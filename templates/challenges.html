@@ -1,0 +1,16 @@
+<!-- templates/home.html -->
+{% extends "base.html" %}
+
+{% block title %}Profile{% endblock %}
+
+{% block content %}
+{%if not challenges %}
+No challenges. Challenge Someone!
+{%endif%}
+{%for challenge in challenges%}
+    <p>
+        <a href=challenge/{{challenge.unique_code}}>{{challenge.unique_code}}</a>
+    </p>
+{%endfor%}
+
+{% endblock %}

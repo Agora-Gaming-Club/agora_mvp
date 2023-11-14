@@ -1,0 +1,11 @@
+#!/bin/bash
+
+# install and activate virtualenv
+# python3 -m pip virtualenv .venv
+source .env/bin/activate
+
+# install dependancies
+pip install -r requirements.txt
+cp kernel/settings_local.py.example kernel/settings_local.py
+
+echo "Dont forget to activate your environment with \`source .venv/bin/activate\` !!"

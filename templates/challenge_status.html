@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block title %}Challenge Status{% endblock %}
+
+{% block content %}
+        <p>Challenge from</p>
+        <p>{{challenger.username}}</p>
+        <p>Game: {{challenge.game.game}} on {{challenge.game.platform}}</p>
+        <p>for {{challenge.amount}} on {{challenge.created_at}}.</p>
+        <p>Current Status {{challenge.status}}</p>
+
+        
+    {% if challenge.status == "awaiting_response" %}
+        <p>awaiting_response</p>
+        {% if not viewer%}
+            <p>DO YOU ACCEPT???</p>
+            <form action="/challenge/accept/{{challenge.unique_code}}" method="post">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit">accept</button>
+            </form>
+        {% else%}
+            <p>Noone accepted yet :(</p>
+        {%endif%}
+
+    {% elif challenge.status == "accepted" %}
+        <p>Challenge Accepted by {{respondent.username}}</p>
+        <p>Ante Up!</p>
+        <form action="/challenge/ante/{{challenge.unique_code}}" method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">accept</button>
+        </form>
+
+    {% elif challenge.status == "expired" %}
+        <p>expired, Noone accepted</p>
+
+    {% elif challenge.status == "in_progress" %}
+        <p>{{challenger.username}} and {{respondent.username}} are duking it out!</p>
+        <p>Select who won</p>
+        <form action="/challenge/winner/{{challenge.unique_code}}" method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">accept</button>
+        </form>
+
+    {% elif challenge.status == "challenger_wins" %}
+        <p>{{challenger.username}} wins!!</p>
+
+    {% elif challenge.status == "respondent_wins" %}
+        <p>{{respondent.username}} wins!!</p>
+
+    {% elif challenge.status == "completed" %}
+        <p>completed</p>
+
+    {%endif%}
+{% endblock %}
