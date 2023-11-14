@@ -159,6 +159,6 @@ def phone_number_validator(phone_number):
     return p.match(phone_number)
 
 
-pn = "520-123-4567"
-x = phone_number_validator(pn)
-print(x)
+# pn = "520-123-4567"
+# x = phone_number_validator(pn)
+# print(x)
