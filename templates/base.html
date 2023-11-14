@@ -1,47 +1,54 @@
-<!-- templates/base.html -->
+{% load django_vite %}
+{% load static %}
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-    <meta charset="utf-8">
-    <title>{% block title %}Django{% endblock %}</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <!-- css -->
+    <link rel="stylesheet" href="{% static 'dist/css/app.css' %}"/>
+    <!-- vite hmr -->
+    {% vite_hmr_client %}
+    {% vite_asset 'src/main.jsx' %}
+    <title>D.I.R.T Stack - Django Inertia React Tailwind CSS</title>
 </head>
-
 <body>
-    <main>
-        {% block content %}
-        {% endblock %}
-    </main>
+<!-- inertia -->
+{% block inertia %}{% endblock %}
+<main>
+    {% block content %}
+    {% endblock %}
+</main>
 
-    <footer>
-            {% if user.is_authenticated %}
-            
-            <p>Hi {{ user.username }}!</p>
-            <p>
-                <a href="{% url 'log_out' %}">Log Out</a>
-            </p>
-            <p>
-                <a href="{% url 'challenge' %}">Challenge</a>
-            </p>
-            <p>
-                <a href="{% url 'challenges' %}">Challenges</a>
-            </p>
-            <p>
-                <a href="{% url 'profile_edit' %}">Edit Profile</a>
-            </p>
-            <p>
-                <a href="{% url 'password_change' %}">Password Change</a>
-            </p>
-            {% else %}
-            <p>You are not logged in</p>
-            <p>
-                <a href="{% url 'log_in' %}">Log In</a>
-            </p>
-            <p>
-                <a href="{% url 'register' %}">Register</a>
-            </p>
-            {% endif %}
-    </footer>
+<footer>
+    {% if user.is_authenticated %}
+
+        <p>Hi {{ user.username }}!</p>
+        <p>
+            <a href="{% url 'log_out' %}">Log Out</a>
+        </p>
+        <p>
+            <a href="{% url 'challenge' %}">Challenge</a>
+        </p>
+        <p>
+            <a href="{% url 'challenges' %}">Challenges</a>
+        </p>
+        <p>
+            <a href="{% url 'profile_edit' %}">Edit Profile</a>
+        </p>
+        <p>
+            <a href="{% url 'password_change' %}">Password Change</a>
+        </p>
+    {% else %}
+        <p>You are not logged in</p>
+        <p>
+            <a href="{% url 'log_in' %}">Log In</a>
+        </p>
+        <p>
+            <a href="{% url 'register' %}">Register</a>
+        </p>
+    {% endif %}
+</footer>
 </body>
 
 </html>

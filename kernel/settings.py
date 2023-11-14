@@ -15,7 +15,6 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
@@ -27,7 +26,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -38,6 +36,8 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    # D.I.R.T Stack apps
+    "django_vite",
     "inertia",
 ]
 
@@ -49,6 +49,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    # D.I.R.T Stack middleware
     "inertia.middleware.InertiaMiddleware",
 ]
 
@@ -56,8 +57,8 @@ ROOT_URLCONF = "kernel.urls"
 
 TEMPLATES = [
     {
-        "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": ["templates"],
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [BASE_DIR / 'templates'],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -72,7 +73,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "kernel.wsgi.application"
 
-
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
@@ -82,7 +82,6 @@ DATABASES = {
         "NAME": BASE_DIR / "db.sqlite3",
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -102,7 +101,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
@@ -114,7 +112,6 @@ USE_I18N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
@@ -125,12 +122,35 @@ STATIC_URL = "static/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+# D.I.R.T Stack Settings
 # inertia
 INERTIA_VERSION = "1.0"  # defaults to '1.0'
-INERTIA_LAYOUT = "layout.html"  # required and has no default
+INERTIA_LAYOUT = "base.html"  # required and has no default
 INERTIA_JSON_ENCODER = inertia.utils.InertiaJsonEncoder
 INERTIA_SSR_URL = "http://localhost:13714"  # defaults to http://localhost:13714
 INERTIA_SSR_ENABLED = False  # defaults to False
 
 CSRF_HEADER_NAME = "HTTP_X_XSRF_TOKEN"
 CSRF_COOKIE_NAME = "XSRF-TOKEN"
+
+# Where ViteJS assets are built.
+DJANGO_VITE_ASSETS_PATH = BASE_DIR / 'react-app' / 'dist'
+
+# If we should use HMR or not.
+DJANGO_VITE_DEV_MODE = DEBUG
+
+# we need this to get around cors issues
+DJANGO_VITE_DEV_SERVER_HOST = '127.0.0.1'
+
+# this is the default, but I'm leaving this here, so you know what to change if you want to run on a different port
+DJANGO_VITE_PORT = 3000
+
+# Name of our static files' folder (after called python manage.py collectstatic)
+STATIC_ROOT = BASE_DIR / 'static'
+
+# Include DJANGO_VITE_ASSETS_PATH into STATICFILES_DIRS to be copied inside
+# when run command python manage.py collectstatic
+STATICFILES_DIRS = [
+    BASE_DIR / 'static',
+    DJANGO_VITE_ASSETS_PATH
+]
