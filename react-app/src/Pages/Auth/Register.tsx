@@ -5,18 +5,16 @@ import { Button, Label, TextInput } from 'flowbite-react';
 import Cookies from 'js-cookie';
 
 const Register: FunctionComponent<any> = ({ props }) => {
-  const page = usePage();
-  console.log(page, Cookies.get());
   const { data, setData, post, processing, errors, reset } = useForm({
-    first_name: 'solomon',
-    last_name: 'solomon',
-    username: 'test',
-    email: 'test@test.com',
-    phone: '5555555555',
-    birthday: '10/04/99',
+    first_name: '',
+    last_name: '',
+    username: '',
+    email: '',
+    phone_number: '',
+    birthday: '', // YYYY-MM-DD
     state: 'MN',
-    password: 'password',
-    password_confirm: 'password',
+    password: '',
+    password_confirm: '',
     csrfmiddelwaretoken: Cookies.get('XSRF-TOKEN'),
   });
 
@@ -24,7 +22,12 @@ const Register: FunctionComponent<any> = ({ props }) => {
     e.preventDefault();
 
     console.log(data);
-    post('/accounts/register');
+    // console.log(data);
+    post('/accounts/register', {
+      onSuccess: (data) => {
+        // window.location.href = data.props.url as unknown as string; // work around
+      },
+    });
   };
 
   return (
@@ -84,6 +87,32 @@ const Register: FunctionComponent<any> = ({ props }) => {
         </div>
         <div>
           <div className="mb-2 block">
+            <Label htmlFor="phone" value="Phone" />
+          </div>
+          <TextInput
+            id="phone"
+            type="tel"
+            placeholder="Enter Your Phone"
+            value={data.phone_number}
+            onChange={(e) => setData('phone_number', e.target.value)}
+            shadow
+          />
+        </div>
+        <div>
+          <div className="mb-2 block">
+            <Label htmlFor="birthday" value="Birthday" />
+          </div>
+          <TextInput
+            id="birthday"
+            type="date"
+            placeholder="Enter Your Birthday"
+            value={data.birthday}
+            onChange={(e) => setData('birthday', e.target.value)}
+            shadow
+          />
+        </div>
+        <div>
+          <div className="mb-2 block">
             <Label htmlFor="password" value="Password" />
           </div>
           <TextInput
@@ -105,19 +134,6 @@ const Register: FunctionComponent<any> = ({ props }) => {
             placeholder="Confirm Your Password"
             value={data.password_confirm}
             onChange={(e) => setData('password_confirm', e.target.value)}
-            shadow
-          />
-        </div>
-        <div>
-          <div className="mb-2 block">
-            <Label htmlFor="username" value="Username" />
-          </div>
-          <TextInput
-            id="username"
-            type="text"
-            placeholder="Enter Your Username"
-            value={data.username}
-            onChange={(e) => setData('username', e.target.value)}
             shadow
           />
         </div>

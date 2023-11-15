@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import logout, login, authenticate
 from django.core.validators import validate_email
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, render, redirect
 from django.urls import reverse
 from django.views.decorators.csrf import ensure_csrf_cookie
 from inertia import inertia
@@ -36,9 +36,9 @@ def log_in(request):
                 return HttpResponseRedirect(reverse("profile_view"))
             else:
                 form.add_error("username", "Username/Password incorrect")
-                return JsonResponse(form.errors.get_json_data())
+                return form.errors.get_json_data()
         else:
-            return JsonResponse(form.errors.get_json_data())
+            return form.errors.get_json_data()
     form = LoginForm()
     context = {
         "form": form,
@@ -56,32 +56,39 @@ def log_out(request):
 @inertia('Auth/Register')
 def register(request):
     if request.method == "POST":
-        print(request.body)
-        form = RegisterForm(request.body)
+        data = json.loads(request.body)
+        print(data)
+        # print(request.body)
+        # return {
+        #     'message': 'return erarly'
+        # }
+        form = RegisterForm(data)
         if form.is_valid():
             user = User.objects.create_user(
-                username=request.body["username"],
-                email=request.body["email"],
-                password=request.body["password"],
-                first_name=request.body["first_name"],
-                last_name=request.body["last_name"],
+                username=data["username"],
+                email=data["email"],
+                password=data["password"],
+                first_name=data["first_name"],
+                last_name=data["last_name"],
             )
             profile = UserProfile.objects.create(
                 user=user,
-                username=request.body["username"],
-                first_name=request.body["first_name"],
-                last_name=request.body["last_name"],
-                email=request.body["email"],
-                state=request.body["state"].upper(),
-                phone_number=request.body["phone_number"],
-                birthday=request.body["birthday"],
+                username=data["username"],
+                first_name=data["first_name"],
+                last_name=data["last_name"],
+                email=data["email"],
+                state=data["state"].upper(),
+                phone_number=data["phone_number"],
+                birthday=data["birthday"],
                 acct_verified=False,
             )
             profile.set_verification_id()
             login(request, user)
             context = {"profile": profile}
-            return {'message': 'Successful!'}
             return HttpResponseRedirect(reverse("profile_view"))
+            return {
+                'url': reverse("profile_view")
+            }
         return JsonResponse(form.errors.get_json_data())
     else:
         form = RegisterForm()

@@ -6,11 +6,13 @@ from django.core import serializers
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
+from inertia import inertia
 
 from api.models import UserProfile
 from api.forms import ProfileForm, RegisterForm
 
 
+@inertia('Welcome')
 def profile_view(request, user_id=None):
     if user_id:
         profile = get_object_or_404(UserProfile, user__id=user_id)
@@ -18,8 +20,7 @@ def profile_view(request, user_id=None):
         print(request.user)
         profile = UserProfile.objects.get(user=request.user)
         print(profile)
-    context = {"profile": profile}
-    return render(request, "registration/profile.html", context)
+    return {"profile": profile}
 
 
 def profile_edit(request):
