@@ -6,6 +6,8 @@ from django.core.validators import validate_email
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
+from django.views.decorators.csrf import ensure_csrf_cookie
+from inertia import inertia
 
 from api.models import UserProfile
 from api.forms import RegisterForm, PasswordChangeForm, LoginForm
@@ -50,37 +52,43 @@ def log_out(request):
     return HttpResponse("you are logged out")
 
 
+@ensure_csrf_cookie
+@inertia('Auth/Register')
 def register(request):
     if request.method == "POST":
-        form = RegisterForm(request.POST)
+        print(request.body)
+        form = RegisterForm(request.body)
         if form.is_valid():
             user = User.objects.create_user(
-                username=request.POST["username"],
-                email=request.POST["email"],
-                password=request.POST["password"],
-                first_name=request.POST["first_name"],
-                last_name=request.POST["last_name"],
+                username=request.body["username"],
+                email=request.body["email"],
+                password=request.body["password"],
+                first_name=request.body["first_name"],
+                last_name=request.body["last_name"],
             )
             profile = UserProfile.objects.create(
                 user=user,
-                username=request.POST["username"],
-                first_name=request.POST["first_name"],
-                last_name=request.POST["last_name"],
-                email=request.POST["email"],
-                state=request.POST["state"].upper(),
-                phone_number=request.POST["phone_number"],
-                birthday=request.POST["birthday"],
+                username=request.body["username"],
+                first_name=request.body["first_name"],
+                last_name=request.body["last_name"],
+                email=request.body["email"],
+                state=request.body["state"].upper(),
+                phone_number=request.body["phone_number"],
+                birthday=request.body["birthday"],
                 acct_verified=False,
             )
             profile.set_verification_id()
             login(request, user)
             context = {"profile": profile}
+            return {'message': 'Successful!'}
             return HttpResponseRedirect(reverse("profile_view"))
         return JsonResponse(form.errors.get_json_data())
     else:
         form = RegisterForm()
     context = {"form": form}
-    return render(request, "registration/register.html", context)
+    return {
+        'csrf_token': 'fake'
+    }
 
 
 def password_change(request):
