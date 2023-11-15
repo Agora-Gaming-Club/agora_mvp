@@ -1,6 +1,6 @@
 import json
 from django.contrib.auth.models import User
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
 
@@ -13,8 +13,8 @@ from payment.authorize_client import AuthorizeClient
 
 
 def challenge(request):
-    # if not request.user.is_authenticated:
-    #     return HttpResponse("Not Authed")
+    if not request.user.is_authenticated:
+        return HttpResponse("Not Authed")
     if request.method == "POST":
         form = ChallengeForm(
             request.POST, initial={"challenger_username": request.user}
@@ -26,16 +26,15 @@ def challenge(request):
             game_obj, _ = Game.objects.get_or_create(platform=platform, game=game)
             wager = Wager(
                 challenger_id=request.user.id,
-                respondent_id=0,
                 amount=request.POST["amount"],
                 unique_code="new",
                 game=game_obj,
             )
             wager.generate_unique_code()
-            context = {"unique_code": str(wager.unique_code), "form": form}
-            return HttpResponse(str(wager.unique_code))
+            context = {"unique_code": str(wager.unique_code)}
+            return JsonResponse(context)
         else:
-            return HttpResponse("not valid")
+            return JsonResponse(form.errors.get_json_data())
     form = ChallengeForm(initial={"challenger_username": request.user.username})
     context = {"form": form}
     return render(request, "challenge_init.html", context)
@@ -58,6 +57,13 @@ def challenge_status(request, challenge_id):
         form = AnteForm()
     if challenge.status == Wager.IN_PROGRESS:
         form = WinnerForm()
+        # challenger_ids = [challenge.challenger_id, challenge.respondent_id]
+        # choices = [
+        #     (user_id, UserProfile.objects.get(user__id=user_id))
+        #     for user_id in challenger_ids
+        # ]
+        # print(choices)
+
     context = {
         "challenge": challenge,
         "challenger": challenger,
@@ -65,25 +71,27 @@ def challenge_status(request, challenge_id):
         "respondent": respondent,
         "viewer": current_user == challenger,
     }
-    print(context)
+    context.update(form.errors.get_json_data())
     return render(request, "challenge_status.html", context)
 
 
 def challenge_accept(request, challenge_id):
     challenge = get_object_or_404(Wager, unique_code=challenge_id)
-    # make it so you cant accept your own challenge
-    respondent = UserProfile.objects.get(user=request.user)
-    print(respondent)
-    challenger = UserProfile.objects.get(user__id=challenge.challenger_id)
-    print(challenger)
-    if respondent == challenger:
-        return HttpResponse("cannot accept own challenge")
-    challenge.accept(respondent)
-    context = {
-        "respondent": respondent,
-        "challenger": challenger,
-    }
-    return HttpResponse(f"{context}")
+    form = AcceptForm(request.POST)
+    if form.is_valid():
+        respondent = UserProfile.objects.get(user=request.user)
+        challenger = UserProfile.objects.get(user__id=challenge.challenger_id)
+        if respondent == challenger:
+            form.add_error("accept", "Cannot accept your own challenge")
+            return JsonResponse(form.errors.get_json_data())
+        gamer_tag = request.POST["gamer_tag"]
+        challenge.accept(respondent, gamer_tag)
+        context = {
+            "respondent": respondent,
+            "challenger": challenger,
+        }
+        return JsonResponse(form.errors.get_json_data())
+    return JsonResponse(form.errors.get_json_data())
 
 
 def challenge_ante(request, challenge_id):
@@ -101,14 +109,15 @@ def challenge_ante(request, challenge_id):
         amount = challenge.amount
 
         payment_client = AuthorizeClient("token")
-        payment_status = payment_client("source", "target", amount)
+        payment_status = payment_client.send_payment("source", "target", amount)
 
-        payment = Payment.objects.get_or_create(
+        payment, _ = Payment.objects.get_or_create(
             user=request.user,
             wager=challenge,
             authorize_net_payment_id=payment_status["id"],
             authorize_net_payment_status=payment_status["status"],
         )
+        challenge.all_payments_received()
         return HttpResponse(f"{payment.authorize_net_payment_status}")
 
     return HttpResponse("Bad Payment")
@@ -116,7 +125,20 @@ def challenge_ante(request, challenge_id):
 
 def challenge_winner(request, challenge_id):
     """Verify both people are supposed to be here"""
-    pass
+    challenge = get_object_or_404(Wager, unique_code=challenge_id)
+    form = WinnerForm()
+    if form.is_valid(unique_code=challenge.unique_code):
+        print("yo")
+
+    return JsonResponse(form.errors.get_json_data())
+
+    # challenger_ids = [challenge.challenger_id, challenge.respondent_id]
+    # choices = [
+    #     (user_id, UserProfile.objects.get(user__id=user_id))
+    #     for user_id in challenger_ids
+    # ]
+    # print(choices)
+    # form.CHOICES = choices
 
 
 def challenges(request):

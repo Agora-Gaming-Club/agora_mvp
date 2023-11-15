@@ -23,7 +23,7 @@ class UserProfile(models.Model):
     last_name = models.CharField(max_length=40)
     email = models.EmailField()
     state = models.CharField(max_length=2)
-    # phone_number = models.CharField(max_length=15, blank=False, null=False)
+    phone_number = models.CharField(max_length=11, blank=False, null=False)
     birthday = models.DateField(null=False, blank=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -51,6 +51,7 @@ class Wager(models.Model):
     IN_PROGRESS = "in_progress"
     AWAITING_RESPONSE = "awaiting_response"
     COMPLETED = "completed"
+    DISPUTED = "disputed"
     EXPIRED = "expired"
 
     WAGER_STATUS = [
@@ -60,20 +61,32 @@ class Wager(models.Model):
         (IN_PROGRESS, "In Progress"),
         (AWAITING_RESPONSE, "Awaiting Response"),
         (COMPLETED, "Completed"),
+        (DISPUTED, "Disputed"),
         (EXPIRED, "Expired"),
     ]
 
     challenger_id = models.IntegerField()
-    respondent_id = models.IntegerField(blank=True)
+    respondent_id = models.IntegerField(blank=True, null=True)
+    # make amount a choice box
     amount = models.DecimalField(max_digits=6, decimal_places=2)
     game = models.ForeignKey("Game", on_delete=models.CASCADE, blank=True)
+    notes = models.CharField(max_length=200, blank=True, null=True)
     unique_code = models.CharField(max_length=40, blank=True)  # make this unique
-    gamer_tag = models.CharField(max_length=40, blank=True)
+    gamer_tag = models.CharField(max_length=40, blank=True, null=True)
     status = models.CharField(
         max_length=30, choices=WAGER_STATUS, default=AWAITING_RESPONSE
     )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        respondent = "NOT ACCEPTED"
+        if self.respondent_id:
+            respondent = self.respondent_id
+        return f"<{self.challenger_id} vs {respondent} at {self.game}: {self.status}>"
+
+    def __repr__(self):
+        return self.__str__()
 
     def generate_unique_code(self):
         """
@@ -105,10 +118,18 @@ class Wager(models.Model):
                 return True
         return False
 
-    def accept(self, respondent):
+    def accept(self, respondent, gamer_tag):
         self.respondent_id = respondent.user.id
+        self.gamer_tag = gamer_tag
         self.status = self.ACCEPTED
         self.save()
+
+    def all_payments_received(self):
+        challengers = [self.challenger_id, self.respondent_id]
+        payments = Payment.objects.filter(user__id__in=challengers)
+        if len(payments) == 2:
+            self.status = Wager.IN_PROGRESS
+            self.save()
 
 
 class Payment(models.Model):
@@ -131,6 +152,9 @@ class Payment(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    def __str__(self):
+        return f"<{self.user} paid {self.wager.amount} for {self.wager.unique_code}>"
+
 
 class Game(models.Model):
     PLATFORM = [
@@ -140,10 +164,9 @@ class Game(models.Model):
         ("pc", "Superior PC"),
     ]
     GAMES = [
-        ("minecraft", "Minecraft"),
-        ("destiny", "Destiny"),
-        ("cod_bo3", "COD:BO3"),
-        ("minecraft", "Minecraft"),
+        ("rocket_league", "Rocket League"),
+        ("madden_24", "Madden 24"),
+        ("nba_2k_24", "NBA 2K 24"),
     ]
     platform = models.CharField(max_length=20, choices=PLATFORM)
     game = models.CharField(max_length=20, choices=GAMES)

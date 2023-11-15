@@ -1,7 +1,14 @@
 from django.contrib import admin
-from api.models import Payment, UserProfile, Wager
+from api.models import Game, Payment, UserProfile, Wager
 
 # Register your models here.
+
+
+class GameAdmin(admin.ModelAdmin):
+    list_display = [
+        "game",
+        "platform",
+    ]
 
 
 class PaymentAdmin(admin.ModelAdmin):
@@ -24,6 +31,7 @@ class UserProfileAdmin(admin.ModelAdmin):
         "email",
         "state",
         "birthday",
+        "phone_number",
         "acct_verified",
         "created_at",
         "updated_at",
@@ -45,3 +53,4 @@ class WagerAdmin(admin.ModelAdmin):
 admin.site.register(Payment, PaymentAdmin)
 admin.site.register(UserProfile, UserProfileAdmin)
 admin.site.register(Wager, WagerAdmin)
+admin.site.register(Game, GameAdmin)

@@ -68,6 +68,7 @@ def register(request):
                 last_name=request.POST["last_name"],
                 email=request.POST["email"],
                 state=request.POST["state"].upper(),
+                phone_number=request.POST["phone_number"],
                 birthday=request.POST["birthday"],
                 acct_verified=False,
             )
