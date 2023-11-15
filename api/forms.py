@@ -4,9 +4,10 @@ from django import forms
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.forms import ModelForm
+from django.shortcuts import get_object_or_404
 
 from api.models import UserProfile, Wager, Game
-from kernel.agora_settings import FORBIDDEN_STATES
+from kernel.agora_settings import FORBIDDEN_STATES, LEGAL_GAMBLING_AGE
 
 
 class AcceptForm(forms.Form):
@@ -30,6 +31,7 @@ class ChallengeForm(forms.Form):
     gamer_tag = forms.CharField(max_length=30, required=False)
     game = forms.ChoiceField(choices=Game.GAMES)
     platform = forms.ChoiceField(choices=Game.PLATFORM)
+    notes = forms.CharField(max_length=200, required=False)
 
     amount = forms.DecimalField(max_digits=6, decimal_places=2)
 
@@ -73,6 +75,14 @@ class RegisterForm(forms.Form):
         user_name_exists = User.objects.filter(username=self.data["username"])
         if user_name_exists:
             self.add_error("username", "username unavailable")
+
+        # # Add this back in and get it working properly
+        # phone_number_exists = User.objects.filter(
+        #     phone_number=self.data["phone_number"]
+        # )
+        # if phone_number_exists:
+        #     self.add_error("phone_number", "username unavailable")
+
         passwords_match = self.data["password"] == self.data["password_confirm"]
         if not passwords_match:
             self.add_error("password", "passwords dont match")
@@ -81,7 +91,7 @@ class RegisterForm(forms.Form):
             self.add_error("email", "email unavailable")
 
         of_age = True
-        legal_age = datetime.timedelta(days=365.2425 * 21)
+        legal_age = datetime.timedelta(days=365.2425 * LEGAL_GAMBLING_AGE)
         now = datetime.datetime.now()
         birthday = self.data["birthday"]
         birthday_datetime = datetime.datetime.strptime(birthday, "%Y-%m-%d")
@@ -97,6 +107,7 @@ class RegisterForm(forms.Form):
         validation = [
             valid,
             not user_name_exists,
+            # not phone_number_exists,
             passwords_match,
             not email_exists,
             of_age,
@@ -144,7 +155,24 @@ class LoginForm(forms.Form):
 class WinnerForm(forms.Form):
     """Needs to be populated with the two combatants"""
 
-    who_won = forms.Select()
+    CHOICES = ((5, "User A"), (3, "User B"))
+
+    winner = forms.ChoiceField(choices=CHOICES)
+
+    def is_valid(self, unique_code=None):
+        valid = super(WinnerForm, self).is_valid()
+        challenge = get_object_or_404(Wager, unique_code=unique_code)
+        challenger_ids = [challenge.challenger_id, challenge.respondent_id]
+        incorrect_user_selected = False
+        if self.data.get("who_won") not in challenger_ids:
+            # self.add_error("winner", "User selected is not part of wager")
+            incorrect_user_selected = True
+        validation = [
+            valid,
+            not incorrect_user_selected,
+        ]
+        print(validation)
+        return all(validation)
 
 
 class AnteForm(forms.Form):

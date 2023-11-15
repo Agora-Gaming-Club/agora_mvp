@@ -130,7 +130,7 @@ class TestAuth(TestCase):
             "first_name": "Wanda",
             "last_name": "Maximoff",
             "birthday": "1989-02-10",
-            "phone_number": "15201234567",
+            "phone_number": "5201234567",
             "state": "CA",
             "acct_verified": False,
         }

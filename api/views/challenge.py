@@ -57,6 +57,13 @@ def challenge_status(request, challenge_id):
         form = AnteForm()
     if challenge.status == Wager.IN_PROGRESS:
         form = WinnerForm()
+        # challenger_ids = [challenge.challenger_id, challenge.respondent_id]
+        # choices = [
+        #     (user_id, UserProfile.objects.get(user__id=user_id))
+        #     for user_id in challenger_ids
+        # ]
+        # print(choices)
+
     context = {
         "challenge": challenge,
         "challenger": challenger,
@@ -64,7 +71,6 @@ def challenge_status(request, challenge_id):
         "respondent": respondent,
         "viewer": current_user == challenger,
     }
-    print(context)
     context.update(form.errors.get_json_data())
     return render(request, "challenge_status.html", context)
 
@@ -103,14 +109,15 @@ def challenge_ante(request, challenge_id):
         amount = challenge.amount
 
         payment_client = AuthorizeClient("token")
-        payment_status = payment_client("source", "target", amount)
+        payment_status = payment_client.send_payment("source", "target", amount)
 
-        payment = Payment.objects.get_or_create(
+        payment, _ = Payment.objects.get_or_create(
             user=request.user,
             wager=challenge,
             authorize_net_payment_id=payment_status["id"],
             authorize_net_payment_status=payment_status["status"],
         )
+        challenge.all_payments_received()
         return HttpResponse(f"{payment.authorize_net_payment_status}")
 
     return HttpResponse("Bad Payment")
@@ -118,7 +125,20 @@ def challenge_ante(request, challenge_id):
 
 def challenge_winner(request, challenge_id):
     """Verify both people are supposed to be here"""
-    pass
+    challenge = get_object_or_404(Wager, unique_code=challenge_id)
+    form = WinnerForm()
+    if form.is_valid(unique_code=challenge.unique_code):
+        print("yo")
+
+    return JsonResponse(form.errors.get_json_data())
+
+    # challenger_ids = [challenge.challenger_id, challenge.respondent_id]
+    # choices = [
+    #     (user_id, UserProfile.objects.get(user__id=user_id))
+    #     for user_id in challenger_ids
+    # ]
+    # print(choices)
+    # form.CHOICES = choices
 
 
 def challenges(request):
