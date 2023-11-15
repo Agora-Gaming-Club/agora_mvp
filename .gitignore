@@ -170,6 +170,8 @@ cython_debug/
 # Django
 db.sqlite3
 kernel/settings_local.py
+# I am adding /api/migrations in here for now to preserve migration sanity until actually deploying
+api/migrations
 
 #secrets
 secrets.json

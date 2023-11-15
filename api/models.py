@@ -23,7 +23,7 @@ class UserProfile(models.Model):
     last_name = models.CharField(max_length=40)
     email = models.EmailField()
     state = models.CharField(max_length=2)
-    # phone_number = models.CharField(max_length=15, blank=False, null=False)
+    phone_number = models.CharField(max_length=11, blank=False, null=False)
     birthday = models.DateField(null=False, blank=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -64,16 +64,25 @@ class Wager(models.Model):
     ]
 
     challenger_id = models.IntegerField()
-    respondent_id = models.IntegerField(blank=True)
+    respondent_id = models.IntegerField(blank=True, null=True)
     amount = models.DecimalField(max_digits=6, decimal_places=2)
     game = models.ForeignKey("Game", on_delete=models.CASCADE, blank=True)
     unique_code = models.CharField(max_length=40, blank=True)  # make this unique
-    gamer_tag = models.CharField(max_length=40, blank=True)
+    gamer_tag = models.CharField(max_length=40, blank=True, null=True)
     status = models.CharField(
         max_length=30, choices=WAGER_STATUS, default=AWAITING_RESPONSE
     )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        respondent = "None"
+        if self.respondent_id:
+            respondent = self.respondent_id
+        return f"<{self.challenger_id} vs {respondent} at {self.game}: {self.status}>"
+
+    def __repr__(self):
+        return self.__str__()
 
     def generate_unique_code(self):
         """
@@ -105,8 +114,9 @@ class Wager(models.Model):
                 return True
         return False
 
-    def accept(self, respondent):
+    def accept(self, respondent, gamer_tag):
         self.respondent_id = respondent.user.id
+        self.gamer_tag = gamer_tag
         self.status = self.ACCEPTED
         self.save()
 

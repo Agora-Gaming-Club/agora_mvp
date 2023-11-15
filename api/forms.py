@@ -11,6 +11,13 @@ from kernel.agora_settings import FORBIDDEN_STATES
 
 class AcceptForm(forms.Form):
     accept = forms.BooleanField()
+    gamer_tag = forms.CharField(max_length=30)
+
+    def is_valid(self):
+        valid = super(AcceptForm, self).is_valid()
+        valid_gamertag = self.data.get("gamer_tag") is not None
+        validation = [valid, valid_gamertag]
+        return all(validation)
 
 
 class ChallengeForm(forms.Form):
@@ -20,6 +27,7 @@ class ChallengeForm(forms.Form):
 
     challenger_username = forms.CharField(max_length=30, disabled=True)
     respondent_username = forms.CharField(max_length=30, required=False)
+    gamer_tag = forms.CharField(max_length=30, required=False)
     game = forms.ChoiceField(choices=Game.GAMES)
     platform = forms.ChoiceField(choices=Game.PLATFORM)
 
@@ -31,11 +39,7 @@ class ChallengeForm(forms.Form):
 
     def is_valid(self):
         valid = super(ChallengeForm, self).is_valid()
-        # respondent = UserProfile.objects.filter(
-        #     username=self.data["respondent_username"]
-        # )
-        respondent = True
-        validation = [valid, respondent]
+        validation = [valid]
         # validate dollar amount is ok?
         return all(validation)
 
@@ -50,6 +54,7 @@ class RegisterForm(forms.Form):
     last_name = forms.CharField(max_length=40)
     email = forms.EmailField()
     state = forms.CharField(max_length=2)
+    phone_number = forms.CharField(max_length=11)
     birthday = forms.DateField(widget=forms.DateInput())
 
     def is_valid(self):
