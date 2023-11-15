@@ -2,7 +2,7 @@ import { resolve } from 'path';
 import react from '@vitejs/plugin-react';
 
 module.exports = {
-    // this was changed
+  // this was changed
   plugins: [
     react({
       include: '**/*.disabled',
@@ -20,7 +20,8 @@ module.exports = {
     },
   },
   resolve: {
-    extensions: ['.js', '.json'],
+    extensions: ['.tsx', '.ts', '.js', '.json'],
+    alias: [{ find: '@', replacement: resolve(__dirname, './react-app/src') }],
   },
   build: {
     outDir: resolve('./react-app/dist'),
