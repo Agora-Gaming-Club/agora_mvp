@@ -171,7 +171,6 @@ class WinnerForm(forms.Form):
             valid,
             not incorrect_user_selected,
         ]
-        print(validation)
         return all(validation)
 
 

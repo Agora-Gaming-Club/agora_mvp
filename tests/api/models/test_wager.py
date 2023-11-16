@@ -1,7 +1,7 @@
 from django.test import TestCase
 
 from api.models import Game, Wager
-from tests.utils import make_user
+from tests.utils import make_user, get_wager
 
 
 class TestWager(TestCase):
@@ -153,27 +153,10 @@ class TestWager(TestCase):
         wager = Wager.objects.get(unique_code=unique_code)
         self.assertEqual(wager.status, Wager.IN_PROGRESS)
 
-    def get_wager(self):
-        game = Game.objects.create(
-            platform="xbox",
-            game="rocket_league",
-        )
-        wager = Wager.objects.create(
-            challenger_id=self.user_a.id,
-            respondent_id=self.user_b.id,
-            amount=25.00,
-            game=game,
-            notes="lolnotes",
-            unique_code="qWQePXeZPjei",
-            gamer_tag="SuperCoolGuyGamerTag",
-            status=Wager.IN_PROGRESS,
-        )
-        return wager
-
     def test_selecting_winner(self):
         self.client.login(username="user_b", password="password")
 
-        wager = self.get_wager()
+        wager = get_wager(self.user_a, self.user_b)
 
         response = self.client.post(
             f"/challenge/winner/{wager.unique_code}",
