@@ -1,3 +1,7 @@
+import json
+
+from inertia.test import InertiaTestCase
+
 from django.test import TestCase
 from django.contrib.auth.models import User
 from django.contrib.auth import logout, login, authenticate
@@ -5,25 +9,29 @@ from django.contrib.auth import logout, login, authenticate
 from api.models import UserProfile
 
 
-class TestAuth(TestCase):
+class TestAuth(InertiaTestCase):
     def setUp(self):
+        super().setUp()
         self.user = User.objects.create_user(
             username="UserName",
             email="email@email.com",
             password="password",
         )
 
-    # def test_user_profile(self):
-    #     user_profile = UserProfile.objects.create(
-    #         user=self.user,
-    #         username=self.user.username,
-    #         email=self.user.email,
-    #         clerk_id="clerk_id",
-    #         bio="bio",
-    #         is_streamer=False,
-    #         acct_verified=False,
-    #         profile_image_url="http://domain.com/image.jpg",
-    #     )
+    def base_register_data(self):
+        # TODO: These fields will change, come back after it works and update it
+        return {
+            "username": "ScarletWitch",
+            "email": "wanda@avengers.net",
+            "password": "magneto",
+            "password_confirm": "magneto",
+            "first_name": "Wanda",
+            "last_name": "Maximoff",
+            "birthday": "1989-02-10",
+            "phone_number": "5201234567",
+            "state": "CA",
+            "acct_verified": False,
+        }
 
     # Login
     def test_change_password(self):
@@ -39,6 +47,7 @@ class TestAuth(TestCase):
                 "new_password": new_password,
                 "new_password_confirm": new_password,
             },
+            content_type="application/json",
         )
         user = authenticate(
             username="UserName",
@@ -59,6 +68,7 @@ class TestAuth(TestCase):
                 "new_password": new_password,
                 "new_password_confirm": "wrong",
             },
+            content_type="application/json",
         )
         user = authenticate(
             username="UserName",
@@ -73,6 +83,7 @@ class TestAuth(TestCase):
                 "username": "UserName",
                 "password": "password",
             },
+            content_type="application/json",
         )
         # this will have to change once its json
         self.assertEqual(response.status_code, 302)
@@ -84,6 +95,7 @@ class TestAuth(TestCase):
                 "username": "UserName",
                 "password": "password2",
             },
+            content_type="application/json",
         )
         self.assertIn("username", response.json())
 
@@ -95,6 +107,7 @@ class TestAuth(TestCase):
                 "username": "UserName",
                 "password": "",
             },
+            content_type="application/json",
         )
         self.assertIn("password", response.json())
 
@@ -105,6 +118,7 @@ class TestAuth(TestCase):
                 "username": "",
                 "password": "password",
             },
+            content_type="application/json",
         )
         self.assertIn("username", response.json())
 
@@ -115,31 +129,18 @@ class TestAuth(TestCase):
                 "username": "",
                 "password": "",
             },
+            content_type="application/json",
         )
         self.assertIn("username", response.json())
         self.assertIn("password", response.json())
 
     # Register
-    def base_register_data(self):
-        # TODO: These fields will change, come back after it works and update it
-        return {
-            "username": "ScarletWitch",
-            "email": "wanda@avengers.net",
-            "password": "magneto",
-            "password_confirm": "magneto",
-            "first_name": "Wanda",
-            "last_name": "Maximoff",
-            "birthday": "1989-02-10",
-            "phone_number": "5201234567",
-            "state": "CA",
-            "acct_verified": False,
-        }
-
     def test_register_success(self):
         base_data = self.base_register_data()
         response = self.client.post(
             "/accounts/register",
             base_data,
+            content_type="application/json",
         )
         # this will have to change once its json
         self.assertEqual(response.status_code, 302)
@@ -157,6 +158,7 @@ class TestAuth(TestCase):
         response = self.client.post(
             "/accounts/register",
             base_data,
+            content_type="application/json",
         )
         self.assertIn("state", response.json())
 
@@ -166,6 +168,7 @@ class TestAuth(TestCase):
         response = self.client.post(
             "/accounts/register",
             base_data,
+            content_type="application/json",
         )
         self.assertIn("birthday", response.json())
 
@@ -175,6 +178,7 @@ class TestAuth(TestCase):
         response = self.client.post(
             "/accounts/register",
             base_data,
+            content_type="application/json",
         )
         self.assertIn("password", response.json())
 
@@ -183,6 +187,7 @@ class TestAuth(TestCase):
         response = self.client.post(
             "/accounts/register",
             base_data,
+            content_type="application/json",
         )
         self.assertIn("password", response.json())
 
@@ -192,6 +197,7 @@ class TestAuth(TestCase):
         response = self.client.post(
             "/accounts/register",
             base_data,
+            content_type="application/json",
         )
         self.assertIn("username", response.json())
 
@@ -200,11 +206,13 @@ class TestAuth(TestCase):
         response = self.client.post(
             "/accounts/register",
             base_data,
+            content_type="application/json",
         )
 
         response = self.client.post(
             "/accounts/register",
             base_data,
+            content_type="application/json",
         )
         self.assertIn("username", response.json())
         self.assertIn("email", response.json())

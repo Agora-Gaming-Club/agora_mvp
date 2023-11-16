@@ -13,6 +13,8 @@ from api.models import UserProfile
 from api.forms import RegisterForm, PasswordChangeForm, LoginForm
 
 
+@ensure_csrf_cookie
+@inertia("Auth/Login")
 def log_in(request):
     """
     Standard login page with error bubbling.
@@ -23,22 +25,25 @@ def log_in(request):
     """
     errors = []
     if request.method == "POST":
-        form = LoginForm(request.POST)
+        data = json.loads(request.body)
+        form = LoginForm(data)
         if form.is_valid():
-            # something like:
-            # if validate_email(request.POST["username"]):
-            #     username = UserProfile.objects.filter(request.POST["username"]).first().username
-            username = request.POST["username"]
-            password = request.POST["password"]
+            # # something like:
+            # if False:  # validate_email(data["username"]):
+            #     username = UserProfile.objects.filter(data["username"]).first().username
+            # else:
+            #     username = data["username"]
+            username = data["username"]
+            password = data["password"]
             user = authenticate(username=username, password=password)
             if user:
                 login(request, user)
                 return HttpResponseRedirect(reverse("profile_view"))
             else:
                 form.add_error("username", "Username/Password incorrect")
-                return form.errors.get_json_data()
+                return JsonResponse(form.errors.get_json_data())
         else:
-            return form.errors.get_json_data()
+            return JsonResponse(form.errors.get_json_data())
     form = LoginForm()
     context = {
         "form": form,
@@ -53,15 +58,10 @@ def log_out(request):
 
 
 @ensure_csrf_cookie
-@inertia('Auth/Register')
+@inertia("Auth/Register")
 def register(request):
     if request.method == "POST":
         data = json.loads(request.body)
-        print(data)
-        # print(request.body)
-        # return {
-        #     'message': 'return erarly'
-        # }
         form = RegisterForm(data)
         if form.is_valid():
             user = User.objects.create_user(
@@ -86,30 +86,29 @@ def register(request):
             login(request, user)
             context = {"profile": profile}
             return HttpResponseRedirect(reverse("profile_view"))
-            return {
-                'url': reverse("profile_view")
-            }
+            return {"url": reverse("profile_view")}
         return JsonResponse(form.errors.get_json_data())
     else:
         form = RegisterForm()
     context = {"form": form}
-    return {
-        'csrf_token': 'fake'
-    }
+    return {"csrf_token": "fake"}
 
 
+@ensure_csrf_cookie
+@inertia("Auth/PasswordChange")
 def password_change(request):
     if request.method == "POST":
-        form = PasswordChangeForm(request.POST)
+        data = json.loads(request.body)
+        form = PasswordChangeForm(data)
         if form.is_valid():
             username = request.user.username
-            password = request.POST["password"]
+            password = data["password"]
             user = authenticate(username=username, password=password)
             if user is not None:
-                user.set_password(request.POST["new_password"])
+                user.set_password(data["new_password"])
                 user.save()
                 login(request, user)
-                return HttpResponse("password changed")
+                return JsonResponse({"message": "password changed"})
         return JsonResponse(form.errors.get_json_data())
 
     form = PasswordChangeForm()
