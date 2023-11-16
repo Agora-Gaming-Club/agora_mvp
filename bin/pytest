@@ -5,5 +5,10 @@ if [ "$VIRTUAL_ENV" == "" ]; then
     exit 1
 fi
 
+if [ -z "$1" ]; then
+    ARG=tests
+else
+    ARG=$*
+fi
 
-./manage.py test $ARG
+./manage.py test "$ARG"

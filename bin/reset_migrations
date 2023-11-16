@@ -1,0 +1,14 @@
+#!/bin/bash
+
+
+if [ "$VIRTUAL_ENV" == "" ]; then
+    echo "First activate venv environment"
+    exit 1
+fi
+
+find . -path "api/migrations/*.py" -not -name "__init__.py" -delete
+find . -path "api/migrations/*.pyc"  -delete
+rm db.sqlite3
+python manage.py makemigrations
+python manage.py makemigrations api
+python manage.py migrate
