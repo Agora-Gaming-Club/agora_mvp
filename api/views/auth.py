@@ -13,6 +13,15 @@ from api.models import UserProfile
 from api.forms import RegisterForm, PasswordChangeForm, LoginForm
 
 
+class JsonResponseUnprocessableEntity(HttpResponse):
+    status_code = 422
+
+    def __init__(self, data, *args, **kwargs):
+        content = json.dumps(data)
+        kwargs['content_type'] = 'application/json'
+        super().__init__(content, *args, **kwargs)
+
+
 @ensure_csrf_cookie
 @inertia("Auth/Login")
 def log_in(request):
@@ -41,15 +50,19 @@ def log_in(request):
                 return HttpResponseRedirect(reverse("profile_view"))
             else:
                 form.add_error("username", "Username/Password incorrect")
-                return JsonResponse(form.errors.get_json_data())
+                return {
+                    "errors": form.errors.get_json_data()
+                }
         else:
-            return JsonResponse(form.errors.get_json_data())
+            return {
+                "errors": form.errors.get_json_data()
+            }
     form = LoginForm()
     context = {
         "form": form,
         "errors": errors,
     }
-    return render(request, "registration/login.html", context)
+    return {}
 
 
 def log_out(request):
@@ -84,14 +97,13 @@ def register(request):
             )
             profile.set_verification_id()
             login(request, user)
-            context = {"profile": profile}
             return HttpResponseRedirect(reverse("profile_view"))
-            return {"url": reverse("profile_view")}
-        return JsonResponse(form.errors.get_json_data())
+        return {
+            "errors": form.errors.get_json_data()
+        }
     else:
         form = RegisterForm()
-    context = {"form": form}
-    return {"csrf_token": "fake"}
+    return {}
 
 
 @ensure_csrf_cookie
