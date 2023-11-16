@@ -30,8 +30,9 @@ class UserProfile(models.Model):
 
     verification_id = models.CharField(max_length=36, blank=False)
     acct_verified = models.BooleanField(default=False, null=False)
-    # impliment this before switching to the API
-    # winnings = models.DecimalField(max_digits=10, decimal_places=2, default=00.00)
+    winnings = models.DecimalField(
+        max_digits=10, decimal_places=2, default=00.00, null=True
+    )
 
     def __str__(self):
         return f"<Profile: {self.username} #{self.id}>"
@@ -78,6 +79,8 @@ class Wager(models.Model):
     )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    challenger_vote = models.CharField(max_length=10, null=True, blank=True)
+    respondent_vote = models.CharField(max_length=10, null=True, blank=True)
 
     def __str__(self):
         respondent = "NOT ACCEPTED"

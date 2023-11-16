@@ -1,3 +1,6 @@
+from django.core.validators import validate_email
+
+
 STATES = {
     "ALABAMA": "AL",
     "ALASKA": "AK",
@@ -65,3 +68,11 @@ def form_errors(form):
         message = value[0]["message"]
         errors["errors"] = message
     return errors
+
+
+def good_email(email):
+    try:
+        validate_email(email)
+        return True
+    except:
+        return False

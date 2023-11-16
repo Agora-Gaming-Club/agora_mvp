@@ -1,16 +1,22 @@
+"""
+Auth related endpooints
+
+TODO: Verify that @ensure_csrf_cookie is required (not 100% sure)
+TODO: replace renders on login/logout/password_change
+"""
 import json
 
 from django.contrib.auth.models import User
 from django.contrib.auth import logout, login, authenticate
-from django.core.validators import validate_email
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
-from django.shortcuts import get_object_or_404, render, redirect
+from django.shortcuts import render
 from django.urls import reverse
 from django.views.decorators.csrf import ensure_csrf_cookie
 from inertia import inertia
 
 from api.models import UserProfile
 from api.forms import RegisterForm, PasswordChangeForm, LoginForm
+from api.utils import good_email
 
 
 @ensure_csrf_cookie
@@ -19,28 +25,26 @@ def log_in(request):
     """
     Standard login page with error bubbling.
 
-    User is to use username.
-    TODO: Make it so it can be either username or email or even phone number
-    (preferrably a way to turn one off)
+    User is to use email
     """
     errors = []
     if request.method == "POST":
         data = json.loads(request.body)
         form = LoginForm(data)
         if form.is_valid():
-            # # something like:
-            # if False:  # validate_email(data["username"]):
-            #     username = UserProfile.objects.filter(data["username"]).first().username
-            # else:
-            #     username = data["username"]
-            username = data["username"]
+            if good_email(data["username"]):
+                user_profile = User.objects.filter(email=data["username"])
+                username = user_profile.first().username
+            else:
+                username = ""
+
             password = data["password"]
             user = authenticate(username=username, password=password)
             if user:
                 login(request, user)
                 return HttpResponseRedirect(reverse("profile_view"))
             else:
-                form.add_error("username", "Username/Password incorrect")
+                form.add_error("username", "Email/Password incorrect")
                 return JsonResponse(form.errors.get_json_data())
         else:
             return JsonResponse(form.errors.get_json_data())
@@ -52,9 +56,11 @@ def log_in(request):
     return render(request, "registration/login.html", context)
 
 
+@ensure_csrf_cookie
+@inertia("Auth/Logout")
 def log_out(request):
     logout(request)
-    return HttpResponse("you are logged out")
+    return JsonResponse({"message": "you are now logged out"})
 
 
 @ensure_csrf_cookie
@@ -84,14 +90,12 @@ def register(request):
             )
             profile.set_verification_id()
             login(request, user)
-            context = {"profile": profile}
             return HttpResponseRedirect(reverse("profile_view"))
-            return {"url": reverse("profile_view")}
         return JsonResponse(form.errors.get_json_data())
     else:
         form = RegisterForm()
     context = {"form": form}
-    return {"csrf_token": "fake"}
+    return {}
 
 
 @ensure_csrf_cookie

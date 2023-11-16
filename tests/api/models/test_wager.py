@@ -174,7 +174,6 @@ class TestWager(TestCase):
         self.client.login(username="user_b", password="password")
 
         wager = self.get_wager()
-        print(wager)
 
         response = self.client.post(
             f"/challenge/winner/{wager.unique_code}",
@@ -182,5 +181,5 @@ class TestWager(TestCase):
                 "winner": 2,
             },
         )
-        print(response.json())
-        pass
+        # print(response.json())
+        # pass

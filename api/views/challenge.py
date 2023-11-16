@@ -1,8 +1,16 @@
+"""
+Challenge related endpoints
+
+TODO: ?
+"""
 import json
+
 from django.contrib.auth.models import User
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
+from django.views.decorators.csrf import ensure_csrf_cookie
+from inertia import inertia
 
 # from inertia import render
 
@@ -14,7 +22,7 @@ from payment.authorize_client import AuthorizeClient
 
 def challenge(request):
     if not request.user.is_authenticated:
-        return HttpResponse("Not Authed")
+        return JsonResponse({"message": "Not Authed"})
     if request.method == "POST":
         form = ChallengeForm(
             request.POST, initial={"challenger_username": request.user}
