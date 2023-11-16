@@ -1,11 +1,13 @@
 from django.test import TestCase
+from inertia.test import InertiaTestCase
 
 from api.models import Game, Wager
 from tests.utils import make_user, get_wager
 
 
-class TestWager(TestCase):
+class TestWager(InertiaTestCase):
     def setUp(self):
+        super().setUp()
         self.user_a = make_user("user_a", "user_a@email.com", "password")
         self.user_b = make_user("user_b", "user_b@email.com", "password")
 
@@ -21,7 +23,9 @@ class TestWager(TestCase):
                 "platform": "xbox",
                 "game": "rocket_league",
             },
+            content_type="application/json",
         )
+        # print(self.props())
         self.assertIn("unique_code", response.json())
 
     def test_wager_accept(self):
@@ -35,6 +39,7 @@ class TestWager(TestCase):
                 "platform": "xbox",
                 "game": "rocket_league",
             },
+            content_type="application/json",
         )
         unique_code = response.json()["unique_code"]
         wager = Wager.objects.get(unique_code=unique_code)
@@ -47,6 +52,7 @@ class TestWager(TestCase):
                 "accept": True,
                 "gamer_tag": "omgitsnotwanda",
             },
+            content_type="application/json",
         )
         wager = Wager.objects.get(unique_code=unique_code)
         self.assertEqual(wager.status, Wager.ACCEPTED)
@@ -62,6 +68,7 @@ class TestWager(TestCase):
                 "platform": "xbox",
                 "game": "rocket_league",
             },
+            content_type="application/json",
         )
         unique_code = response.json()["unique_code"]
         wager = Wager.objects.get(unique_code=unique_code)
@@ -74,6 +81,7 @@ class TestWager(TestCase):
                 "accept": True,
                 "gamer_tag": "omgitswanda",
             },
+            content_type="application/json",
         )
         self.assertIn("accept", response.json())
         wager = Wager.objects.get(unique_code=unique_code)
@@ -90,6 +98,7 @@ class TestWager(TestCase):
                 "platform": "xbox",
                 "game": "rocket_league",
             },
+            content_type="application/json",
         )
         unique_code = response.json()["unique_code"]
         wager = Wager.objects.get(unique_code=unique_code)
@@ -101,6 +110,7 @@ class TestWager(TestCase):
             {
                 "accept": True,
             },
+            content_type="application/json",
         )
         self.assertIn("gamer_tag", response.json())
 
@@ -116,6 +126,7 @@ class TestWager(TestCase):
                 "platform": "xbox",
                 "game": "rocket_league",
             },
+            content_type="application/json",
         )
         unique_code = response.json()["unique_code"]
         wager = Wager.objects.get(unique_code=unique_code)
@@ -129,6 +140,7 @@ class TestWager(TestCase):
                 "accept": True,
                 "gamer_tag": "omgitsnotwanda",
             },
+            content_type="application/json",
         )
         wager = Wager.objects.get(unique_code=unique_code)
         self.assertEqual(wager.status, Wager.ACCEPTED)
@@ -140,6 +152,7 @@ class TestWager(TestCase):
             {
                 "payment_info": "This is extremely mocked right now",
             },
+            content_type="application/json",
         )
 
         # login as second user and make payment
@@ -149,20 +162,112 @@ class TestWager(TestCase):
             {
                 "payment_info": "This is extremely mocked right now",
             },
+            content_type="application/json",
         )
         wager = Wager.objects.get(unique_code=unique_code)
         self.assertEqual(wager.status, Wager.IN_PROGRESS)
 
     def test_selecting_winner(self):
-        self.client.login(username="user_b", password="password")
-
         wager = get_wager(self.user_a, self.user_b)
+        wager.status = Wager.IN_PROGRESS
+        wager.save()
 
+        self.client.login(username="user_a", password="password")
+        winner = 1
+        response = self.client.post(
+            f"/challenge/winner/{wager.unique_code}",
+            {
+                "winner": winner,
+            },
+            content_type="application/json",
+        )
+
+        wager = Wager.objects.get(unique_code=wager.unique_code)
+        self.assertEqual(wager.challenger_vote, str(winner))
+
+    def test_selecting_invalid_winner(self):
+        wager = get_wager(self.user_a, self.user_b)
+        wager.status = Wager.IN_PROGRESS
+        wager.save()
+
+        self.client.login(username="user_a", password="password")
+        winner = 3
+        response = self.client.post(
+            f"/challenge/winner/{wager.unique_code}",
+            {
+                "winner": winner,
+            },
+            content_type="application/json",
+        )
+        self.assertIn("winner", response.json())
+
+    def test_invalid_winner_selector(self):
+        user_c = make_user("user_c", "user_c@email.com", "password")
+        wager = get_wager(self.user_a, self.user_b)
+        wager.status = Wager.IN_PROGRESS
+        wager.save()
+
+        self.client.login(username="user_c", password="password")
+        winner = 1
+        response = self.client.post(
+            f"/challenge/winner/{wager.unique_code}",
+            {
+                "winner": winner,
+            },
+            content_type="application/json",
+        )
+        self.assertEqual({"message": "You didnt participate"}, response.json())
+
+    def test_selecting_agreed_winner(self):
+        wager = get_wager(self.user_a, self.user_b)
+        wager.status = Wager.IN_PROGRESS
+        wager.save()
+
+        winner = 1
+
+        self.client.login(username="user_a", password="password")
+        response = self.client.post(
+            f"/challenge/winner/{wager.unique_code}",
+            {
+                "winner": winner,
+            },
+            content_type="application/json",
+        )
+
+        self.client.login(username="user_b", password="password")
+        response = self.client.post(
+            f"/challenge/winner/{wager.unique_code}",
+            {
+                "winner": winner,
+            },
+            content_type="application/json",
+        )
+        wager = Wager.objects.get(unique_code=wager.unique_code)
+        self.assertEqual(wager.challenger_vote, wager.respondent_vote)
+        self.assertEqual(wager.status, Wager.COMPLETED)
+
+    def test_selecting_disputed_winner(self):
+        wager = get_wager(self.user_a, self.user_b)
+        wager.status = Wager.IN_PROGRESS
+        wager.save()
+
+        self.client.login(username="user_a", password="password")
+        response = self.client.post(
+            f"/challenge/winner/{wager.unique_code}",
+            {
+                "winner": 1,
+            },
+            content_type="application/json",
+        )
+
+        self.client.login(username="user_b", password="password")
         response = self.client.post(
             f"/challenge/winner/{wager.unique_code}",
             {
                 "winner": 2,
             },
+            content_type="application/json",
         )
-        # print(response.json())
-        # pass
+        wager = Wager.objects.get(unique_code=wager.unique_code)
+        self.assertNotEqual(wager.challenger_vote, wager.respondent_vote)
+        self.assertEqual(wager.status, Wager.DISPUTED)

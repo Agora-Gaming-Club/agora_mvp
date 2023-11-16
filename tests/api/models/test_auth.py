@@ -83,11 +83,22 @@ class TestAuth(InertiaTestCase):
         )
         self.assertEqual(response.status_code, 302)
 
-    def test_login_wrongpass(self):
+    def test_login_wrong_pass(self):
         response = self.client.post(
             "/accounts/login",
             {
                 "username": "totallyreal@email.com",
+                "password": "password2",
+            },
+            content_type="application/json",
+        )
+        self.assertIn("username", response.json())
+
+    def test_login_wrong_email(self):
+        response = self.client.post(
+            "/accounts/login",
+            {
+                "username": "absolutelyfake@email.com",
                 "password": "password2",
             },
             content_type="application/json",

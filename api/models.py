@@ -106,6 +106,21 @@ class Wager(models.Model):
         self.unique_code = code
         self.save()
 
+    def get_winner_choices(self):
+        choice_a = self.challenger_id, User.objects.get(id=self.challenger_id)
+        choice_b = self.respondent_id, User.objects.get(id=self.respondent_id)
+        choices = choice_a, choice_b
+        return choices
+
+    def both_voted(self):
+        return self.challenger_vote and self.respondent_vote
+
+    def disputed(self):
+        """verifies both voted and they are not equal"""
+        return self.both_voted() and (
+            str(self.challenger_vote) != str(self.respondent_vote)
+        )
+
     def is_expired(self):
         """
         Challenges can expire, make this a setting

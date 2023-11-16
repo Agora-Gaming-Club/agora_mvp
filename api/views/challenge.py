@@ -20,21 +20,22 @@ from api.models import Game, Payment, UserProfile, Wager
 from payment.authorize_client import AuthorizeClient
 
 
+@ensure_csrf_cookie
+@inertia("Challenge/Create")
 def challenge(request):
     if not request.user.is_authenticated:
         return JsonResponse({"message": "Not Authed"})
     if request.method == "POST":
-        form = ChallengeForm(
-            request.POST, initial={"challenger_username": request.user}
-        )
+        data = json.loads(request.body)
+        form = ChallengeForm(data, initial={"challenger_username": request.user})
         if form.is_valid():
             """Create the challenge"""
-            platform = request.POST["platform"]
-            game = request.POST["game"]
+            platform = data["platform"]
+            game = data["game"]
             game_obj, _ = Game.objects.get_or_create(platform=platform, game=game)
             wager = Wager(
                 challenger_id=request.user.id,
-                amount=request.POST["amount"],
+                amount=data["amount"],
                 unique_code="new",
                 game=game_obj,
             )
@@ -83,16 +84,19 @@ def challenge_status(request, challenge_id):
     return render(request, "challenge_status.html", context)
 
 
+@ensure_csrf_cookie
+@inertia("Challenge/Accept")
 def challenge_accept(request, challenge_id):
+    data = json.loads(request.body)
     challenge = get_object_or_404(Wager, unique_code=challenge_id)
-    form = AcceptForm(request.POST)
+    form = AcceptForm(data)
     if form.is_valid():
         respondent = UserProfile.objects.get(user=request.user)
         challenger = UserProfile.objects.get(user__id=challenge.challenger_id)
         if respondent == challenger:
             form.add_error("accept", "Cannot accept your own challenge")
             return JsonResponse(form.errors.get_json_data())
-        gamer_tag = request.POST["gamer_tag"]
+        gamer_tag = data["gamer_tag"]
         challenge.accept(respondent, gamer_tag)
         context = {
             "respondent": respondent,
@@ -131,12 +135,33 @@ def challenge_ante(request, challenge_id):
     return HttpResponse("Bad Payment")
 
 
+@ensure_csrf_cookie
+@inertia("Challenge/Winner")
 def challenge_winner(request, challenge_id):
     """Verify both people are supposed to be here"""
+    data = json.loads(request.body)
     challenge = get_object_or_404(Wager, unique_code=challenge_id)
-    form = WinnerForm()
-    if form.is_valid(unique_code=challenge.unique_code):
-        print("yo")
+    form = WinnerForm(data, choices=challenge.get_winner_choices())
+    if form.is_valid():
+        user_id = request.user.id
+        if user_id == challenge.challenger_id:
+            challenge.challenger_vote = data["winner"]
+            challenge.save()
+
+        elif user_id == challenge.respondent_id:
+            challenge.respondent_vote = data["winner"]
+            challenge.save()
+        else:
+            return JsonResponse({"message": "You didnt participate"})
+        if challenge.both_voted():
+            if challenge.disputed():
+                challenge.status = Wager.DISPUTED
+                challenge.save()
+                # fire off a email, or keep voting open if they change their mind?
+            else:
+                challenge.status = Wager.COMPLETED
+                challenge.save()
+        return JsonResponse({"vote": f"You voted for {data['winner']}"})
 
     return JsonResponse(form.errors.get_json_data())
 

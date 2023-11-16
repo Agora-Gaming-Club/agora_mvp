@@ -34,7 +34,10 @@ def log_in(request):
         if form.is_valid():
             if good_email(data["username"]):
                 user_profile = User.objects.filter(email=data["username"])
-                username = user_profile.first().username
+                if user_profile:
+                    username = user_profile.first().username
+                else:
+                    username = ""
             else:
                 username = ""
 
