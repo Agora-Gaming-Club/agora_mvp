@@ -1,5 +1,14 @@
-import {createRoot} from 'react-dom/client';
-import {createInertiaApp} from '@inertiajs/react';
+import { createRoot } from 'react-dom/client';
+import { createInertiaApp } from '@inertiajs/react';
+import { CustomFlowbiteTheme, Flowbite } from 'flowbite-react';
+
+const customTheme: CustomFlowbiteTheme = {
+  button: {
+    color: {
+      primary: 'bg-red-500 hover:bg-red-600',
+    },
+  },
+};
 
 document.addEventListener('DOMContentLoaded', () => {
   createInertiaApp({
@@ -9,6 +18,6 @@ document.addEventListener('DOMContentLoaded', () => {
     },
     setup({ el, App, props }) {
       createRoot(el).render(<App {...props} />);
-    }
+    },
   }).then(() => {});
 });

@@ -31,7 +31,7 @@ module.exports = {
     target: 'es2015',
     rollupOptions: {
       input: {
-        main: resolve('./react-app/src/main.jsx'), // <- renamed from main.jsx
+        main: resolve('./react-app/src/main.tsx'), // <- renamed from main.tsx
       },
       output: {
         chunkFileNames: undefined,

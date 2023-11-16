@@ -194,8 +194,12 @@ const Register: FunctionComponent = () => {
           />
         </div>
 
-        <Button className="w-full" isProcessing={processing} type="submit">
-          Submit
+        <Button
+          className="w-full bg-primary"
+          isProcessing={processing}
+          type="submit"
+        >
+          Create Account
         </Button>
       </form>
     </GuestLayout>
