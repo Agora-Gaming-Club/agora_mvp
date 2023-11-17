@@ -32,14 +32,12 @@ def log_in(request):
         data = json.loads(request.body)
         form = LoginForm(data)
         if form.is_valid():
+            username = ""
+            # username=data['username']
             if good_email(data["username"]):
                 user_profile = User.objects.filter(email=data["username"])
                 if user_profile:
                     username = user_profile.first().username
-                else:
-                    username = ""
-            else:
-                username = ""
 
             password = data["password"]
             user = authenticate(username=username, password=password)
