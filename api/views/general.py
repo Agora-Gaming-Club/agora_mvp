@@ -4,6 +4,7 @@ from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
 from inertia import inertia
 
+
 # from inertia import render
 
 from api.forms import ChallengeForm
@@ -17,6 +18,6 @@ def index(request):
 
 
 # Create your views here.
-@inertia("Landing")
+@inertia("Welcome")
 def landing(request):
     return {}

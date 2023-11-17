@@ -13,6 +13,8 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.views.decorators.csrf import ensure_csrf_cookie
 from inertia import inertia
+from inertia.share import share
+
 
 from api.models import UserProfile
 from api.forms import RegisterForm, PasswordChangeForm, LoginForm
@@ -27,6 +29,7 @@ def log_in(request):
 
     User is to use email
     """
+    share(request, user=lambda: request.user)
     errors = []
     if request.method == "POST":
         data = json.loads(request.body)
