@@ -195,7 +195,8 @@ const Register: FunctionComponent = () => {
         </div>
 
         <Button
-          className="w-full bg-primary"
+          color="blue"
+          className="w-full"
           isProcessing={processing}
           type="submit"
         >

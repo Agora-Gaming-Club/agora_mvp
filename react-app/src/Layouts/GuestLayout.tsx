@@ -1,13 +1,16 @@
 import { FunctionComponent, PropsWithChildren } from 'react';
 import { Link } from '@inertiajs/react';
 import Logo from '@/Components/Logo';
+import * as React from 'react';
 
 const GuestLayout: FunctionComponent<PropsWithChildren> = ({ children }) => {
   return (
     <div className="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0  bg-[#111928]">
       <div>
-        <Link href="/">
-          <Logo />
+        <Link href="/" className="mb-6 mx-auto">
+          <div className="flex items-center justify-center w-12 h-12 rounded-full bg-teal-accent-400">
+            <Logo />
+          </div>
         </Link>
       </div>
 
