@@ -67,7 +67,7 @@ def log_in(request):
 
 def log_out(request):
     logout(request)
-    return HttpResponse("you are logged out")
+    return HttpResponseRedirect(reverse("index"))
 
 
 @ensure_csrf_cookie

@@ -12,7 +12,7 @@ from api.models import UserProfile
 from api.forms import ProfileForm, RegisterForm
 
 
-@inertia('Welcome')
+@inertia('Profile')
 def profile_view(request, user_id=None):
     if user_id:
         profile = get_object_or_404(UserProfile, user__id=user_id)

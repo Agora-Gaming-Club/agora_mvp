@@ -10,7 +10,7 @@ const Welcome = (): React.ReactNode => {
         <div className="max-w-xl mx-auto lg:max-w-2xl">
           <div className="flex flex-col justify-between mb-16 text-center sm:mb-0">
             <Link href="/" className="mb-6 mx-auto">
-              <div className="flex items-center justify-center w-12 h-12 rounded-full bg-teal-accent-400">
+              <div className="flex items-center justify-center w-12 h-12 rounded-full">
                 <Logo />
               </div>
             </Link>
@@ -25,12 +25,12 @@ const Welcome = (): React.ReactNode => {
               </p>
             </div>
             <div className="block sm:flex items-center justify-between sm:gap-x-8">
-              <Link href="/accounts/login">
+              <Link className="w-full" href="/accounts/login">
                 <Button color="blue" className="w-full">
                   Login
                 </Button>
               </Link>
-              <Link href="/accounts/register">
+              <Link className="w-full" href="/accounts/register">
                 <Button
                   color="blue"
                   outline={true}
