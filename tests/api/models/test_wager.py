@@ -11,6 +11,11 @@ class TestWager(InertiaTestCase):
         self.user_a = make_user("user_a", "user_a@email.com", "password")
         self.user_b = make_user("user_b", "user_b@email.com", "password")
 
+    def test_wager_status(self):
+        wager = get_wager(self.user_a, self.user_b)
+        wager.status = Wager.IN_PROGRESS
+        wager.save()
+
     def test_wager_unique_id(self):
         """Verifying a uniqueID was created"""
         self.client.login(username="user_a", password="password")

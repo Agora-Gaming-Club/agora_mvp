@@ -11,6 +11,12 @@ from api.models import Wager, UserProfile
 
 
 # Create your views here.
-@inertia('Home')
+@inertia("Home")
 def index(request):
+    return {}
+
+
+# Create your views here.
+@inertia("Landing")
+def landing(request):
     return {}
