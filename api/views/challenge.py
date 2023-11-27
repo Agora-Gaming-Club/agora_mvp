@@ -24,7 +24,7 @@ from payment.authorize_client import AuthorizeClient
 @inertia("Challenge/Create")
 def challenge(request):
     if not request.user.is_authenticated:
-        return JsonResponse({"message": "Not Authed"})
+        return {"message": "Requires Auth"}
     if request.method == "POST":
         data = json.loads(request.body)
         form = ChallengeForm(data, initial={"challenger_username": request.user})
@@ -100,6 +100,8 @@ def challenge_accept(request, challenge_id):
     return {"errors": form.errors.get_json_data()}
 
 
+@ensure_csrf_cookie
+@inertia("Challenge/Ante")
 def challenge_ante(request, challenge_id):
     """
     Should take payment, and return something to indicate if
@@ -124,9 +126,9 @@ def challenge_ante(request, challenge_id):
             authorize_net_payment_status=payment_status["status"],
         )
         challenge.all_payments_received()
-        return HttpResponse(f"{payment.authorize_net_payment_status}")
+        return {"status": payment.authorize_net_payment_status}
 
-    return HttpResponse("Bad Payment")
+    return {"error": "Bad Payment"}
 
 
 @ensure_csrf_cookie
@@ -159,14 +161,6 @@ def challenge_winner(request, challenge_id):
 
     return {"errors": form.errors.get_json_data()}
 
-    # challenger_ids = [challenge.challenger_id, challenge.respondent_id]
-    # choices = [
-    #     (user_id, UserProfile.objects.get(user__id=user_id))
-    #     for user_id in challenger_ids
-    # ]
-    # print(choices)
-    # form.CHOICES = choices
-
 
 def challenges(request):
     """
@@ -176,4 +170,4 @@ def challenges(request):
         challenges = Wager.objects.filter(challenger_id=request.user.id)
         context = {"challenges": challenges}
         return render(request, "challenges.html", context)
-    return HttpResponse("None")
+    return {}
