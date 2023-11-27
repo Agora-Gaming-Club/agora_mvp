@@ -76,7 +76,7 @@ class TestAuth(InertiaTestCase):
             },
             content_type="application/json",
         )
-        self.assertIn("username", response.json())
+        self.assertIn("username", self.props().get("errors", []))
 
     def test_login_success_email(self):
         response = self.client.post(
@@ -98,7 +98,7 @@ class TestAuth(InertiaTestCase):
             },
             content_type="application/json",
         )
-        self.assertIn("username", response.json())
+        self.assertIn("username", self.props().get("errors", []))
 
     def test_login_wrong_email(self):
         response = self.client.post(
@@ -109,7 +109,7 @@ class TestAuth(InertiaTestCase):
             },
             content_type="application/json",
         )
-        self.assertIn("username", response.json())
+        self.assertIn("username", self.props().get("errors", []))
 
     def test_login_missing_info(self):
         # missing password
@@ -121,7 +121,7 @@ class TestAuth(InertiaTestCase):
             },
             content_type="application/json",
         )
-        self.assertIn("password", response.json())
+        self.assertIn("password", self.props().get("errors", []))
 
         # missing email
         response = self.client.post(
@@ -132,7 +132,7 @@ class TestAuth(InertiaTestCase):
             },
             content_type="application/json",
         )
-        self.assertIn("username", response.json())
+        self.assertIn("username", self.props().get("errors", []))
 
         # missing email and password
         response = self.client.post(
@@ -143,8 +143,8 @@ class TestAuth(InertiaTestCase):
             },
             content_type="application/json",
         )
-        self.assertIn("username", response.json())
-        self.assertIn("password", response.json())
+        self.assertIn("username", self.props().get("errors", []))
+        self.assertIn("password", self.props().get("errors", []))
 
     # Register
 
@@ -187,7 +187,7 @@ class TestAuth(InertiaTestCase):
             base_data,
             content_type="application/json",
         )
-        self.assertIn("state", response.json())
+        self.assertIn("state", self.props().get("errors", []))
 
     def test_not_legal_age(self):
         base_data = self.base_register_data()
@@ -197,7 +197,7 @@ class TestAuth(InertiaTestCase):
             base_data,
             content_type="application/json",
         )
-        self.assertIn("birthday", response.json())
+        self.assertIn("birthday", self.props().get("errors", []))
 
     def test_register_fail_match_passwords(self):
         base_data = self.base_register_data()
@@ -207,7 +207,7 @@ class TestAuth(InertiaTestCase):
             base_data,
             content_type="application/json",
         )
-        self.assertIn("password", response.json())
+        self.assertIn("password", self.props().get("errors", []))
 
         base_data = self.base_register_data()
         base_data["password"] = "not_magneto"
@@ -216,7 +216,7 @@ class TestAuth(InertiaTestCase):
             base_data,
             content_type="application/json",
         )
-        self.assertIn("password", response.json())
+        self.assertIn("password", self.props().get("errors", []))
 
     def test_register_missing_required_field(self):
         base_data = self.base_register_data()
@@ -226,7 +226,7 @@ class TestAuth(InertiaTestCase):
             base_data,
             content_type="application/json",
         )
-        self.assertIn("username", response.json())
+        self.assertIn("username", self.props().get("errors", []))
 
     def test_register_preexisting_acct(self):
         base_data = self.base_register_data()
@@ -241,5 +241,5 @@ class TestAuth(InertiaTestCase):
             base_data,
             content_type="application/json",
         )
-        self.assertIn("username", response.json())
-        self.assertIn("email", response.json())
+        self.assertIn("username", self.props().get("errors", []))
+        self.assertIn("email", self.props().get("errors", []))

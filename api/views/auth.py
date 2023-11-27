@@ -48,22 +48,22 @@ def log_in(request):
                 return HttpResponseRedirect(reverse("profile_view"))
             else:
                 form.add_error("username", "Email/Password incorrect")
-                return JsonResponse(form.errors.get_json_data())
+                return {"errors": form.errors.get_json_data()}
         else:
-            return JsonResponse(form.errors.get_json_data())
+            return {"errors": form.errors.get_json_data()}
     form = LoginForm()
     context = {
         "form": form,
         "errors": errors,
     }
-    return render(request, "registration/login.html", context)
+    return {}
 
 
 @ensure_csrf_cookie
 @inertia("Auth/Logout")
 def log_out(request):
     logout(request)
-    return JsonResponse({"message": "you are now logged out"})
+    return HttpResponseRedirect(reverse("index"))
 
 
 @ensure_csrf_cookie
@@ -95,7 +95,7 @@ def register(request):
             profile.set_verification_id()
             login(request, user)
             return HttpResponseRedirect(reverse("profile_view"))
-        return JsonResponse(form.errors.get_json_data())
+        return {"errors": form.errors.get_json_data()}
     else:
         form = RegisterForm()
     context = {"form": form}
