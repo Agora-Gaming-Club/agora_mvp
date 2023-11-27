@@ -1,18 +1,27 @@
-import { FormEventHandler, FunctionComponent, PropsWithChildren } from 'react';
+import React, {
+  FormEventHandler,
+  FunctionComponent,
+  PropsWithChildren,
+  useState,
+} from 'react';
 import GuestLayout from '@/Layouts/GuestLayout';
-import { router, useForm, usePage } from '@inertiajs/react';
-import { Button, Label, TextInput } from 'flowbite-react';
+import { Head, Link, router, useForm, usePage } from '@inertiajs/react';
+import { Button, Label, Select, TextInput } from 'flowbite-react';
 import Cookies from 'js-cookie';
+import { TransformedErrors, transformErrors } from '@/Utils/form';
+import { formatPhoneNumberWhileTyping, stripPhoneNumber } from '@/Utils/phone';
+import { states } from '@/Data/states';
 
-const Register: FunctionComponent<any> = ({ props }) => {
-  const { data, setData, post, processing, errors, reset } = useForm({
+const Register: FunctionComponent = () => {
+  const [formErrors, setFormErrors] = useState<TransformedErrors | null>(null);
+  const { data, setData, post, processing, reset, transform } = useForm({
     first_name: '',
     last_name: '',
     username: '',
     email: '',
     phone_number: '',
     birthday: '', // YYYY-MM-DD
-    state: 'MN',
+    state: '',
     password: '',
     password_confirm: '',
     csrfmiddelwaretoken: Cookies.get('XSRF-TOKEN'),
@@ -21,17 +30,21 @@ const Register: FunctionComponent<any> = ({ props }) => {
   const submit: FormEventHandler = (e) => {
     e.preventDefault();
 
-    console.log(data);
+    transform((data) => ({
+      ...data,
+      phone_number: stripPhoneNumber(data.phone_number),
+    }));
     // console.log(data);
     post('/accounts/register', {
-      onSuccess: (data) => {
-        // window.location.href = data.props.url as unknown as string; // work around
+      onError: (err) => {
+        setFormErrors(transformErrors(err));
       },
     });
   };
 
   return (
     <GuestLayout>
+      <Head title="Sign Up | Agora" />
       <form className="space-y-4" onSubmit={submit}>
         <div>
           <div className="mb-2 block">
@@ -44,6 +57,8 @@ const Register: FunctionComponent<any> = ({ props }) => {
             value={data.first_name}
             onChange={(e) => setData('first_name', e.target.value)}
             shadow
+            color={formErrors?.errors?.first_name ? 'failure' : 'gray'}
+            helperText={<span>{formErrors?.errors?.first_name ?? ''}</span>}
           />
         </div>
         <div>
@@ -57,6 +72,8 @@ const Register: FunctionComponent<any> = ({ props }) => {
             value={data.last_name}
             onChange={(e) => setData('last_name', e.target.value)}
             shadow
+            color={formErrors?.errors?.last_name ? 'failure' : 'gray'}
+            helperText={<span>{formErrors?.errors?.last_name ?? ''}</span>}
           />
         </div>
         <div>
@@ -70,6 +87,8 @@ const Register: FunctionComponent<any> = ({ props }) => {
             value={data.email}
             onChange={(e) => setData('email', e.target.value)}
             shadow
+            color={formErrors?.errors?.email ? 'failure' : 'gray'}
+            helperText={<span>{formErrors?.errors?.email ?? ''}</span>}
           />
         </div>
         <div>
@@ -83,6 +102,8 @@ const Register: FunctionComponent<any> = ({ props }) => {
             value={data.username}
             onChange={(e) => setData('username', e.target.value)}
             shadow
+            color={formErrors?.errors?.username ? 'failure' : 'gray'}
+            helperText={<span>{formErrors?.errors?.username ?? ''}</span>}
           />
         </div>
         <div>
@@ -92,11 +113,39 @@ const Register: FunctionComponent<any> = ({ props }) => {
           <TextInput
             id="phone"
             type="tel"
+            addon="+1"
             placeholder="Enter Your Phone"
             value={data.phone_number}
-            onChange={(e) => setData('phone_number', e.target.value)}
+            onChange={(e) =>
+              setData('phone_number', formatPhoneNumberWhileTyping(e) as string)
+            }
             shadow
+            color={formErrors?.errors?.phone_number ? 'failure' : 'gray'}
+            helperText={<span>{formErrors?.errors?.phone_number ?? ''}</span>}
           />
+        </div>
+        <div>
+          <div className="mb-2 block">
+            <Label htmlFor="states" value="State" />
+          </div>
+          <Select
+            shadow
+            value={data.state}
+            onChange={(e) => setData('state', e.target.value)}
+            id="states"
+            required
+            color={formErrors?.errors?.state ? 'failure' : 'gray'}
+            helperText={<span>{formErrors?.errors?.state ?? ''}</span>}
+          >
+            <option value="" disabled>
+              Select your state
+            </option>
+            {states.map((state) => (
+              <option key={state.abbrev} value={state.abbrev}>
+                {state.name}
+              </option>
+            ))}
+          </Select>
         </div>
         <div>
           <div className="mb-2 block">
@@ -109,6 +158,8 @@ const Register: FunctionComponent<any> = ({ props }) => {
             value={data.birthday}
             onChange={(e) => setData('birthday', e.target.value)}
             shadow
+            color={formErrors?.errors?.birthday ? 'failure' : 'gray'}
+            helperText={<span>{formErrors?.errors?.birthday ?? ''}</span>}
           />
         </div>
         <div>
@@ -122,6 +173,8 @@ const Register: FunctionComponent<any> = ({ props }) => {
             value={data.password}
             onChange={(e) => setData('password', e.target.value)}
             shadow
+            color={formErrors?.errors?.password ? 'failure' : 'gray'}
+            helperText={<span>{formErrors?.errors?.password ?? ''}</span>}
           />
         </div>
         <div>
@@ -135,10 +188,30 @@ const Register: FunctionComponent<any> = ({ props }) => {
             value={data.password_confirm}
             onChange={(e) => setData('password_confirm', e.target.value)}
             shadow
+            color={formErrors?.errors?.password_confirm ? 'failure' : 'gray'}
+            helperText={
+              <span>{formErrors?.errors?.password_confirm ?? ''}</span>
+            }
           />
         </div>
 
-        <Button type="submit">Submit</Button>
+        <Button
+          color="blue"
+          className="w-full"
+          isProcessing={processing}
+          type="submit"
+        >
+          Create Account
+        </Button>
+
+        <div className="mt-5">
+          <p className="text-center text-white">
+            Already have an account?{' '}
+            <Link href="/accounts/login" className="text-blue-500 underline">
+              Sign in here!
+            </Link>{' '}
+          </p>
+        </div>
       </form>
     </GuestLayout>
   );

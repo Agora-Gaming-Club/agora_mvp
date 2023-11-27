@@ -162,6 +162,7 @@ def challenge_winner(request, challenge_id):
     return {"errors": form.errors.get_json_data()}
 
 
+@inertia("Challenge/Index")
 def challenges(request):
     """
     Gets all of a users challenges
