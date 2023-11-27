@@ -4,6 +4,7 @@ import { Avatar, Dropdown, Navbar } from 'flowbite-react';
 import { Link, useForm, usePage } from '@inertiajs/react';
 import Logo from '@/Components/Logo';
 import * as React from 'react';
+import { HomeIcon, TrophyIcon } from '@heroicons/react/24/outline';
 
 type Props = {
   user: any;
@@ -13,7 +14,7 @@ const AuthenticatedLayout: FunctionComponent<PropsWithChildren> = ({
 }) => {
   const auth = usePage().props;
   const { post } = useForm({});
-  console.log(auth);
+  console.log(auth, location.pathname);
 
   const handleLogout = () => {
     post('/accounts/logout');
@@ -21,7 +22,8 @@ const AuthenticatedLayout: FunctionComponent<PropsWithChildren> = ({
 
   return (
     <>
-      <Navbar fluid>
+      <Navbar>
+        <Navbar.Toggle />
         <Navbar.Brand href="https://flowbite-react.com">
           <Link href="/" className="flex items-center justify-start text-white">
             <div className="flex items-center justify-center  w-6 h-6 rounded-full mr-1">
@@ -35,11 +37,11 @@ const AuthenticatedLayout: FunctionComponent<PropsWithChildren> = ({
             arrowIcon={false}
             inline
             label={
-              <Avatar
-                alt="User settings"
-                img="https://flowbite.com/docs/images/people/profile-picture-5.jpg"
-                rounded
-              />
+              <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-gray-500">
+                <span className="text-xs font-medium leading-none text-white">
+                  TW
+                </span>
+              </span>
             }
           >
             <Dropdown.Header>
@@ -54,16 +56,24 @@ const AuthenticatedLayout: FunctionComponent<PropsWithChildren> = ({
             <Dropdown.Divider />
             <Dropdown.Item onClick={handleLogout}>Sign out</Dropdown.Item>
           </Dropdown>
-          <Navbar.Toggle />
         </div>
         <Navbar.Collapse>
-          <Navbar.Link href="#" active>
+          <Navbar.Link
+            className="flex items-center text-sm"
+            href="#"
+            active={location.pathname === '/accounts/profile/'}
+          >
+            <HomeIcon className="h-5 w-5 mr-1" />
             Home
           </Navbar.Link>
-          <Navbar.Link href="#">About</Navbar.Link>
-          <Navbar.Link href="#">Services</Navbar.Link>
-          <Navbar.Link href="#">Pricing</Navbar.Link>
-          <Navbar.Link href="#">Contact</Navbar.Link>
+          <Navbar.Link
+            className="flex items-center text-sm"
+            href="#"
+            active={location.pathname === '/accounts/challenges/'}
+          >
+            <TrophyIcon className="h-5 w-5 mr-1" />
+            Challenges
+          </Navbar.Link>
         </Navbar.Collapse>
       </Navbar>
       <div className="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-dark">

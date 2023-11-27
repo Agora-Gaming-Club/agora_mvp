@@ -5,7 +5,7 @@ import React, {
   useState,
 } from 'react';
 import GuestLayout from '@/Layouts/GuestLayout';
-import { router, useForm, usePage } from '@inertiajs/react';
+import { Head, Link, router, useForm, usePage } from '@inertiajs/react';
 import { Button, Label, Select, TextInput } from 'flowbite-react';
 import Cookies from 'js-cookie';
 import { TransformedErrors, transformErrors } from '@/Utils/form';
@@ -44,6 +44,7 @@ const Register: FunctionComponent = () => {
 
   return (
     <GuestLayout>
+      <Head title="Sign Up | Agora" />
       <form className="space-y-4" onSubmit={submit}>
         <div>
           <div className="mb-2 block">
@@ -202,6 +203,15 @@ const Register: FunctionComponent = () => {
         >
           Create Account
         </Button>
+
+        <div className="mt-5">
+          <p className="text-center text-white">
+            Already have an account?{' '}
+            <Link href="/accounts/login" className="text-blue-500 underline">
+              Sign in here!
+            </Link>{' '}
+          </p>
+        </div>
       </form>
     </GuestLayout>
   );
