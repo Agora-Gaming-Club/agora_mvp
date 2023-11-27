@@ -1,12 +1,12 @@
 import { FunctionComponent } from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 
-const Challenges: FunctionComponent = () => {
+const Accept: FunctionComponent = () => {
   return (
     <AuthenticatedLayout>
-      <h1 className="text-white text-3xl">challenges</h1>
+      <h1>Accept</h1>
     </AuthenticatedLayout>
   );
 };
 
-export default Challenges;
+export default Accept;

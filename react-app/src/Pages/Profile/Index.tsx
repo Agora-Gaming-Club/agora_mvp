@@ -1,7 +1,7 @@
 import { FunctionComponent } from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 
-const Profile: FunctionComponent = () => {
+const Index: FunctionComponent = () => {
   return (
     <AuthenticatedLayout>
       <h1 className="text-white text-3xl">profile</h1>
@@ -9,4 +9,4 @@ const Profile: FunctionComponent = () => {
   );
 };
 
-export default Profile;
+export default Index;

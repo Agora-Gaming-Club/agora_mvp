@@ -123,7 +123,7 @@ class Wager(models.Model):
 
     def is_expired(self):
         """
-        Challenges can expire, make this a setting
+        Index can expire, make this a setting
 
         Unsure if all challenges can expire at the same age, or if its per challenge
         """
