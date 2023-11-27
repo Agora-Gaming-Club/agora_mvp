@@ -96,9 +96,6 @@ def register(request):
             login(request, user)
             return HttpResponseRedirect(reverse("profile_view"))
         return {"errors": form.errors.get_json_data()}
-    else:
-        form = RegisterForm()
-    context = {"form": form}
     return {}
 
 
