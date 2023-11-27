@@ -30,8 +30,7 @@ class TestWager(InertiaTestCase):
             },
             content_type="application/json",
         )
-        # print(self.props())
-        self.assertIn("unique_code", response.json())
+        self.assertIn("unique_code", self.props())
 
     def test_wager_accept(self):
         """Regular Accept Flow"""
@@ -46,7 +45,7 @@ class TestWager(InertiaTestCase):
             },
             content_type="application/json",
         )
-        unique_code = response.json()["unique_code"]
+        unique_code = self.props()["unique_code"]
         wager = Wager.objects.get(unique_code=unique_code)
         self.assertEqual(wager.status, Wager.AWAITING_RESPONSE)
 
@@ -75,7 +74,7 @@ class TestWager(InertiaTestCase):
             },
             content_type="application/json",
         )
-        unique_code = response.json()["unique_code"]
+        unique_code = self.props()["unique_code"]
         wager = Wager.objects.get(unique_code=unique_code)
         self.assertEqual(wager.status, Wager.AWAITING_RESPONSE)
 
@@ -88,7 +87,7 @@ class TestWager(InertiaTestCase):
             },
             content_type="application/json",
         )
-        self.assertIn("accept", response.json())
+        self.assertIn("accept", self.props().get("errors", []))
         wager = Wager.objects.get(unique_code=unique_code)
         self.assertEqual(wager.status, Wager.AWAITING_RESPONSE)
 
@@ -105,7 +104,7 @@ class TestWager(InertiaTestCase):
             },
             content_type="application/json",
         )
-        unique_code = response.json()["unique_code"]
+        unique_code = self.props()["unique_code"]
         wager = Wager.objects.get(unique_code=unique_code)
         self.assertEqual(wager.status, Wager.AWAITING_RESPONSE)
 
@@ -117,7 +116,7 @@ class TestWager(InertiaTestCase):
             },
             content_type="application/json",
         )
-        self.assertIn("gamer_tag", response.json())
+        self.assertIn("gamer_tag", self.props().get("errors", []))
 
     def test_wager_accept_payment(self):
         """Regular Accept Flow but with payment"""
@@ -133,7 +132,7 @@ class TestWager(InertiaTestCase):
             },
             content_type="application/json",
         )
-        unique_code = response.json()["unique_code"]
+        unique_code = self.props()["unique_code"]
         wager = Wager.objects.get(unique_code=unique_code)
         self.assertEqual(wager.status, Wager.AWAITING_RESPONSE)
 
@@ -186,7 +185,6 @@ class TestWager(InertiaTestCase):
             },
             content_type="application/json",
         )
-
         wager = Wager.objects.get(unique_code=wager.unique_code)
         self.assertEqual(wager.challenger_vote, str(winner))
 
@@ -204,7 +202,7 @@ class TestWager(InertiaTestCase):
             },
             content_type="application/json",
         )
-        self.assertIn("winner", response.json())
+        self.assertIn("winner", self.props().get("errors", []))
 
     def test_invalid_winner_selector(self):
         user_c = make_user("user_c", "user_c@email.com", "password")
@@ -221,7 +219,7 @@ class TestWager(InertiaTestCase):
             },
             content_type="application/json",
         )
-        self.assertEqual({"message": "You didnt participate"}, response.json())
+        self.assertEqual({"message": "You didnt participate"}, self.props())
 
     def test_selecting_agreed_winner(self):
         wager = get_wager(self.user_a, self.user_b)

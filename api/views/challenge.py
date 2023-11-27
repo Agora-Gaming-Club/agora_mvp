@@ -40,10 +40,10 @@ def challenge(request):
                 game=game_obj,
             )
             wager.generate_unique_code()
-            context = {"unique_code": str(wager.unique_code)}
-            return JsonResponse(context)
+            # Probably want additional info about the challenge here
+            return {"unique_code": str(wager.unique_code)}
         else:
-            return JsonResponse(form.errors.get_json_data())
+            return {"errors": form.errors.get_json_data()}
     form = ChallengeForm(initial={"challenger_username": request.user.username})
     context = {"form": form}
     return render(request, "challenge_init.html", context)
@@ -66,12 +66,6 @@ def challenge_status(request, challenge_id):
         form = AnteForm()
     if challenge.status == Wager.IN_PROGRESS:
         form = WinnerForm()
-        # challenger_ids = [challenge.challenger_id, challenge.respondent_id]
-        # choices = [
-        #     (user_id, UserProfile.objects.get(user__id=user_id))
-        #     for user_id in challenger_ids
-        # ]
-        # print(choices)
 
     context = {
         "challenge": challenge,
@@ -95,15 +89,15 @@ def challenge_accept(request, challenge_id):
         challenger = UserProfile.objects.get(user__id=challenge.challenger_id)
         if respondent == challenger:
             form.add_error("accept", "Cannot accept your own challenge")
-            return JsonResponse(form.errors.get_json_data())
+            return {"errors": form.errors.get_json_data()}
         gamer_tag = data["gamer_tag"]
         challenge.accept(respondent, gamer_tag)
         context = {
             "respondent": respondent,
             "challenger": challenger,
         }
-        return JsonResponse(form.errors.get_json_data())
-    return JsonResponse(form.errors.get_json_data())
+        return {"errors": form.errors.get_json_data()}
+    return {"errors": form.errors.get_json_data()}
 
 
 def challenge_ante(request, challenge_id):
@@ -152,7 +146,7 @@ def challenge_winner(request, challenge_id):
             challenge.respondent_vote = data["winner"]
             challenge.save()
         else:
-            return JsonResponse({"message": "You didnt participate"})
+            return {"message": "You didnt participate"}
         if challenge.both_voted():
             if challenge.disputed():
                 challenge.status = Wager.DISPUTED
@@ -161,9 +155,9 @@ def challenge_winner(request, challenge_id):
             else:
                 challenge.status = Wager.COMPLETED
                 challenge.save()
-        return JsonResponse({"vote": f"You voted for {data['winner']}"})
+        return {"vote": f"You voted for {data['winner']}"}
 
-    return JsonResponse(form.errors.get_json_data())
+    return {"errors": form.errors.get_json_data()}
 
     # challenger_ids = [challenge.challenger_id, challenge.respondent_id]
     # choices = [

@@ -194,3 +194,8 @@ class Game(models.Model):
 
     def __repr__(self):
         return self.__str__()
+
+
+# TODO: Add a Platform model
+# TODO: Replace Game module with something that takes the platform as an arg
+# TODO: add terms model that takes game + platform as arg, admin will manually create these 3 models
