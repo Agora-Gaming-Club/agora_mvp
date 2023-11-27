@@ -6,13 +6,14 @@ from django.core import serializers
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
+from django.views.decorators.csrf import ensure_csrf_cookie
 from inertia import inertia
 
 from api.models import UserProfile
 from api.forms import ProfileForm, RegisterForm
 
 
-@inertia("Welcome")
+@inertia("Profile/Index")
 def profile_view(request, user_id=None):
     if user_id:
         profile = get_object_or_404(UserProfile, user__id=user_id)
@@ -21,6 +22,8 @@ def profile_view(request, user_id=None):
     return {"profile": profile}
 
 
+@ensure_csrf_cookie
+@inertia("Profile/Edit")
 def profile_edit(request):
     if request.method == "POST":
         form = ProfileForm(request.POST)

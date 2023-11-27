@@ -174,6 +174,7 @@ def challenge_winner(request, challenge_id):
     # form.CHOICES = choices
 
 
+@inertia("Challenge/Index")
 def challenges(request):
     """
     Gets all of a users challenges
