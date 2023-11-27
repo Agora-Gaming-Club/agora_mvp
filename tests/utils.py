@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 
-from api.models import UserProfile
+from api.models import Game, UserProfile, Wager
 
 
 def make_user(username, email, password, *args, **kwargs):
@@ -20,3 +20,21 @@ def make_user(username, email, password, *args, **kwargs):
         birthday="2000-01-01",
     )
     return user_profile
+
+
+def get_wager(user_a, user_b):
+    game = Game.objects.create(
+        platform="xbox",
+        game="rocket_league",
+    )
+    wager = Wager.objects.create(
+        challenger_id=user_a.id,
+        respondent_id=user_b.id,
+        amount=25.00,
+        game=game,
+        notes="lolnotes",
+        gamer_tag="SuperCoolGuyGamerTag",
+        status=Wager.IN_PROGRESS,
+    )
+    wager.generate_unique_code()
+    return wager

@@ -2,7 +2,7 @@ from django.urls import path
 from api import views
 
 urlpatterns = [
-    path("", views.index, name="index"),
+    path("", views.landing, name="landing"),
     path("challenge", views.challenge, name="challenge"),
     path(
         "challenge/accept/<challenge_id>",

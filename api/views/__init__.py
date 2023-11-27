@@ -4,7 +4,7 @@ from .auth import (
     password_change,
     register,
 )
-from .general import index
+from .general import landing
 from .challenge import (
     challenge,
     challenge_accept,

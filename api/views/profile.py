@@ -12,14 +12,12 @@ from api.models import UserProfile
 from api.forms import ProfileForm, RegisterForm
 
 
-@inertia('Profile')
+@inertia("Welcome")
 def profile_view(request, user_id=None):
     if user_id:
         profile = get_object_or_404(UserProfile, user__id=user_id)
     else:
-        print(request.user)
         profile = UserProfile.objects.get(user=request.user)
-        print(profile)
     return {"profile": profile}
 
 

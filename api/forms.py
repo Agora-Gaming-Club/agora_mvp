@@ -159,20 +159,11 @@ class WinnerForm(forms.Form):
 
     winner = forms.ChoiceField(choices=CHOICES)
 
-    def is_valid(self, unique_code=None):
-        valid = super(WinnerForm, self).is_valid()
-        challenge = get_object_or_404(Wager, unique_code=unique_code)
-        challenger_ids = [challenge.challenger_id, challenge.respondent_id]
-        incorrect_user_selected = False
-        if self.data.get("who_won") not in challenger_ids:
-            # self.add_error("winner", "User selected is not part of wager")
-            incorrect_user_selected = True
-        validation = [
-            valid,
-            not incorrect_user_selected,
-        ]
-        print(validation)
-        return all(validation)
+    def __init__(self, *args, **kwargs):
+        if "choices" in kwargs:
+            choices = kwargs.pop("choices")
+        super(WinnerForm, self).__init__(*args, **kwargs)
+        self.fields["winner"].choices = choices
 
 
 class AnteForm(forms.Form):
