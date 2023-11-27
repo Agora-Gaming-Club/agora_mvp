@@ -29,7 +29,6 @@ def log_in(request):
 
     User is to use email
     """
-    share(request, user=lambda: request.user)
     errors = []
     if request.method == "POST":
         data = json.loads(request.body)
@@ -70,6 +69,7 @@ def log_out(request):
 @ensure_csrf_cookie
 @inertia("Auth/Register")
 def register(request):
+    share(request, user={"user": "test"})
     if request.method == "POST":
         data = json.loads(request.body)
         form = RegisterForm(data)

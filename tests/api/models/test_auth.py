@@ -2,7 +2,7 @@ import json
 
 from inertia.test import InertiaTestCase
 
-from django.test import TestCase
+# from django.test import TestCase
 from django.contrib.auth.models import User
 from django.contrib.auth import logout, login, authenticate
 
@@ -17,6 +17,12 @@ class TestAuth(InertiaTestCase):
             email="totallyreal@email.com",
             password="password",
         )
+
+    # def test_share(self):
+    #     self.client.get("/accounts/register")
+    #     print(self.component())
+    #     print(self.props())
+    #     # self.assertComponentUsed("Auth/Register")
 
     # Login
     def test_change_password(self):
