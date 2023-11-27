@@ -60,10 +60,9 @@ def log_in(request):
 
 
 @ensure_csrf_cookie
-@inertia("Auth/Logout")
 def log_out(request):
     logout(request)
-    return HttpResponseRedirect(reverse("index"))
+    return HttpResponseRedirect(reverse("landing"))
 
 
 @ensure_csrf_cookie

@@ -5,3 +5,8 @@ from inertia import inertia
 @inertia("Welcome")
 def landing(request):
     return {}
+
+
+@inertia("Dashboard")
+def dashboard(request):
+    return {}
