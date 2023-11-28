@@ -5,14 +5,10 @@ TODO: ?
 """
 import json
 
-from django.contrib.auth.models import User
-from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
 from django.views.decorators.csrf import ensure_csrf_cookie
 from inertia import inertia
-
-# from inertia import render
 
 from api.forms import AcceptForm, AnteForm, ChallengeForm, WinnerForm
 from api.models import Game, Payment, UserProfile, Wager
@@ -24,7 +20,8 @@ from payment.authorize_client import AuthorizeClient
 @inertia("Challenge/Create")
 def challenge(request):
     if not request.user.is_authenticated:
-        return JsonResponse({"message": "Not Authed"})
+        return {"message": "Requires Auth"}
+    profile = UserProfile.objects.get(user=request.user)
     if request.method == "POST":
         data = json.loads(request.body)
         form = ChallengeForm(data, initial={"challenger_username": request.user})
@@ -40,18 +37,19 @@ def challenge(request):
                 game=game_obj,
             )
             wager.generate_unique_code()
-            context = {"unique_code": str(wager.unique_code)}
-            return JsonResponse(context)
+            # Probably want additional info about the challenge here
+            return {"unique_code": str(wager.unique_code)}
         else:
-            return JsonResponse(form.errors.get_json_data())
-    form = ChallengeForm(initial={"challenger_username": request.user.username})
-    context = {"form": form}
-    return render(request, "challenge_init.html", context)
+            return {"errors": form.errors.get_json_data()}
+    return {"profile": profile}
 
 
 def challenge_status(request, challenge_id):
+    # QUESTION: Figure out if anyone can go here or if only authenticated ppl
     challenge = get_object_or_404(Wager, unique_code=challenge_id)
-    current_user = UserProfile.objects.get(user=request.user)
+    current_user = UserProfile.objects.filter(user=request.user)
+    if current_user:
+        current_user = current_user.first()
     challenger = UserProfile.objects.get(user__id=challenge.challenger_id)
 
     respondent = None
@@ -59,29 +57,16 @@ def challenge_status(request, challenge_id):
         respondent = UserProfile.objects.filter(
             user__id=challenge.respondent_id
         ).first()
-    form = None
-    if challenge.status == Wager.AWAITING_RESPONSE:
-        form = AcceptForm()
-    if challenge.status == Wager.ACCEPTED:
-        form = AnteForm()
-    if challenge.status == Wager.IN_PROGRESS:
-        form = WinnerForm()
-        # challenger_ids = [challenge.challenger_id, challenge.respondent_id]
-        # choices = [
-        #     (user_id, UserProfile.objects.get(user__id=user_id))
-        #     for user_id in challenger_ids
-        # ]
-        # print(choices)
 
-    context = {
+    props = {
         "challenge": challenge,
         "challenger": challenger,
-        "form": form,
+        "user": current_user,
         "respondent": respondent,
-        "viewer": current_user == challenger,
+        "viewer": current_user in [challenger, respondent],
     }
-    context.update(form.errors.get_json_data())
-    return render(request, "challenge_status.html", context)
+
+    return props
 
 
 @ensure_csrf_cookie
@@ -95,17 +80,20 @@ def challenge_accept(request, challenge_id):
         challenger = UserProfile.objects.get(user__id=challenge.challenger_id)
         if respondent == challenger:
             form.add_error("accept", "Cannot accept your own challenge")
-            return JsonResponse(form.errors.get_json_data())
+            return {"errors": form.errors.get_json_data()}
         gamer_tag = data["gamer_tag"]
         challenge.accept(respondent, gamer_tag)
-        context = {
+        props = {
             "respondent": respondent,
             "challenger": challenger,
         }
-        return JsonResponse(form.errors.get_json_data())
-    return JsonResponse(form.errors.get_json_data())
+        props.update({"errors": form.errors.get_json_data()})
+        return props
+    return {"errors": form.errors.get_json_data()}
 
 
+@ensure_csrf_cookie
+@inertia("Challenge/Ante")
 def challenge_ante(request, challenge_id):
     """
     Should take payment, and return something to indicate if
@@ -118,6 +106,7 @@ def challenge_ante(request, challenge_id):
         raise Exception("Why are you here if you arent part of this?")
 
     if request.method == "POST":
+        # form = AnteForm(request.POST)
         amount = challenge.amount
 
         payment_client = AuthorizeClient("token")
@@ -130,9 +119,9 @@ def challenge_ante(request, challenge_id):
             authorize_net_payment_status=payment_status["status"],
         )
         challenge.all_payments_received()
-        return HttpResponse(f"{payment.authorize_net_payment_status}")
+        return {"status": payment.authorize_net_payment_status}
 
-    return HttpResponse("Bad Payment")
+    return {"error": "Bad Payment"}
 
 
 @ensure_csrf_cookie
@@ -152,7 +141,7 @@ def challenge_winner(request, challenge_id):
             challenge.respondent_vote = data["winner"]
             challenge.save()
         else:
-            return JsonResponse({"message": "You didnt participate"})
+            return {"message": "You didnt participate"}
         if challenge.both_voted():
             if challenge.disputed():
                 challenge.status = Wager.DISPUTED
@@ -161,17 +150,9 @@ def challenge_winner(request, challenge_id):
             else:
                 challenge.status = Wager.COMPLETED
                 challenge.save()
-        return JsonResponse({"vote": f"You voted for {data['winner']}"})
+        return {"vote": f"You voted for {data['winner']}"}
 
-    return JsonResponse(form.errors.get_json_data())
-
-    # challenger_ids = [challenge.challenger_id, challenge.respondent_id]
-    # choices = [
-    #     (user_id, UserProfile.objects.get(user__id=user_id))
-    #     for user_id in challenger_ids
-    # ]
-    # print(choices)
-    # form.CHOICES = choices
+    return {"errors": form.errors.get_json_data()}
 
 
 @inertia("Challenge/Index")
@@ -183,4 +164,4 @@ def challenges(request):
         challenges = Wager.objects.filter(challenger_id=request.user.id)
         context = {"challenges": challenges}
         return render(request, "challenges.html", context)
-    return HttpResponse("None")
+    return {}

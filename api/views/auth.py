@@ -2,7 +2,6 @@
 Auth related endpooints
 
 TODO: Verify that @ensure_csrf_cookie is required (not 100% sure)
-TODO: replace renders on login/logout/password_change
 """
 import json
 
@@ -15,7 +14,7 @@ from django.views.decorators.csrf import ensure_csrf_cookie
 from inertia import inertia
 from inertia.share import share
 
-
+from api.emails import WelcomeEmail
 from api.models import UserProfile
 from api.forms import RegisterForm, PasswordChangeForm, LoginForm
 from api.utils import good_email
@@ -60,8 +59,10 @@ def log_in(request):
 
 
 @ensure_csrf_cookie
+@inertia("Auth/Logout")
 def log_out(request):
     logout(request)
+    print("LOGGED OUT")
     return HttpResponseRedirect(reverse("landing"))
 
 
@@ -93,6 +94,8 @@ def register(request):
             )
             profile.set_verification_id()
             login(request, user)
+            email = WelcomeEmail({"profile": profile}, target=profile.email)
+            email.send()
             return HttpResponseRedirect(reverse("profile_view"))
         return {"errors": form.errors.get_json_data()}
     return {}
@@ -113,7 +116,7 @@ def password_change(request):
                 user.save()
                 login(request, user)
                 return JsonResponse({"message": "password changed"})
-        return JsonResponse(form.errors.get_json_data())
+        return {"errors": form.errors.get_json_data()}
 
     form = PasswordChangeForm()
     context = {"form": form}
