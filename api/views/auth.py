@@ -44,7 +44,7 @@ def log_in(request):
             user = authenticate(username=username, password=password)
             if user:
                 login(request, user)
-                return HttpResponseRedirect(reverse("profile_view"))
+                return HttpResponseRedirect(reverse("dashboard"))
             else:
                 form.add_error("username", "Email/Password incorrect")
                 return {"errors": form.errors.get_json_data()}
@@ -59,7 +59,6 @@ def log_in(request):
 
 
 @ensure_csrf_cookie
-@inertia("Auth/Logout")
 def log_out(request):
     logout(request)
     print("LOGGED OUT")
@@ -96,7 +95,7 @@ def register(request):
             login(request, user)
             email = WelcomeEmail({"profile": profile}, target=profile.email)
             email.send()
-            return HttpResponseRedirect(reverse("profile_view"))
+            return HttpResponseRedirect(reverse("dashboard"))
         return {"errors": form.errors.get_json_data()}
     return {}
 
