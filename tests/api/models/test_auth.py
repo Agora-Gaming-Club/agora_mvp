@@ -2,11 +2,13 @@ import json
 
 from inertia.test import InertiaTestCase
 
-# from django.test import TestCase
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.auth import logout, login, authenticate
 
 from api.models import UserProfile
+
+settings.EMAIL_TEST_MODE = True
 
 
 class TestAuth(InertiaTestCase):
