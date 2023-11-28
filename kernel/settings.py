@@ -160,9 +160,12 @@ SENDGRID_API_KEY = os.getenv("SENDGRID_API_KEY")
 
 EMAIL_DEFAULT_SENDER = "noreply@agoragaming.club"
 EMAIL_HOST = "smtp.sendgrid.net"
-EMAIL_HOST_USER = "apikey"  # this is exactly the value 'apikey'
+EMAIL_HOST_USER = "apikey"
 EMAIL_HOST_PASSWORD = SENDGRID_API_KEY
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
+# Set to True here to enable emails
 EMAIL_ENABLED = False
+# Set to True inside tests to prevent emails from printing or sending
+EMAIL_TEST_MODE = False

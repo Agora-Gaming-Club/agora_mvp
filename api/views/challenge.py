@@ -5,14 +5,10 @@ TODO: ?
 """
 import json
 
-from django.contrib.auth.models import User
-from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
 from django.views.decorators.csrf import ensure_csrf_cookie
 from inertia import inertia
-
-# from inertia import render
 
 from api.forms import AcceptForm, AnteForm, ChallengeForm, WinnerForm
 from api.models import Game, Payment, UserProfile, Wager
@@ -110,6 +106,7 @@ def challenge_ante(request, challenge_id):
         raise Exception("Why are you here if you arent part of this?")
 
     if request.method == "POST":
+        # form = AnteForm(request.POST)
         amount = challenge.amount
 
         payment_client = AuthorizeClient("token")

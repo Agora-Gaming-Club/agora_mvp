@@ -31,8 +31,10 @@ class Email:
                 message.send()
                 return True
             except SMTPSenderRefused as sr:
-                print("Please check `echo $SENDGRID_API_KEY")
+                print("Please check `echo $SENDGRID_API_KEY", sr)
                 return False
+        if settings.EMAIL_TEST_MODE:
+            return True
         else:
             print("FAKE EMAIL SENT:")
             print(f"TO: {self.target}")
