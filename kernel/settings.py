@@ -30,6 +30,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    "django_crontab",
     "api.apps.ApiConfig",
     "django.contrib.admin",
     "django.contrib.auth",
@@ -169,3 +170,8 @@ EMAIL_USE_TLS = True
 EMAIL_ENABLED = False
 # Set to True inside tests to prevent emails from printing or sending
 EMAIL_TEST_MODE = False
+
+
+CRONJOBS = [
+    ("*/1 * * * *", "api.cron.my_cron_job"),
+]
