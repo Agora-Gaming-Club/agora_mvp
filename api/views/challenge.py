@@ -25,6 +25,7 @@ from payment.authorize_client import AuthorizeClient
 def challenge(request):
     if not request.user.is_authenticated:
         return {"message": "Requires Auth"}
+    profile = UserProfile.objects.get(user=request.user)
     if request.method == "POST":
         data = json.loads(request.body)
         form = ChallengeForm(data, initial={"challenger_username": request.user})
@@ -44,14 +45,15 @@ def challenge(request):
             return {"unique_code": str(wager.unique_code)}
         else:
             return {"errors": form.errors.get_json_data()}
-    form = ChallengeForm(initial={"challenger_username": request.user.username})
-    context = {"form": form}
-    return render(request, "challenge_init.html", context)
+    return {"profile": profile}
 
 
 def challenge_status(request, challenge_id):
+    # QUESTION: Figure out if anyone can go here or if only authenticated ppl
     challenge = get_object_or_404(Wager, unique_code=challenge_id)
-    current_user = UserProfile.objects.get(user=request.user)
+    current_user = UserProfile.objects.filter(user=request.user)
+    if current_user:
+        current_user = current_user.first()
     challenger = UserProfile.objects.get(user__id=challenge.challenger_id)
 
     respondent = None
@@ -59,23 +61,16 @@ def challenge_status(request, challenge_id):
         respondent = UserProfile.objects.filter(
             user__id=challenge.respondent_id
         ).first()
-    form = None
-    if challenge.status == Wager.AWAITING_RESPONSE:
-        form = AcceptForm()
-    if challenge.status == Wager.ACCEPTED:
-        form = AnteForm()
-    if challenge.status == Wager.IN_PROGRESS:
-        form = WinnerForm()
 
-    context = {
+    props = {
         "challenge": challenge,
         "challenger": challenger,
-        "form": form,
+        "user": current_user,
         "respondent": respondent,
-        "viewer": current_user == challenger,
+        "viewer": current_user in [challenger, respondent],
     }
-    context.update(form.errors.get_json_data())
-    return render(request, "challenge_status.html", context)
+
+    return props
 
 
 @ensure_csrf_cookie
@@ -92,11 +87,12 @@ def challenge_accept(request, challenge_id):
             return {"errors": form.errors.get_json_data()}
         gamer_tag = data["gamer_tag"]
         challenge.accept(respondent, gamer_tag)
-        context = {
+        props = {
             "respondent": respondent,
             "challenger": challenger,
         }
-        return {"errors": form.errors.get_json_data()}
+        props.update({"errors": form.errors.get_json_data()})
+        return props
     return {"errors": form.errors.get_json_data()}
 
 

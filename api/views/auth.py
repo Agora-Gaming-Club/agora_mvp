@@ -114,7 +114,7 @@ def password_change(request):
                 user.save()
                 login(request, user)
                 return JsonResponse({"message": "password changed"})
-        return JsonResponse(form.errors.get_json_data())
+        return {"errors": form.errors.get_json_data()}
 
     form = PasswordChangeForm()
     context = {"form": form}
