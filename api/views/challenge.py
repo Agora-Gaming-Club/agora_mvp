@@ -21,9 +21,10 @@ from payment.authorize_client import AuthorizeClient
 def challenge(request):
     if not request.user.is_authenticated:
         return {"message": "Requires Auth"}
-    profile = UserProfile.objects.get(user=request.user)
+    user = UserProfile.objects.get(user=request.user)
     if request.method == "POST":
         data = json.loads(request.body)
+        print(data)
         form = ChallengeForm(data, initial={"challenger_username": request.user})
         if form.is_valid():
             """Create the challenge"""
@@ -41,7 +42,7 @@ def challenge(request):
             return {"unique_code": str(wager.unique_code)}
         else:
             return {"errors": form.errors.get_json_data()}
-    return {"profile": profile}
+    return {"user": user, "games": Game.GAMES, "platforms": Game.PLATFORM}
 
 
 def challenge_status(request, challenge_id):

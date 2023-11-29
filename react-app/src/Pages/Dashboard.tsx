@@ -147,7 +147,11 @@ const Dashboard: FunctionComponent = () => {
     <AuthenticatedLayout>
       <Head title="Dashboard" />
       <div className="flex flex-col w-full pb-8">
-        <div className="bg-[#7B1338] h-64">&nbsp;</div>
+        <div className="bg-[#7B1338] h-48 flex items-center justify-center ">
+          <h1 className="py-4 text-white text-center text-3xl font-bold">
+            Dashboard
+          </h1>
+        </div>
 
         <div className="max-w-xl mx-auto">
           <Card className="-translate-y-1/2 w-64 flex items-center justify-center">

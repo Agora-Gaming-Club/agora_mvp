@@ -14,7 +14,6 @@ const AuthenticatedLayout: FunctionComponent<PropsWithChildren> = ({
 }) => {
   const globalProps: any = usePage().props;
   const { post } = useForm({});
-  console.log(globalProps, location.pathname);
 
   const handleLogout = () => {
     post('/accounts/logout');
@@ -24,10 +23,7 @@ const AuthenticatedLayout: FunctionComponent<PropsWithChildren> = ({
     <>
       <Navbar fluid>
         <Navbar.Toggle />
-        <Navbar.Brand
-          className="flex items-center space-x-5"
-          href="https://flowbite-react.com"
-        >
+        <Navbar.Brand as="div" className="flex items-center space-x-5">
           <Link href="/" className="flex items-center justify-start text-white">
             <div className="flex items-center justify-center  w-6 h-6 rounded-full mr-1">
               <Logo />
@@ -36,23 +32,23 @@ const AuthenticatedLayout: FunctionComponent<PropsWithChildren> = ({
           </Link>
 
           <div className="hidden md:flex list-none ml-5">
-            <Navbar.Link active={location.pathname === '/dashboard'}>
-              <Link
-                className="flex items-center text-sm ml-5"
-                href="/dashboard"
-              >
-                <HomeIcon className="h-5 w-5 mr-1" />
-                Home
-              </Link>
+            <Navbar.Link
+              className="flex items-center text-sm ml-5"
+              href="/dashboard"
+              as={Link}
+              active={location.pathname === '/dashboard'}
+            >
+              <HomeIcon className="h-5 w-5 mr-1" />
+              Home
             </Navbar.Link>
-            <Navbar.Link active={location.pathname === '/challenges'}>
-              <Link
-                className="flex items-center text-sm ml-5"
-                href="/challenges"
-              >
-                <TrophyIcon className="h-5 w-5 mr-1" />
-                Challenges
-              </Link>
+            <Navbar.Link
+              className="flex items-center text-sm ml-5"
+              href="/challenges"
+              as={Link}
+              active={location.pathname === '/challenges'}
+            >
+              <TrophyIcon className="h-5 w-5 mr-1" />
+              Challenges
             </Navbar.Link>
           </div>
         </Navbar.Brand>
