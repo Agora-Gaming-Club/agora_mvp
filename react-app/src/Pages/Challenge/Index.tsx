@@ -1,10 +1,13 @@
 import { FunctionComponent } from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Button, Card } from 'flowbite-react';
+import { Head } from '@inertiajs/react';
+import * as React from 'react';
 
 const Index: FunctionComponent = () => {
   return (
     <AuthenticatedLayout>
+      <Head title="Find / Start a Challenge" />
       <div className="max-w-5xl mx-auto py-5 px-4">
         <h1 className="text-white text-4xl font-bold text-center">
           Find / Start a Challenge

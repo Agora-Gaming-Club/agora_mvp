@@ -36,21 +36,23 @@ const AuthenticatedLayout: FunctionComponent<PropsWithChildren> = ({
           </Link>
 
           <div className="hidden md:flex list-none ml-5">
-            <Navbar.Link
-              className="flex items-center text-sm ml-5"
-              href="/dashboard"
-              active={location.pathname === '/dashboard'}
-            >
-              <HomeIcon className="h-5 w-5 mr-1" />
-              Home
+            <Navbar.Link active={location.pathname === '/dashboard'}>
+              <Link
+                className="flex items-center text-sm ml-5"
+                href="/dashboard"
+              >
+                <HomeIcon className="h-5 w-5 mr-1" />
+                Home
+              </Link>
             </Navbar.Link>
-            <Navbar.Link
-              className="flex items-center text-sm ml-5"
-              href="/challenges"
-              active={location.pathname === '/challenges'}
-            >
-              <TrophyIcon className="h-5 w-5 mr-1" />
-              Challenges
+            <Navbar.Link active={location.pathname === '/challenges'}>
+              <Link
+                className="flex items-center text-sm ml-5"
+                href="/challenges"
+              >
+                <TrophyIcon className="h-5 w-5 mr-1" />
+                Challenges
+              </Link>
             </Navbar.Link>
           </div>
         </Navbar.Brand>

@@ -1,11 +1,11 @@
 type WagerStatus =
   | 'challenger_wins'
   | 'respondent_wins'
-  | 'accepted'
-  | 'in_progress'
-  | 'awaiting_response'
+  | 'accepted' // active
+  | 'in_progress' // active
+  | 'awaiting_response' // active
+  | 'disputed' // active
   | 'completed'
-  | 'disputed'
   | 'expired';
 
 type Wager = {
