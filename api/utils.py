@@ -1,5 +1,5 @@
+from django.core.paginator import Paginator, EmptyPage
 from django.core.validators import validate_email
-
 
 STATES = {
     "ALABAMA": "AL",
@@ -76,3 +76,19 @@ def good_email(email):
         return True
     except:
         return False
+
+
+def paginate(queryset, page, amt):
+    paginator = Paginator(queryset, amt)
+    result = paginator.get_page(page)
+    try:
+        paginator.page(page)
+        total = result.object_list
+    except EmptyPage:
+        total = []
+    return {
+        "result": total,
+        "current_page": int(page),
+        "total_pages": paginator.num_pages,
+        "total_amount": paginator.count,
+    }

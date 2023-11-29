@@ -149,6 +149,20 @@ class Wager(models.Model):
             self.status = Wager.IN_PROGRESS
             self.save()
 
+    def award_payment(self):
+        # 1: Both people select the same person.
+        if self.challenger_vote == self.respondent_vote:
+            print("""Send it to the vote, minus the rake""")
+        # 2: Only one votes.
+        elif self.challenger_vote and not self.respondent_vote:
+            print("""send it to the vote, minus the rake""")
+        # 3: Only one votes.
+        elif not self.respondent_vote and self.challenger_vote:
+            print("""send it to the vote, minus the rake""")
+        # 4: No one votes.
+        elif not self.respondent_vote and not self.challenger_vote:
+            print("""refund all, minus the rake""")
+
 
 class Payment(models.Model):
     GOOD = "go"

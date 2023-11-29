@@ -1,7 +1,5 @@
 """
 Challenge related endpoints
-
-TODO: ?
 """
 import json
 
@@ -12,6 +10,7 @@ from inertia import inertia
 
 from api.forms import AcceptForm, AnteForm, ChallengeForm, WinnerForm
 from api.models import Game, Payment, UserProfile, Wager
+from api.utils import paginate
 
 from payment.authorize_client import AuthorizeClient
 
@@ -158,10 +157,29 @@ def challenge_winner(request, challenge_id):
 @inertia("Challenge/Index")
 def challenges(request):
     """
-    Gets all of a users challenges
+    Gets all of a users challenges, paginated
+    query_params:
+    chal_page: page of challenger query
+    chal_amt: amount per challenger page
+    resp_page: page of respondent query
+    resp_amt: amount per respondent page
     """
+    chal_page = request.GET.get("chal_page")
+    chal_amt = request.GET.get("chal_amt")
+    resp_page = request.GET.get("resp_page")
+    resp_amt = request.GET.get("resp_amt")
     if request.user.is_authenticated:
-        challenges = Wager.objects.filter(challenger_id=request.user.id)
-        context = {"challenges": challenges}
-        return render(request, "challenges.html", context)
+        challenges = Wager.objects.filter(challenger_id=request.user.id).order_by(
+            "created_at"
+        )
+        challenger = paginate(challenges, chal_page, chal_amt)
+        respondents = Wager.objects.filter(respondent_id=request.user.id).order_by(
+            "created_at"
+        )
+        respondent = paginate(respondents, resp_page, resp_amt)
+        props = {
+            "challenger": challenger,
+            "respondent": respondent,
+        }
+        return props
     return {}
