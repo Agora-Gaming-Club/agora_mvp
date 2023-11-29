@@ -162,6 +162,7 @@ def challenges(request):
     """
     if request.user.is_authenticated:
         challenges = Wager.objects.filter(challenger_id=request.user.id)
-        context = {"challenges": challenges}
-        return render(request, "challenges.html", context)
+        user = UserProfile.objects.get(user=request.user)
+        props = {"challenges": challenges, "user": user}
+        return props
     return {}
