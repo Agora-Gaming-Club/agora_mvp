@@ -9,7 +9,13 @@ from django.urls import reverse
 from django.views.decorators.csrf import ensure_csrf_cookie
 from inertia import inertia
 
-from api.forms import AcceptForm, AnteForm, ChallengeForm, WinnerForm
+from api.forms import (
+    AcceptForm,
+    AnteForm,
+    ChallengeForm,
+    ChallengeSearchForm,
+    WinnerForm,
+)
 from api.models import Game, Payment, UserProfile, Wager
 from api.utils import paginate
 
@@ -47,7 +53,7 @@ def challenge(request):
     return {"user": user, "games": Game.GAMES, "platforms": Game.PLATFORM}
 
 
-@inertia('Challenge/Show')
+@inertia("Challenge/Show")
 def challenge_status(request, challenge_id):
     # QUESTION: Figure out if anyone can go here or if only authenticated ppl
     challenge = get_object_or_404(Wager, unique_code=challenge_id)
@@ -73,6 +79,25 @@ def challenge_status(request, challenge_id):
     }
 
     return props
+
+
+@inertia("Challenge/Search")
+def challenge_search(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        form = ChallengeSearchForm(data)
+        if form.is_valid():
+            unique_code = data["unique_code"]
+            challenge = Wager.objects.filter(unique_code=unique_code)
+            if challenge:
+                return HttpResponseRedirect(
+                    f"challenge/{challenge.first().unique_code}"
+                )
+            else:
+                form.add_error("unique_code", "challenge does not exist")
+        return {"errors": form.errors.get_json_data()}
+    form = ChallengeSearchForm()
+    return {}
 
 
 @ensure_csrf_cookie
