@@ -15,7 +15,6 @@ const Login: FunctionComponent = () => {
   const submit: FormEventHandler = (e) => {
     e.preventDefault();
 
-    // console.log(data);
     post('/accounts/login', {
       onSuccess: (data) => {
         // window.location.href = data.props.url as unknown as string; // work around

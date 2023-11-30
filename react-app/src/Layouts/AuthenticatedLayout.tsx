@@ -1,18 +1,22 @@
 import { FunctionComponent, PropsWithChildren } from 'react';
 
 import { Avatar, Dropdown, Navbar } from 'flowbite-react';
-import { Link, useForm, usePage } from '@inertiajs/react';
+import { Head, Link, useForm, usePage } from '@inertiajs/react';
 import Logo from '@/Components/Logo';
 import * as React from 'react';
 import { HomeIcon, TrophyIcon } from '@heroicons/react/24/outline';
 
 type Props = {
-  user: any;
+  user: UserProfile;
+  title?: string;
+  description?: string;
 };
-const AuthenticatedLayout: FunctionComponent<PropsWithChildren> = ({
+const AuthenticatedLayout: FunctionComponent<PropsWithChildren<Props>> = ({
   children,
+  title,
+  description,
+  user,
 }) => {
-  const globalProps: any = usePage().props;
   const { post } = useForm({});
 
   const handleLogout = () => {
@@ -21,6 +25,7 @@ const AuthenticatedLayout: FunctionComponent<PropsWithChildren> = ({
 
   return (
     <>
+      <Head title={title ?? 'Agora Gaming'} />
       <Navbar fluid>
         <Navbar.Toggle />
         <Navbar.Brand as="div" className="flex items-center space-x-5">
@@ -59,18 +64,18 @@ const AuthenticatedLayout: FunctionComponent<PropsWithChildren> = ({
             label={
               <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-gray-500">
                 <span className="text-xs font-medium leading-none text-white uppercase">
-                  {globalProps.user.first_name.substring(0, 1)}
-                  {globalProps.user.last_name.substring(0, 1)}
+                  {user.first_name.substring(0, 1)}
+                  {user.last_name.substring(0, 1)}
                 </span>
               </span>
             }
           >
             <Dropdown.Header>
               <span className="block text-sm">
-                {globalProps.user.first_name} {globalProps.user.last_name}
+                {user.first_name} {user.last_name}
               </span>
               <span className="block truncate text-sm font-medium">
-                {globalProps.user.email}
+                {user.email}
               </span>
             </Dropdown.Header>
             {/*<Dropdown.Item>Dashboard</Dropdown.Item>*/}
@@ -101,7 +106,23 @@ const AuthenticatedLayout: FunctionComponent<PropsWithChildren> = ({
           </div>
         </Navbar.Collapse>
       </Navbar>
-      <div className="min-h-screen sm:pt-0 bg-dark">{children}</div>
+      <div className="min-h-screen sm:pt-0 bg-dark">
+        <div className="flex flex-col w-full pb-8">
+          <div className="bg-agora-red h-48 flex items-center justify-center ">
+            {(title || description) && (
+              <div>
+                <h1 className="py-4 text-white text-center text-3xl font-bold">
+                  {title}
+                </h1>
+                <h2 className="text-white text-center font-medium">
+                  {description}
+                </h2>
+              </div>
+            )}
+          </div>
+          {children}
+        </div>
+      </div>
     </>
   );
 };
