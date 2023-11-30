@@ -46,6 +46,10 @@ class ChallengeForm(forms.Form):
         return all(validation)
 
 
+class ChallengeSearchForm(forms.Form):
+    unique_code = forms.CharField(max_length=16)
+
+
 class RegisterForm(forms.Form):
     """Form for registration"""
 

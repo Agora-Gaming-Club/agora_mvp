@@ -16,6 +16,18 @@ class TestWager(InertiaTestCase):
         wager.status = Wager.IN_PROGRESS
         wager.save()
 
+    def test_search_challenge(self):
+        wager = get_wager(self.user_a, self.user_b)
+        wager.status = Wager.IN_PROGRESS
+        wager.save()
+        unique_code = wager.unique_code
+        response = self.client.post(
+            "/challenge/search",
+            {"unique_code": unique_code},
+            content_type="application/json",
+        )
+        # TODO ACTUAL TESTS FOR THIS
+
     def test_wager_unique_id(self):
         """Verifying a uniqueID was created"""
         self.client.login(username="user_a", password="password")

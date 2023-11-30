@@ -5,6 +5,7 @@ urlpatterns = [
     path("", views.landing, name="landing"),
     path("dashboard", views.dashboard, name="dashboard"),
     path("challenge", views.challenge, name="challenge"),
+    path("challenge/search", views.challenge_search, name="challenge_search"),
     path(
         "challenge/accept/<challenge_id>",
         views.challenge_accept,

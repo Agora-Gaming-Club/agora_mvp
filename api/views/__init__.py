@@ -10,6 +10,7 @@ from .challenge import (
     challenge_accept,
     challenge_ante,
     challenge_status,
+    challenge_search,
     challenge_winner,
     challenges,
 )
@@ -27,6 +28,7 @@ _ = [  # This does nothing, but silence a pep8 error
     challenge_accept,
     challenge_ante,
     challenge_status,
+    challenge_search,
     challenge_winner,
     challenges,
     profile_edit,
