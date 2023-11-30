@@ -20,10 +20,10 @@ def dashboard(request):
     old_page: page of respondent query
     old_amt: amount per respondent page
     """
-    active_page = request.GET.get("active_page")
-    active_amt = request.GET.get("active_amt")
-    old_page = request.GET.get("old_page")
-    old_amt = request.GET.get("old_amt")
+    active_page = request.GET.get("active_page",1) 
+    active_amt = request.GET.get("active_amt", 10) 
+    old_page = request.GET.get("old_page"1 ) 
+    old_amt = request.GET.get("old_amt"10) 
 
     if request.user.is_authenticated:
         user = UserProfile.objects.get(user=request.user)
