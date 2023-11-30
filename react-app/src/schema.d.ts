@@ -23,3 +23,19 @@ type Wager = {
   challenger_vote: string | null;
   respondent_vote: string | null;
 };
+
+type UserProfile = {
+  user: number; // Assuming this is a numeric ID representing the foreign key to 'User'
+  username: string;
+  first_name: string;
+  last_name: string;
+  email: string;
+  state: string;
+  phone_number: string;
+  birthday: Date;
+  created_at: Date;
+  updated_at: Date;
+  verification_id: string;
+  acct_verified: boolean;
+  winnings: number; // Assuming this represents a decimal
+};

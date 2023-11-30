@@ -110,7 +110,10 @@ const wagers: Wager[] = [
   },
 ];
 
-const Dashboard: FunctionComponent = () => {
+type Props = {
+  user: UserProfile;
+};
+const Dashboard: FunctionComponent<Props> = ({ user }) => {
   const getStatusBadge = (s: any) => {
     switch (s) {
       case 'pending':
@@ -144,86 +147,77 @@ const Dashboard: FunctionComponent = () => {
   });
 
   return (
-    <AuthenticatedLayout>
-      <Head title="Dashboard" />
-      <div className="flex flex-col w-full pb-8">
-        <div className="bg-[#7B1338] h-48 flex items-center justify-center ">
-          <h1 className="py-4 text-white text-center text-3xl font-bold">
-            Dashboard
+    <AuthenticatedLayout user={user} title="Dashboard">
+      <div className="max-w-xl mx-auto">
+        <Card className="-translate-y-1/2 w-64 flex items-center justify-center">
+          <h1 className="text-4xl text-white text-center font-extrabold tracking-tight">
+            <CountUp
+              duration={1.25}
+              start={0}
+              end={500}
+              prefix="$"
+              decimals={2}
+            />
           </h1>
-        </div>
+          <h2 className="text-green-500 text-center">Total Winnings</h2>
+        </Card>
+      </div>
 
-        <div className="max-w-xl mx-auto">
-          <Card className="-translate-y-1/2 w-64 flex items-center justify-center">
-            <h1 className="text-4xl text-white text-center font-extrabold tracking-tight">
-              <CountUp
-                duration={1.25}
-                start={0}
-                end={500}
-                prefix="$"
-                decimals={2}
-              />
-            </h1>
-            <h2 className="text-green-500 text-center">Total Winnings</h2>
-          </Card>
-        </div>
-
-        <div className="container mx-auto px-5">
-          <h3 className="text-gray-500 text-lg">Active</h3>
-          <ul className="space-y-1 w-full">
-            {wagers.map((wager) => (
-              <li
-                key={wager.id}
-                className="relative flex items-center space-x-4 bg-[#1F2A37] hover:bg-gray-700 px-5 py-4"
+      <div className="container mx-auto px-5">
+        <h3 className="text-gray-500 text-lg">Active</h3>
+        <ul className="space-y-1 w-full">
+          {wagers.map((wager) => (
+            <li
+              key={wager.id}
+              className="relative flex items-center space-x-4 bg-[#1F2A37] hover:bg-gray-700 px-5 py-4"
+            >
+              <div className="min-w-0 flex-auto">
+                <div className="flex items-center gap-x-3">
+                  <div
+                    className={classNames(
+                      getStatusBadge(wager.status),
+                      'flex-none rounded-full p-1'
+                    )}
+                  >
+                    <div className="h-2 w-2 rounded-full bg-current" />
+                  </div>
+                  <h2 className="min-w-0 text-sm font-semibold leading-6 text-white">
+                    <a href="#" className="flex gap-x-2">
+                      <span className="truncate">{wager.gamer_tag}</span>
+                      <span className="text-gray-400">/</span>
+                      <span className="whitespace-nowrap">{wager.game}</span>
+                      <span className="absolute inset-0" />
+                    </a>
+                  </h2>
+                </div>
+                <div className="mt-3 flex items-center gap-x-2.5 text-xs leading-5 text-gray-400">
+                  <p className="truncate">
+                    {currencyFormatter.format(wager.amount)}
+                  </p>
+                  <svg
+                    viewBox="0 0 2 2"
+                    className="h-0.5 w-0.5 flex-none fill-gray-300"
+                  >
+                    <circle cx={1} cy={1} r={1} />
+                  </svg>
+                  <p className="whitespace-nowrap">pending</p>
+                </div>
+              </div>
+              <div
+                className={classNames(
+                  getCtaBadge('pending'),
+                  'rounded-full flex-none py-1 px-2 text-xs font-medium ring-1 ring-inset'
+                )}
               >
-                <div className="min-w-0 flex-auto">
-                  <div className="flex items-center gap-x-3">
-                    <div
-                      className={classNames(
-                        getStatusBadge(wager.status),
-                        'flex-none rounded-full p-1'
-                      )}
-                    >
-                      <div className="h-2 w-2 rounded-full bg-current" />
-                    </div>
-                    <h2 className="min-w-0 text-sm font-semibold leading-6 text-white">
-                      <a href="#" className="flex gap-x-2">
-                        <span className="truncate">{wager.gamer_tag}</span>
-                        <span className="text-gray-400">/</span>
-                        <span className="whitespace-nowrap">{wager.game}</span>
-                        <span className="absolute inset-0" />
-                      </a>
-                    </h2>
-                  </div>
-                  <div className="mt-3 flex items-center gap-x-2.5 text-xs leading-5 text-gray-400">
-                    <p className="truncate">
-                      {currencyFormatter.format(wager.amount)}
-                    </p>
-                    <svg
-                      viewBox="0 0 2 2"
-                      className="h-0.5 w-0.5 flex-none fill-gray-300"
-                    >
-                      <circle cx={1} cy={1} r={1} />
-                    </svg>
-                    <p className="whitespace-nowrap">pending</p>
-                  </div>
-                </div>
-                <div
-                  className={classNames(
-                    getCtaBadge('pending'),
-                    'rounded-full flex-none py-1 px-2 text-xs font-medium ring-1 ring-inset'
-                  )}
-                >
-                  Get Code
-                </div>
-                <ChevronRightIcon
-                  className="h-5 w-5 flex-none text-gray-400"
-                  aria-hidden="true"
-                />
-              </li>
-            ))}
-          </ul>
-        </div>
+                Get Code
+              </div>
+              <ChevronRightIcon
+                className="h-5 w-5 flex-none text-gray-400"
+                aria-hidden="true"
+              />
+            </li>
+          ))}
+        </ul>
       </div>
     </AuthenticatedLayout>
   );

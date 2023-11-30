@@ -82,8 +82,10 @@ def challenge_status(request, challenge_id):
     return props
 
 
+@ensure_csrf_cookie
 @inertia("Challenge/Search")
 def challenge_search(request):
+    user = UserProfile.objects.get(user=request.user)
     if request.method == "POST":
         data = json.loads(request.body)
         form = ChallengeSearchForm(data)
@@ -92,13 +94,15 @@ def challenge_search(request):
             challenge = Wager.objects.filter(unique_code=unique_code)
             if challenge:
                 return HttpResponseRedirect(
-                    f"challenge/{challenge.first().unique_code}"
+                    f"/challenge/{challenge.first().unique_code}"
                 )
             else:
                 form.add_error("unique_code", "challenge does not exist")
         return {"errors": form.errors.get_json_data()}
     form = ChallengeSearchForm()
-    return {}
+    return {
+        "user": user
+    }
 
 
 @ensure_csrf_cookie
