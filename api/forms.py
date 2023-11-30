@@ -52,6 +52,15 @@ class ChallengeSearchForm(forms.Form):
     unique_code = forms.CharField(max_length=16)
 
 
+class PasswordForgotForm(forms.Form):
+    password = forms.CharField(max_length=40, widget=forms.PasswordInput())
+    password_confirm = forms.CharField(max_length=40, widget=forms.PasswordInput())
+
+
+class PasswordResetForm(forms.Form):
+    email = forms.EmailField()
+
+
 class RegisterForm(forms.Form):
     """Form for registration"""
 

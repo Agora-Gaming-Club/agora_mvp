@@ -4,6 +4,7 @@ Auth related endpooints
 TODO: Verify that @ensure_csrf_cookie is required (not 100% sure)
 """
 import json
+import uuid
 
 from django.contrib.auth.models import User
 from django.contrib.auth import logout, login, authenticate
@@ -14,9 +15,15 @@ from django.views.decorators.csrf import ensure_csrf_cookie
 from inertia import inertia
 from inertia.share import share
 
-from api.emails import WelcomeEmail
+from api.emails import WelcomeEmail, PasswordResetEmail
 from api.models import UserProfile
-from api.forms import RegisterForm, PasswordChangeForm, LoginForm
+from api.forms import (
+    RegisterForm,
+    LoginForm,
+    PasswordChangeForm,
+    PasswordForgotForm,
+    PasswordResetForm,
+)
 from api.utils import good_email
 
 
@@ -91,7 +98,6 @@ def register(request):
                 birthday=data["birthday"],
                 acct_verified=False,
             )
-            profile.set_verification_id()
             login(request, user)
             email = WelcomeEmail({"profile": profile}, target=profile.email)
             email.send()
@@ -120,3 +126,39 @@ def password_change(request):
     form = PasswordChangeForm()
     context = {"form": form}
     return render(request, "registration/password_change.html", context)
+
+
+@ensure_csrf_cookie
+@inertia("Auth/ForgotPassword")
+def forgot_password(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        form = PasswordResetForm(data)
+        if form.is_valid():
+            email = data["email"]
+            user_profile = UserProfile.objects.filter(email=email)
+            if user_profile:
+                profile = user_profile.first()
+                username = profile.username
+                profile.reset_password()
+                email = PasswordResetEmail(
+                    {"code": profile.reset_password_id},
+                    target=profile.email,
+                )
+                email.send()
+            return {"message": "email successfully sent"}
+    return {}
+
+
+@ensure_csrf_cookie
+@inertia("Auth/ForgotPassword")
+def password_reset(request):
+    if request.method == "POST":
+        print(request.content_params)
+        print(dir(request))
+        data = json.loads(request.body)
+        password = 1
+        password_confirm = 1
+        print(data)
+        print("!")
+        return {}

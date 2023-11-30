@@ -26,14 +26,15 @@ class UserProfile(models.Model):
     state = models.CharField(max_length=2)
     phone_number = models.CharField(max_length=11, blank=False, null=False)
     birthday = models.DateField(null=False, blank=False)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    verification_id = models.CharField(max_length=36, blank=False)
-    acct_verified = models.BooleanField(default=False, null=False)
     winnings = models.DecimalField(
         max_digits=10, decimal_places=2, default=00.00, null=True
     )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    reset_password_id = models.CharField(max_length=36, null=True, blank=True)
+    verification_id = models.CharField(default=uuid.uuid4, max_length=36, blank=False)
+    acct_verified = models.BooleanField(default=False, null=False)
 
     def __str__(self):
         return f"<Profile: {self.username} #{self.id}>"
@@ -41,8 +42,8 @@ class UserProfile(models.Model):
     def __repr__(self):
         return self.__str__()
 
-    def set_verification_id(self):
-        self.verification_id = str(uuid.uuid4())
+    def reset_password(self):
+        self.reset_password_id = uuid.uuid4()
         self.save()
 
 

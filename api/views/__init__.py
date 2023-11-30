@@ -3,6 +3,8 @@ from .auth import (
     log_out,
     password_change,
     register,
+    forgot_password,
+    password_reset,
 )
 from .general import landing, dashboard
 from .challenge import (

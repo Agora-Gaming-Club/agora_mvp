@@ -1,3 +1,4 @@
+# TODO EVERYTHING HERE SHOUD BE MOVED TO auth.py
 import json
 
 from django.contrib.auth.models import User
