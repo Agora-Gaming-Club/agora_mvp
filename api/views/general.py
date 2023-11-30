@@ -22,8 +22,8 @@ def dashboard(request):
     """
     active_page = request.GET.get("active_page",1) 
     active_amt = request.GET.get("active_amt", 10) 
-    old_page = request.GET.get("old_page"1 ) 
-    old_amt = request.GET.get("old_amt"10) 
+    old_page = request.GET.get("old_page",1 ) 
+    old_amt = request.GET.get("old_amt",10) 
 
     if request.user.is_authenticated:
         user = UserProfile.objects.get(user=request.user)
