@@ -1,7 +1,5 @@
 """
 Challenge related endpoints
-
-TODO: ?
 """
 import json
 
@@ -19,6 +17,7 @@ from api.forms import (
     WinnerForm,
 )
 from api.models import Game, Payment, UserProfile, Wager
+from api.utils import paginate
 
 from payment.authorize_client import AuthorizeClient
 
@@ -193,9 +192,6 @@ def challenge_winner(request, challenge_id):
 
 @inertia("Challenge/Index")
 def challenges(request):
-    """
-    Gets all of a users challenges
-    """
     if request.user.is_authenticated:
         challenges = Wager.objects.filter(challenger_id=request.user.id)
         user = UserProfile.objects.get(user=request.user)

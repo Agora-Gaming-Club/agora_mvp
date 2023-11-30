@@ -22,3 +22,7 @@ urlpatterns = [
     # path("accounts/", include("django.contrib.auth.urls")),
     path("", include("api.urls")),
 ]
+
+admin.site.site_header = "AgoraGaming Admin"
+admin.site.site_title = "AgoraGaming Admin Area"
+admin.site.index_title = "Welcome to the AgoraGaming Admin area"

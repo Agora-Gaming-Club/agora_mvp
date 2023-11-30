@@ -6,6 +6,7 @@ import uuid
 from datetime import datetime
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils.text import slugify
 
 
 # Create your models here.
@@ -66,11 +67,26 @@ class Wager(models.Model):
         (EXPIRED, "Expired"),
     ]
 
+    ACTIVE_STATUS = [
+        ACCEPTED,
+        IN_PROGRESS,
+        AWAITING_RESPONSE,
+        DISPUTED,
+    ]
+
+    INACTIVE_STATUS = [
+        CHALLENGER_WINS,
+        RESPONDENT_WINS,
+        COMPLETED,
+        EXPIRED,
+    ]
+
     challenger_id = models.IntegerField()
     respondent_id = models.IntegerField(blank=True, null=True)
     # make amount a choice box
     amount = models.DecimalField(max_digits=6, decimal_places=2)
     game = models.ForeignKey("Game", on_delete=models.CASCADE, blank=True)
+    # terms = models.ForeignKey("Terms", on_delete=models.CASCADE, blank=True)
     notes = models.CharField(max_length=200, blank=True, null=True)
     unique_code = models.CharField(max_length=40, blank=True)  # make this unique
     gamer_tag = models.CharField(max_length=40, blank=True, null=True)
@@ -149,6 +165,20 @@ class Wager(models.Model):
             self.status = Wager.IN_PROGRESS
             self.save()
 
+    def award_payment(self):
+        # 1: Both people select the same person.
+        if self.challenger_vote == self.respondent_vote:
+            print("""Send it to the vote, minus the rake""")
+        # 2: Only one votes.
+        elif self.challenger_vote and not self.respondent_vote:
+            print("""send it to the vote, minus the rake""")
+        # 3: Only one votes.
+        elif not self.respondent_vote and self.challenger_vote:
+            print("""send it to the vote, minus the rake""")
+        # 4: No one votes.
+        elif not self.respondent_vote and not self.challenger_vote:
+            print("""refund all, minus the rake""")
+
 
 class Payment(models.Model):
     GOOD = "go"
@@ -188,6 +218,7 @@ class Game(models.Model):
     ]
     platform = models.CharField(max_length=20, choices=PLATFORM)
     game = models.CharField(max_length=20, choices=GAMES)
+    discord_link = models.URLField(null=False, blank=False)
 
     def __str__(self):
         return f"<{self.game} for {self.platform}>"
@@ -196,6 +227,35 @@ class Game(models.Model):
         return self.__str__()
 
 
-# TODO: Add a Platform model
-# TODO: Replace Game module with something that takes the platform as an arg
-# TODO: add terms model that takes game + platform as arg, admin will manually create these 3 models
+## You should select the game first, then the platform and the terms.
+
+# class Game(models.Model):
+#     name = models.CharField(max_length=200, blank=False, null=False)
+#     platform = models.ForeignKey("Platform", on_delete=models.CASCADE)
+#     discord_link = models.CharField(max_length=200, blank=False, null=False)
+
+#     def __str__(self):
+#         return f"<{self.game} for {self.platform}>"
+
+#     def __repr__(self):
+#         return self.__str__()
+
+
+# class Platform(models.Model):
+#     name = models.CharField(max_length=200, blank=False, null=False)
+
+
+# class Terms(models.Model):
+#     title = models.CharField(max_length=40, blank=False, null=False)
+#     terms = models.CharField(max_length=200, blank=False, null=False)
+#     game = models.ForeignKey("Game", on_delete=models.CASCADE)
+
+#     @property
+#     def slug(self):
+#         return slugify(self.title)
+
+#     @staticmethod
+#     def term_choices():
+#         x = [(term.id, term.title) for term in Terms.objects.all()]
+#         print(x)
+#         return x

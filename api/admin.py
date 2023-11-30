@@ -8,6 +8,7 @@ class GameAdmin(admin.ModelAdmin):
     list_display = [
         "game",
         "platform",
+        "discord_link",
     ]
 
 
