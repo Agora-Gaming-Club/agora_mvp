@@ -4,7 +4,6 @@ import { Card } from 'flowbite-react';
 import { ChevronRightIcon } from '@heroicons/react/24/outline';
 import CountUp from 'react-countup';
 import { classNames } from '@/Utils/styles';
-import { Head } from '@inertiajs/react';
 
 const statuses = {
   pending: 'text-yellow-500 bg-yellow-100/10',

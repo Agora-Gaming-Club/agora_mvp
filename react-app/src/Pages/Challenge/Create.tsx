@@ -1,15 +1,8 @@
+import * as React from 'react';
 import { FormEventHandler, FunctionComponent, useState } from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, useForm } from '@inertiajs/react';
-import * as React from 'react';
-import {
-  Button,
-  Checkbox,
-  Label,
-  TextInput,
-  Select,
-  Textarea,
-} from 'flowbite-react';
+import { useForm } from '@inertiajs/react';
+import { Button, Label, Select, Textarea, TextInput } from 'flowbite-react';
 import { amounts } from '@/Data/amounts';
 import { TransformedErrors, transformErrors } from '@/Utils/form';
 import Cookies from 'js-cookie';

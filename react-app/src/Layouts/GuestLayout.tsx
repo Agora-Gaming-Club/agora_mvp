@@ -1,7 +1,7 @@
+import * as React from 'react';
 import { FunctionComponent, PropsWithChildren } from 'react';
 import { Link } from '@inertiajs/react';
 import Logo from '@/Components/Logo';
-import * as React from 'react';
 
 const GuestLayout: FunctionComponent<PropsWithChildren> = ({ children }) => {
   return (

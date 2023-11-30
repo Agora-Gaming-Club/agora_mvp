@@ -1,17 +1,11 @@
-import React, {
-  FormEventHandler,
-  FunctionComponent,
-  PropsWithChildren,
-  useState,
-} from 'react';
+import React, { FormEventHandler, FunctionComponent, useState } from 'react';
 import GuestLayout from '@/Layouts/GuestLayout';
-import { Head, Link, router, useForm, usePage } from '@inertiajs/react';
-import { Label, Select, TextInput } from 'flowbite-react';
+import { Head, Link, useForm } from '@inertiajs/react';
+import { Button, Label, Modal, Select, TextInput } from 'flowbite-react';
 import Cookies from 'js-cookie';
 import { TransformedErrors, transformErrors } from '@/Utils/form';
 import { formatPhoneNumberWhileTyping, stripPhoneNumber } from '@/Utils/phone';
 import { states } from '@/Data/states';
-import { Button, Modal } from 'flowbite-react';
 
 const Register: FunctionComponent = () => {
   const [openTermsModal, setOpenTermsModal] = useState(false);

@@ -2,7 +2,7 @@ import React, { FormEventHandler, FunctionComponent, useState } from 'react';
 import GuestLayout from '@/Layouts/GuestLayout';
 import { Head, Link, useForm } from '@inertiajs/react';
 import Cookies from 'js-cookie';
-import { Button, CustomFlowbiteTheme, Label, TextInput } from 'flowbite-react';
+import { Button, Label, TextInput } from 'flowbite-react';
 import { TransformedErrors, transformErrors } from '@/Utils/form';
 
 const Login: FunctionComponent = () => {

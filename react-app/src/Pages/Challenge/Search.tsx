@@ -1,9 +1,9 @@
-import { FormEventHandler, FunctionComponent, useState } from 'react';
-import { Head, useForm } from '@inertiajs/react';
 import * as React from 'react';
+import { FormEventHandler, FunctionComponent, useState } from 'react';
+import { useForm } from '@inertiajs/react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Button, Card, Label, TextInput } from 'flowbite-react';
-import { formatUniqueCodeWhileTyping, trimSpace } from '@/Utils/string';
+import { formatUniqueCodeWhileTyping } from '@/Utils/string';
 import { TransformedErrors, transformErrors } from '@/Utils/form';
 import Cookies from 'js-cookie';
 
