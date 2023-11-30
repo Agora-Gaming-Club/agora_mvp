@@ -32,12 +32,14 @@ class ChallengeForm(forms.Form):
     game = forms.ChoiceField(choices=Game.GAMES)
     platform = forms.ChoiceField(choices=Game.PLATFORM)
     notes = forms.CharField(max_length=200, required=False)
-
     amount = forms.DecimalField(max_digits=6, decimal_places=2)
 
     def __init__(self, *args, **kwargs):
+        # if "terms" in kwargs:
+        #     terms = kwargs.pop("terms")
         super().__init__(*args, **kwargs)
         self.fields["challenger_username"].disabled = True
+        # self.fields["terms"].choices = terms
 
     def is_valid(self):
         valid = super(ChallengeForm, self).is_valid()

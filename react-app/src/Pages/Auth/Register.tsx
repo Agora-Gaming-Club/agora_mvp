@@ -6,15 +6,17 @@ import React, {
 } from 'react';
 import GuestLayout from '@/Layouts/GuestLayout';
 import { Head, Link, router, useForm, usePage } from '@inertiajs/react';
-import { Button, Label, Select, TextInput } from 'flowbite-react';
+import { Label, Select, TextInput } from 'flowbite-react';
 import Cookies from 'js-cookie';
 import { TransformedErrors, transformErrors } from '@/Utils/form';
 import { formatPhoneNumberWhileTyping, stripPhoneNumber } from '@/Utils/phone';
 import { states } from '@/Data/states';
+import { Button, Modal } from 'flowbite-react';
 
 const Register: FunctionComponent = () => {
+  const [openTermsModal, setOpenTermsModal] = useState(false);
   const [formErrors, setFormErrors] = useState<TransformedErrors | null>(null);
-  const { data, setData, post, processing, reset, transform } = useForm({
+  const { data, setData, post, processing } = useForm({
     first_name: '',
     last_name: '',
     username: '',
@@ -30,15 +32,17 @@ const Register: FunctionComponent = () => {
   const submit: FormEventHandler = (e) => {
     e.preventDefault();
 
-    transform((data) => ({
-      ...data,
-      phone_number: stripPhoneNumber(data.phone_number),
-    }));
-    // console.log(data);
+    if (!openTermsModal) {
+      setOpenTermsModal(true);
+      return;
+    }
+
+    data.phone_number = stripPhoneNumber(data.phone_number);
     post('/accounts/register', {
       onError: (err) => {
         setFormErrors(transformErrors(err));
       },
+      onBefore: () => setOpenTermsModal(false),
     });
   };
 
@@ -57,6 +61,7 @@ const Register: FunctionComponent = () => {
             value={data.first_name}
             onChange={(e) => setData('first_name', e.target.value)}
             shadow
+            required
             color={formErrors?.errors?.first_name ? 'failure' : 'gray'}
             helperText={<span>{formErrors?.errors?.first_name ?? ''}</span>}
           />
@@ -72,6 +77,7 @@ const Register: FunctionComponent = () => {
             value={data.last_name}
             onChange={(e) => setData('last_name', e.target.value)}
             shadow
+            required
             color={formErrors?.errors?.last_name ? 'failure' : 'gray'}
             helperText={<span>{formErrors?.errors?.last_name ?? ''}</span>}
           />
@@ -87,6 +93,7 @@ const Register: FunctionComponent = () => {
             value={data.email}
             onChange={(e) => setData('email', e.target.value)}
             shadow
+            required
             color={formErrors?.errors?.email ? 'failure' : 'gray'}
             helperText={<span>{formErrors?.errors?.email ?? ''}</span>}
           />
@@ -102,6 +109,7 @@ const Register: FunctionComponent = () => {
             value={data.username}
             onChange={(e) => setData('username', e.target.value)}
             shadow
+            required
             color={formErrors?.errors?.username ? 'failure' : 'gray'}
             helperText={<span>{formErrors?.errors?.username ?? ''}</span>}
           />
@@ -119,6 +127,7 @@ const Register: FunctionComponent = () => {
             onChange={(e) =>
               setData('phone_number', formatPhoneNumberWhileTyping(e) as string)
             }
+            required
             shadow
             color={formErrors?.errors?.phone_number ? 'failure' : 'gray'}
             helperText={<span>{formErrors?.errors?.phone_number ?? ''}</span>}
@@ -158,6 +167,7 @@ const Register: FunctionComponent = () => {
             value={data.birthday}
             onChange={(e) => setData('birthday', e.target.value)}
             shadow
+            required
             color={formErrors?.errors?.birthday ? 'failure' : 'gray'}
             helperText={<span>{formErrors?.errors?.birthday ?? ''}</span>}
           />
@@ -173,6 +183,7 @@ const Register: FunctionComponent = () => {
             value={data.password}
             onChange={(e) => setData('password', e.target.value)}
             shadow
+            required
             color={formErrors?.errors?.password ? 'failure' : 'gray'}
             helperText={<span>{formErrors?.errors?.password ?? ''}</span>}
           />
@@ -188,6 +199,7 @@ const Register: FunctionComponent = () => {
             value={data.password_confirm}
             onChange={(e) => setData('password_confirm', e.target.value)}
             shadow
+            required
             color={formErrors?.errors?.password_confirm ? 'failure' : 'gray'}
             helperText={
               <span>{formErrors?.errors?.password_confirm ?? ''}</span>
@@ -212,6 +224,44 @@ const Register: FunctionComponent = () => {
             </Link>{' '}
           </p>
         </div>
+
+        <Modal show={openTermsModal} onClose={() => setOpenTermsModal(false)}>
+          <Modal.Header>Terms of Service</Modal.Header>
+          <Modal.Body>
+            <div className="space-y-6">
+              <p className="text-base leading-relaxed text-gray-500 dark:text-gray-400">
+                With less than a month to go before the European Union enacts
+                new consumer privacy laws for its citizens, companies around the
+                world are updating their terms of service agreements to comply.
+              </p>
+              <p className="text-base leading-relaxed text-gray-500 dark:text-gray-400">
+                The European Union’s General Data Protection Regulation
+                (G.D.P.R.) goes into effect on May 25 and is meant to ensure a
+                common set of data rights in the European Union. It requires
+                organizations to notify users as soon as possible of high-risk
+                data breaches that could personally affect them.
+              </p>
+            </div>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button
+              id="submit"
+              color="blue"
+              type="submit"
+              isProcessing={processing}
+              onClick={submit}
+            >
+              I accept
+            </Button>
+            <Button
+              type="button"
+              color="gray"
+              onClick={() => setOpenTermsModal(false)}
+            >
+              Decline
+            </Button>
+          </Modal.Footer>
+        </Modal>
       </form>
     </GuestLayout>
   );

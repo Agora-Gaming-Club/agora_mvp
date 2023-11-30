@@ -274,39 +274,3 @@ class TestWager(InertiaTestCase):
         wager = Wager.objects.get(unique_code=wager.unique_code)
         self.assertNotEqual(wager.challenger_vote, wager.respondent_vote)
         self.assertEqual(wager.status, Wager.DISPUTED)
-
-    def test_challenges_pagination(self):
-        from rich import print
-
-        total_challenges = 5
-        for _ in range(total_challenges):
-            wager = get_wager(self.user_a, self.user_b)
-            wager.status = Wager.IN_PROGRESS
-            wager.save()
-        for _ in range(5):
-            wager = get_wager(self.user_b, self.user_a)
-            wager.status = Wager.IN_PROGRESS
-            wager.save()
-
-        self.client.login(username="user_a", password="password")
-        challenger_page = 1
-        challenger_amount = 2
-        respondent_page = 3
-        respondent_amount = 4
-        self.client.get(
-            "/challenges?chal_page={}&chal_amt={}&resp_page={}&resp_amt={}".format(
-                challenger_page,
-                challenger_amount,
-                respondent_page,
-                respondent_amount,
-            ),
-            content_type="application/json",
-        )
-        # verify all 5 results appear in the pagination total for challenger
-        self.assertEqual(total_challenges, self.props()["challenger"]["total_amount"])
-        # verify only 2 results appear for challenger
-        self.assertEqual(challenger_amount, len(self.props()["challenger"]["result"]))
-        # verify no results appear for respondent because page 3 of 2
-        self.assertEqual(0, len(self.props()["respondent"]["result"]))
-        # verify total amt of pages correct 4 per page, 5 total should be 2 pages
-        self.assertEqual(2, self.props()["respondent"]["total_pages"])

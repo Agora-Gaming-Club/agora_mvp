@@ -156,30 +156,9 @@ def challenge_winner(request, challenge_id):
 
 @inertia("Challenge/Index")
 def challenges(request):
-    """
-    Gets all of a users challenges, paginated
-    query_params:
-    chal_page: page of challenger query
-    chal_amt: amount per challenger page
-    resp_page: page of respondent query
-    resp_amt: amount per respondent page
-    """
-    chal_page = request.GET.get("chal_page")
-    chal_amt = request.GET.get("chal_amt")
-    resp_page = request.GET.get("resp_page")
-    resp_amt = request.GET.get("resp_amt")
     if request.user.is_authenticated:
-        challenges = Wager.objects.filter(challenger_id=request.user.id).order_by(
-            "created_at"
-        )
-        challenger = paginate(challenges, chal_page, chal_amt)
-        respondents = Wager.objects.filter(respondent_id=request.user.id).order_by(
-            "created_at"
-        )
-        respondent = paginate(respondents, resp_page, resp_amt)
-        props = {
-            "challenger": challenger,
-            "respondent": respondent,
-        }
+        challenges = Wager.objects.filter(challenger_id=request.user.id)
+        user = UserProfile.objects.get(user=request.user)
+        props = {"challenges": challenges, "user": user}
         return props
     return {}

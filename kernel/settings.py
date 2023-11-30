@@ -138,6 +138,7 @@ CSRF_COOKIE_NAME = "XSRF-TOKEN"
 # Where ViteJS assets are built.
 DJANGO_VITE_ASSETS_PATH = BASE_DIR / "react-app" / "dist"
 TAILWIND_CSS_ASSETS_PATH = BASE_DIR / "static" / "dist"
+IMAGE_ASSETS = BASE_DIR / "static" / "assets"
 
 # If we should use HMR or not.
 DJANGO_VITE_DEV_MODE = DEBUG
@@ -153,7 +154,7 @@ STATIC_ROOT = BASE_DIR / "static"
 
 # Include DJANGO_VITE_ASSETS_PATH into STATICFILES_DIRS to be copied inside
 # when run command python manage.py collectstatic
-STATICFILES_DIRS = [DJANGO_VITE_ASSETS_PATH, TAILWIND_CSS_ASSETS_PATH]
+STATICFILES_DIRS = [DJANGO_VITE_ASSETS_PATH, TAILWIND_CSS_ASSETS_PATH, IMAGE_ASSETS]
 
 
 # Sendgrid/Email config
