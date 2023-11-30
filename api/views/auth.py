@@ -101,7 +101,7 @@ def register(request):
 
 
 @ensure_csrf_cookie
-@inertia("Auth/PasswordChange")
+@inertia('Profile/ChangePassword')
 def password_change(request):
     if request.method == "POST":
         data = json.loads(request.body)
@@ -114,9 +114,12 @@ def password_change(request):
                 user.set_password(data["new_password"])
                 user.save()
                 login(request, user)
-                return JsonResponse({"message": "password changed"})
+                return {"message": "password changed"}
+
+            form.add_error('password', "Current Password is Incorrect")
         return {"errors": form.errors.get_json_data()}
 
-    form = PasswordChangeForm()
-    context = {"form": form}
-    return render(request, "registration/password_change.html", context)
+    user = UserProfile.objects.get(user=request.user)
+    return {
+        "user": user
+    }

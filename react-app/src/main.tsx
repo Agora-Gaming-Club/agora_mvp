@@ -1,6 +1,6 @@
 import { createRoot } from 'react-dom/client';
 import { createInertiaApp } from '@inertiajs/react';
-import { CustomFlowbiteTheme, Flowbite } from 'flowbite-react';
+import { CustomFlowbiteTheme } from 'flowbite-react';
 
 const customTheme: CustomFlowbiteTheme = {
   button: {
