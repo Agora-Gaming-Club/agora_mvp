@@ -104,7 +104,9 @@ const Create: FunctionComponent<Props> = ({ platforms, games }) => {
                   Select a Game
                 </option>
                 {games.map((game: any) => (
-                  <option key={game[0]}>{game[1]}</option>
+                  <option key={game[0]} value={game[0]}>
+                    {game[1]}
+                  </option>
                 ))}
               </Select>
             </div>
@@ -135,7 +137,9 @@ const Create: FunctionComponent<Props> = ({ platforms, games }) => {
                   Select a Platform
                 </option>
                 {platforms.map((platform: any) => (
-                  <option key={platform[0]}>{platform[1]}</option>
+                  <option key={platform[0]} value={platform[0]}>
+                    {platform[1]}
+                  </option>
                 ))}
               </Select>
             </div>

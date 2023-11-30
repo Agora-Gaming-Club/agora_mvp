@@ -5,6 +5,7 @@ TODO: ?
 """
 import json
 
+from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
 from django.views.decorators.csrf import ensure_csrf_cookie
@@ -38,13 +39,16 @@ def challenge(request):
                 game=game_obj,
             )
             wager.generate_unique_code()
+            print(wager.unique_code)
             # Probably want additional info about the challenge here
-            return {"unique_code": str(wager.unique_code)}
+            return HttpResponseRedirect(f"challenge/{wager.unique_code}")
         else:
+            print(form.errors.get_json_data())
             return {"errors": form.errors.get_json_data()}
     return {"user": user, "games": Game.GAMES, "platforms": Game.PLATFORM}
 
 
+@inertia('Challenge/Show')
 def challenge_status(request, challenge_id):
     # QUESTION: Figure out if anyone can go here or if only authenticated ppl
     challenge = get_object_or_404(Wager, unique_code=challenge_id)
@@ -61,6 +65,8 @@ def challenge_status(request, challenge_id):
 
     props = {
         "challenge": challenge,
+        "created_at": challenge.created_at,
+        "game": challenge.game.get_game_display(),
         "challenger": challenger,
         "user": current_user,
         "respondent": respondent,
