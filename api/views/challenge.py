@@ -4,8 +4,7 @@ Challenge related endpoints
 import json
 
 from django.http import HttpResponseRedirect
-from django.shortcuts import get_object_or_404, render
-from django.urls import reverse
+from django.shortcuts import get_object_or_404
 from django.views.decorators.csrf import ensure_csrf_cookie
 from inertia import inertia
 
@@ -30,10 +29,8 @@ def challenge(request):
     user = UserProfile.objects.get(user=request.user)
     if request.method == "POST":
         data = json.loads(request.body)
-        print(data)
         form = ChallengeForm(data, initial={"challenger_username": request.user})
         if form.is_valid():
-            """Create the challenge"""
             platform = data["platform"]
             game = data["game"]
             game_obj, _ = Game.objects.get_or_create(platform=platform, game=game)
@@ -44,11 +41,9 @@ def challenge(request):
                 game=game_obj,
             )
             wager.generate_unique_code()
-            print(wager.unique_code)
             # Probably want additional info about the challenge here
             return HttpResponseRedirect(f"challenge/{wager.unique_code}")
         else:
-            print(form.errors.get_json_data())
             return {"errors": form.errors.get_json_data()}
     return {"user": user, "games": Game.GAMES, "platforms": Game.PLATFORM}
 
@@ -84,7 +79,6 @@ def challenge_status(request, challenge_id):
 @ensure_csrf_cookie
 @inertia("Challenge/Search")
 def challenge_search(request):
-    user = UserProfile.objects.get(user=request.user)
     if request.method == "POST":
         data = json.loads(request.body)
         form = ChallengeSearchForm(data)
@@ -98,10 +92,9 @@ def challenge_search(request):
             else:
                 form.add_error("unique_code", "challenge does not exist")
         return {"errors": form.errors.get_json_data()}
+    user = UserProfile.objects.get(user=request.user)
     form = ChallengeSearchForm()
-    return {
-        "user": user
-    }
+    return {"user": user}
 
 
 @ensure_csrf_cookie

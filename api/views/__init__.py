@@ -3,6 +3,8 @@ from .auth import (
     log_out,
     password_change,
     register,
+    forgot_password,
+    password_reset,
 )
 from .general import landing, dashboard
 from .challenge import (
@@ -23,6 +25,8 @@ _ = [  # This does nothing, but silence a pep8 error
     log_in,
     log_out,
     password_change,
+    forgot_password,
+    password_reset,
     register,
     challenge,
     challenge_accept,

@@ -51,6 +51,12 @@ class WelcomeEmail(Email):
         self.subject = "Welcome"
 
 
+class PasswordResetEmail(Email):
+    def __init__(self, context, target):
+        super().__init__("password_reset", context, target)
+        self.subject = "Password Reset"
+
+
 # class VerificationEmail(Email):
 #     def __init__(self, context, target):
 #         super().__init__("verification", context, target)

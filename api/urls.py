@@ -30,4 +30,10 @@ urlpatterns = [
     path("accounts/login", views.log_in, name="log_in"),
     path("accounts/logout", views.log_out, name="log_out"),
     path("accounts/password_change", views.password_change, name="password_change"),
+    path("accounts/forgot_password", views.forgot_password, name="forgot_password"),
+    path(
+        "accounts/password_reset/<reset_password_id>",
+        views.password_reset,
+        name="password_reset",
+    ),
 ]

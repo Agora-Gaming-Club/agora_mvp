@@ -174,5 +174,6 @@ EMAIL_TEST_MODE = False
 
 
 CRONJOBS = [
-    ("*/1 * * * *", "api.cron.my_cron_job"),
+    ("*/10 * * * *", "api.cron.challenge_creation_expired"),
+    ("*/10 * * * *", "api.cron.password_change_expired"),
 ]

@@ -1,12 +1,11 @@
-import json
-
 from inertia.test import InertiaTestCase
 
 from django.conf import settings
 from django.contrib.auth.models import User
-from django.contrib.auth import logout, login, authenticate
+from django.contrib.auth import authenticate
 
 from api.models import UserProfile
+from tests.utils import make_user
 
 settings.EMAIL_TEST_MODE = True
 
@@ -20,11 +19,19 @@ class TestAuth(InertiaTestCase):
             password="password",
         )
 
-    # def test_share(self):
-    #     self.client.get("/accounts/register")
-    #     print(self.component())
-    #     print(self.props())
-    #     # self.assertComponentUsed("Auth/Register")
+    def base_register_data(self):
+        return {
+            "username": "ScarletWitch",
+            "email": "wanda@avengers.net",
+            "password": "magneto",
+            "password_confirm": "magneto",
+            "first_name": "Wanda",
+            "last_name": "Maximoff",
+            "birthday": "1989-02-10",
+            "phone_number": "5201234567",
+            "state": "CA",
+            "acct_verified": False,
+        }
 
     # Login
     def test_change_password(self):
@@ -150,20 +157,6 @@ class TestAuth(InertiaTestCase):
 
     # Register
 
-    def base_register_data(self):
-        return {
-            "username": "ScarletWitch",
-            "email": "wanda@avengers.net",
-            "password": "magneto",
-            "password_confirm": "magneto",
-            "first_name": "Wanda",
-            "last_name": "Maximoff",
-            "birthday": "1989-02-10",
-            "phone_number": "5201234567",
-            "state": "CA",
-            "acct_verified": False,
-        }
-
     def test_register_success(self):
         base_data = self.base_register_data()
         response = self.client.post(
@@ -245,3 +238,64 @@ class TestAuth(InertiaTestCase):
         )
         self.assertIn("username", self.props().get("errors", []))
         self.assertIn("email", self.props().get("errors", []))
+
+    # Password Reset
+    def test_forgot_password_happy(self):
+        user = make_user("antman", "hankpym@avengers.net", "wasp")
+        response = self.client.post(
+            "/accounts/forgot_password",
+            {"email": "hankpym@avengers.net"},
+            content_type="application/json",
+        )
+        self.assertIn("message", self.props())
+
+        # # Pretend that i got the email and clicked the link
+        user = UserProfile.objects.get(email="hankpym@avengers.net")
+        reset_password_id = user.reset_password_id
+
+        response = self.client.post(
+            f"/accounts/password_reset/{reset_password_id}",
+            {
+                "password": "asfafsa",
+                "password_confirm": "asfafsa",
+            },
+            content_type="application/json",
+        )
+        self.assertEqual(self.props(), {"message": "password changed"})
+
+    def test_forgot_password_email_doesnt_exist(self):
+        user = make_user("antman", "hankpym@avengers.net", "wasp")
+        response = self.client.post(
+            "/accounts/forgot_password",
+            {"email": "hankpym@avengers.net"},
+            content_type="application/json",
+        )
+        # Should return as if all was good, but no email to use.
+        self.assertIn("message", self.props())
+
+    def test_forgot_password_invalid_link(self):
+        reset_password_id = "alfaldgsg"
+        response = self.client.post(
+            f"/accounts/password_reset/{reset_password_id}",
+            {
+                "password": "asfafsa",
+                "password_confirm": "asfafsa",
+            },
+            content_type="application/json",
+        )
+        # return generic link expired error if its invalid
+        self.assertEqual({"error": "link expired"}, self.props())
+
+    def test_forgot_password_email_expired(self):
+        user = make_user("antman", "hankpym@avengers.net", "wasp")
+        reset_password_id = "8458e01d-3bee-4847-aaa9-bc1b1801269d"
+        response = self.client.post(
+            f"/accounts/password_reset/{reset_password_id}",
+            {
+                "password": "test_forgot_password_email_expired",
+                "password_confirm": "test_forgot_password_email_expired",
+            },
+            content_type="application/json",
+        )
+        # user doenst have reset_password_id so it will seem expired
+        self.assertEqual({"error": "link expired"}, self.props())

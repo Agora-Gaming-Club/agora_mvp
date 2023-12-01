@@ -1,4 +1,3 @@
-from django.test import TestCase
 from inertia.test import InertiaTestCase
 
 from api.models import Game, Wager
@@ -26,7 +25,7 @@ class TestWager(InertiaTestCase):
             {"unique_code": unique_code},
             content_type="application/json",
         )
-        # TODO ACTUAL TESTS FOR THIS
+        self.assertEqual(response.status_code, 302)
 
     def test_wager_unique_id(self):
         """Verifying a uniqueID was created"""
@@ -42,7 +41,7 @@ class TestWager(InertiaTestCase):
             },
             content_type="application/json",
         )
-        self.assertIn("unique_code", self.props())
+        self.assertEqual(response.status_code, 302)
 
     def test_wager_accept(self):
         """Regular Accept Flow"""
@@ -57,8 +56,8 @@ class TestWager(InertiaTestCase):
             },
             content_type="application/json",
         )
-        unique_code = self.props()["unique_code"]
-        wager = Wager.objects.get(unique_code=unique_code)
+        wager = Wager.objects.get(challenger_id=self.user_a.user.id)
+        unique_code = wager.unique_code
         self.assertEqual(wager.status, Wager.AWAITING_RESPONSE)
 
         self.client.login(username="user_b", password="password")
@@ -86,8 +85,8 @@ class TestWager(InertiaTestCase):
             },
             content_type="application/json",
         )
-        unique_code = self.props()["unique_code"]
-        wager = Wager.objects.get(unique_code=unique_code)
+        wager = Wager.objects.get(challenger_id=self.user_a.user.id)
+        unique_code = wager.unique_code
         self.assertEqual(wager.status, Wager.AWAITING_RESPONSE)
 
         self.client.login(username="user_a", password="password")
@@ -116,8 +115,8 @@ class TestWager(InertiaTestCase):
             },
             content_type="application/json",
         )
-        unique_code = self.props()["unique_code"]
-        wager = Wager.objects.get(unique_code=unique_code)
+        wager = Wager.objects.get(challenger_id=self.user_a.user.id)
+        unique_code = wager.unique_code
         self.assertEqual(wager.status, Wager.AWAITING_RESPONSE)
 
         self.client.login(username="user_b", password="password")
@@ -144,8 +143,8 @@ class TestWager(InertiaTestCase):
             },
             content_type="application/json",
         )
-        unique_code = self.props()["unique_code"]
-        wager = Wager.objects.get(unique_code=unique_code)
+        wager = Wager.objects.get(challenger_id=self.user_a.user.id)
+        unique_code = wager.unique_code
         self.assertEqual(wager.status, Wager.AWAITING_RESPONSE)
 
         # log in as other user and accept challenge
