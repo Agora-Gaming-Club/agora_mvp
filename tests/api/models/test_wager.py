@@ -38,6 +38,7 @@ class TestWager(InertiaTestCase):
                 "amount": "25.00",
                 "platform": "xbox",
                 "game": "rocket_league",
+                "challenger_gamer_tag": "XxXx_SUPERCOOL_xXxX",
             },
             content_type="application/json",
         )
@@ -53,6 +54,7 @@ class TestWager(InertiaTestCase):
                 "amount": "25.00",
                 "platform": "xbox",
                 "game": "rocket_league",
+                "challenger_gamer_tag": "XxXx_SUPERCOOL_xXxX",
             },
             content_type="application/json",
         )
@@ -66,7 +68,7 @@ class TestWager(InertiaTestCase):
             f"/challenge/accept/{unique_code}",
             {
                 "accept": True,
-                "gamer_tag": "omgitsnotwanda",
+                "respondent_gamer_tag": "omgitsnotwanda",
             },
             content_type="application/json",
         )
@@ -83,6 +85,7 @@ class TestWager(InertiaTestCase):
                 "amount": "25.00",
                 "platform": "xbox",
                 "game": "rocket_league",
+                "challenger_gamer_tag": "XxXx_SUPERCOOL_xXxX",
             },
             content_type="application/json",
         )
@@ -95,7 +98,7 @@ class TestWager(InertiaTestCase):
             f"/challenge/accept/{unique_code}",
             {
                 "accept": True,
-                "gamer_tag": "omgitswanda",
+                "respondent_gamer_tag": "XxXx_SUPERCOOL_xXxX",
             },
             content_type="application/json",
         )
@@ -113,6 +116,7 @@ class TestWager(InertiaTestCase):
                 "amount": "25.00",
                 "platform": "xbox",
                 "game": "rocket_league",
+                "challenger_gamer_tag": "XxXx_SUPERCOOL_xXxX",
             },
             content_type="application/json",
         )
@@ -128,7 +132,7 @@ class TestWager(InertiaTestCase):
             },
             content_type="application/json",
         )
-        self.assertIn("gamer_tag", self.props().get("errors", []))
+        self.assertIn("respondent_gamer_tag", self.props().get("errors", []))
 
     def test_wager_accept_payment(self):
         """Regular Accept Flow but with payment"""
@@ -141,6 +145,7 @@ class TestWager(InertiaTestCase):
                 "amount": "25.00",
                 "platform": "xbox",
                 "game": "rocket_league",
+                "challenger_gamer_tag": "XxXx_SUPERCOOL_xXxX",
             },
             content_type="application/json",
         )
@@ -154,7 +159,7 @@ class TestWager(InertiaTestCase):
             f"/challenge/accept/{unique_code}",
             {
                 "accept": True,
-                "gamer_tag": "omgitsnotwanda",
+                "respondent_gamer_tag": "omgitsnotwanda",
             },
             content_type="application/json",
         )

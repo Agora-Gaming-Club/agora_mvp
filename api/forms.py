@@ -12,11 +12,11 @@ from kernel.agora_settings import FORBIDDEN_STATES, LEGAL_GAMBLING_AGE
 
 class AcceptForm(forms.Form):
     accept = forms.BooleanField()
-    gamer_tag = forms.CharField(max_length=30)
+    respondent_gamer_tag = forms.CharField(max_length=30)
 
     def is_valid(self):
         valid = super(AcceptForm, self).is_valid()
-        valid_gamertag = self.data.get("gamer_tag") is not None
+        valid_gamertag = self.data.get("respondent_gamer_tag") is not None
         validation = [valid, valid_gamertag]
         return all(validation)
 
@@ -28,7 +28,8 @@ class ChallengeForm(forms.Form):
 
     challenger_username = forms.CharField(max_length=30, disabled=True)
     respondent_username = forms.CharField(max_length=30, required=False)
-    gamer_tag = forms.CharField(max_length=30, required=False)
+    challenger_gamer_tag = forms.CharField(max_length=30, required=False)
+    respondent_gamer_tag = forms.CharField(max_length=30, required=False)
     game = forms.ChoiceField(choices=Game.GAMES)
     platform = forms.ChoiceField(choices=Game.PLATFORM)
     notes = forms.CharField(max_length=200, required=False)

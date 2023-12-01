@@ -1,6 +1,7 @@
 from inertia import inertia
 
 from api.models import UserProfile, Wager
+from api.serializers import serialize_objs
 from api.utils import paginate
 
 
@@ -35,7 +36,6 @@ def dashboard(request):
         ).order_by(
             "created_at"
         )
-        active = paginate(active_challenges, active_page, active_amt)
 
         old_challenges = Wager.objects.filter(
             challenger_id=request.user.id, status__in=Wager.INACTIVE_STATUS
@@ -44,8 +44,14 @@ def dashboard(request):
         ).order_by(
             "created_at"
         )
-        old = paginate(old_challenges, old_page, old_amt)
+
         # TODO:  make a serializer for the challenges
+        active_challenges = serialize_objs(active_challenges)
+        active = paginate(active_challenges, active_page, active_amt)
+
+        old_challenges = serialize_objs(old_challenges)
+        old = paginate(old_challenges, old_page, old_amt)
+
         props = {
             "user": user,
             "active": active,

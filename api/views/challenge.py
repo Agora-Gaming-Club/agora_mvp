@@ -36,6 +36,7 @@ def challenge(request):
             game_obj, _ = Game.objects.get_or_create(platform=platform, game=game)
             wager = Wager.objects.create(
                 challenger_id=request.user.id,
+                challenger_gamer_tag=data["challenger_gamer_tag"],
                 amount=data["amount"],
                 game=game_obj,
             )
@@ -106,8 +107,8 @@ def challenge_accept(request, challenge_id):
         if respondent == challenger:
             form.add_error("accept", "Cannot accept your own challenge")
             return {"errors": form.errors.get_json_data()}
-        gamer_tag = data["gamer_tag"]
-        challenge.accept(respondent, gamer_tag)
+        respondent_gamer_tag = data["respondent_gamer_tag"]
+        challenge.accept(respondent, respondent_gamer_tag)
         props = {
             "respondent": respondent,
             "challenger": challenger,

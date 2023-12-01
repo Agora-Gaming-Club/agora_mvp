@@ -67,6 +67,7 @@ class TestCron(InertiaTestCase):
                 "amount": "25.00",
                 "platform": "xbox",
                 "game": "rocket_league",
+                "challenger_gamer_tag": "XxXx_SUPERCOOL_xXxX",
             },
             content_type="application/json",
         )
