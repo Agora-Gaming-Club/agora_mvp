@@ -9,8 +9,7 @@ import uuid
 
 from django.contrib.auth.models import User
 from django.contrib.auth import logout, login, authenticate
-from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
-from django.shortcuts import render, get_object_or_404
+from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.views.decorators.csrf import ensure_csrf_cookie
 from inertia import inertia

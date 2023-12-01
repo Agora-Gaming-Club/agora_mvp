@@ -1,4 +1,3 @@
-from django.test import TestCase
 from inertia.test import InertiaTestCase
 
 from api.models import Game, Wager

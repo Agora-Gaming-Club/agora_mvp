@@ -1,10 +1,8 @@
-import json
-
 from inertia.test import InertiaTestCase
 
 from django.conf import settings
 from django.contrib.auth.models import User
-from django.contrib.auth import logout, login, authenticate
+from django.contrib.auth import authenticate
 
 from api.models import UserProfile
 from tests.utils import make_user
