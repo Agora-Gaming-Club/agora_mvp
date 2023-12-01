@@ -34,7 +34,6 @@ class TestCron(InertiaTestCase):
         )
         self.assertIn("message", self.props())
 
-        # # Pretend that i got the email and clicked the link
         user = UserProfile.objects.get(email="hankpym@avengers.net")
         reset_password_id = user.reset_password_id
 
@@ -45,7 +44,7 @@ class TestCron(InertiaTestCase):
         user.save()
 
         password_change_expired()
-
+        # Pretend that i got the email and clicked the link
         response = self.client.post(
             f"/accounts/password_reset/{reset_password_id}",
             {
