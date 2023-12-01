@@ -1,8 +1,7 @@
-import { FunctionComponent, useMemo, useState } from 'react';
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import * as React from 'react';
-import { Head } from '@inertiajs/react';
-import { Button, Card, TextInput } from 'flowbite-react';
+import { FunctionComponent, useState } from 'react';
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import { Card } from 'flowbite-react';
 import { ClipboardIcon } from '@heroicons/react/24/solid';
 import { useCopyToClipboard } from '@/Hooks/useCopyToClipboard';
 import { formatUniqueCode } from '@/Utils/string';

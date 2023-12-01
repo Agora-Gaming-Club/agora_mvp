@@ -1,9 +1,9 @@
+import * as React from 'react';
 import { FunctionComponent, PropsWithChildren } from 'react';
 
-import { Avatar, Dropdown, Navbar } from 'flowbite-react';
-import { Head, Link, useForm, usePage } from '@inertiajs/react';
+import { Dropdown, Navbar } from 'flowbite-react';
+import { Head, Link, useForm } from '@inertiajs/react';
 import Logo from '@/Components/Logo';
-import * as React from 'react';
 import { HomeIcon, TrophyIcon } from '@heroicons/react/24/outline';
 
 type Props = {
@@ -78,10 +78,15 @@ const AuthenticatedLayout: FunctionComponent<PropsWithChildren<Props>> = ({
                 {user.email}
               </span>
             </Dropdown.Header>
-            {/*<Dropdown.Item>Dashboard</Dropdown.Item>*/}
-            {/*<Dropdown.Item>Settings</Dropdown.Item>*/}
-            {/*<Dropdown.Item>Earnings</Dropdown.Item>*/}
-            {/*<Dropdown.Divider />*/}
+            {/*@ts-ignore*/}
+            <Dropdown.Item href="/accounts/profile/edit" as={Link}>
+              View Profile
+            </Dropdown.Item>
+            {/*@ts-ignore*/}
+            <Dropdown.Item href="/accounts/password_change" as={Link}>
+              Update Password
+            </Dropdown.Item>
+            <Dropdown.Divider />
             <Dropdown.Item onClick={handleLogout}>Sign out</Dropdown.Item>
           </Dropdown>
         </div>

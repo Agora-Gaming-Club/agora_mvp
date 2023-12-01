@@ -43,7 +43,9 @@ class ChallengeForm(forms.Form):
 
     def is_valid(self):
         valid = super(ChallengeForm, self).is_valid()
-        validation = [valid]
+        validation = [
+            valid,
+        ]
         # validate dollar amount is ok?
         return all(validation)
 
@@ -53,12 +55,28 @@ class ChallengeSearchForm(forms.Form):
 
 
 class PasswordForgotForm(forms.Form):
-    password = forms.CharField(max_length=40, widget=forms.PasswordInput())
-    password_confirm = forms.CharField(max_length=40, widget=forms.PasswordInput())
+    email = forms.EmailField()
+
+    def is_valid(self):
+        valid = super(PasswordForgotForm, self).is_valid()
+        validation = [valid]
+        return all(validation)
 
 
 class PasswordResetForm(forms.Form):
-    email = forms.EmailField()
+    password = forms.CharField(max_length=40, widget=forms.PasswordInput())
+    password_confirm = forms.CharField(max_length=40, widget=forms.PasswordInput())
+
+    def is_valid(self):
+        valid = super(PasswordResetForm, self).is_valid()
+        passwords_match = self.data.get("password") == self.data.get("password_confirm")
+        if not passwords_match:
+            self.add_error("password", "passwords dont match")
+        validation = [
+            valid,
+            passwords_match,
+        ]
+        return all(validation)
 
 
 class RegisterForm(forms.Form):

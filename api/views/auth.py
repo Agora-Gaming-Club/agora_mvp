@@ -3,13 +3,14 @@ Auth related endpooints
 
 TODO: Verify that @ensure_csrf_cookie is required (not 100% sure)
 """
+import datetime
 import json
 import uuid
 
 from django.contrib.auth.models import User
 from django.contrib.auth import logout, login, authenticate
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
 from django.views.decorators.csrf import ensure_csrf_cookie
 from inertia import inertia
@@ -107,7 +108,7 @@ def register(request):
 
 
 @ensure_csrf_cookie
-@inertia("Auth/PasswordChange")
+@inertia("Profile/ChangePassword")
 def password_change(request):
     if request.method == "POST":
         data = json.loads(request.body)
@@ -120,12 +121,13 @@ def password_change(request):
                 user.set_password(data["new_password"])
                 user.save()
                 login(request, user)
-                return JsonResponse({"message": "password changed"})
+                return {"message": "password changed"}
+
+            form.add_error("password", "Current Password is Incorrect")
         return {"errors": form.errors.get_json_data()}
 
-    form = PasswordChangeForm()
-    context = {"form": form}
-    return render(request, "registration/password_change.html", context)
+    user = UserProfile.objects.get(user=request.user)
+    return {"user": user}
 
 
 @ensure_csrf_cookie
@@ -133,12 +135,15 @@ def password_change(request):
 def forgot_password(request):
     if request.method == "POST":
         data = json.loads(request.body)
-        form = PasswordResetForm(data)
+        form = PasswordForgotForm(data)
         if form.is_valid():
             email = data["email"]
             user_profile = UserProfile.objects.filter(email=email)
             if user_profile:
                 profile = user_profile.first()
+                profile.reset_password_time = datetime.datetime.now(
+                    datetime.timezone.utc
+                )
                 username = profile.username
                 profile.reset_password()
                 email = PasswordResetEmail(
@@ -146,19 +151,30 @@ def forgot_password(request):
                     target=profile.email,
                 )
                 email.send()
-            return {"message": "email successfully sent"}
+            return {"message": "email sent"}
     return {}
 
 
 @ensure_csrf_cookie
 @inertia("Auth/ForgotPassword")
-def password_reset(request):
+def password_reset(request, reset_password_id):
     if request.method == "POST":
-        print(request.content_params)
-        print(dir(request))
         data = json.loads(request.body)
-        password = 1
-        password_confirm = 1
-        print(data)
-        print("!")
-        return {}
+        form = PasswordResetForm(data)
+        if form.is_valid():
+            password = data.get("password")
+            user_profile = UserProfile.objects.filter(
+                reset_password_id=reset_password_id
+            )
+            if user_profile:
+                profile = user_profile.first()
+            else:
+                return {"error": "link expired"}
+            user = profile.user
+            user.set_password(password)
+            profile.reset_password_id = None
+            user.save()
+            logout(request)
+            return {"message": "password changed"}
+        return {"errors": form.errors.get_json_data()}
+    return {}

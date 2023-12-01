@@ -1,9 +1,8 @@
+import * as React from 'react';
 import { FunctionComponent } from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Button, Card } from 'flowbite-react';
-import { Head, Link } from '@inertiajs/react';
-import * as React from 'react';
-import CountUp from 'react-countup';
+import { Link } from '@inertiajs/react';
 
 type Props = {
   user: UserProfile;

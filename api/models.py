@@ -33,6 +33,7 @@ class UserProfile(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     reset_password_id = models.CharField(max_length=36, null=True, blank=True)
+    reset_password_time = models.DateTimeField(null=True, blank=True)
     verification_id = models.CharField(default=uuid.uuid4, max_length=36, blank=False)
     acct_verified = models.BooleanField(default=False, null=False)
 
