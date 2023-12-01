@@ -22,7 +22,6 @@ def challenge_creation_expired():
             challenge.save()
 
 
-# TODO: add one here to make sure if its expired
 def challenge_in_progress_expired():
     challenges = Wager.objects.filter(status=Wager.IN_PROGRESS)
     now = datetime.now(timezone.utc)
