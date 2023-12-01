@@ -48,6 +48,9 @@ class UserProfile(models.Model):
         self.reset_password_id = uuid.uuid4()
         self.save()
 
+    def natural_key(self):
+        return self.get_user_display()
+
 
 class Wager(models.Model):
     ACCEPTED = "accepted"  # respondent has accepted the challenge
@@ -88,7 +91,8 @@ class Wager(models.Model):
     unique_code = models.CharField(
         default=generate_unique_code, max_length=40, blank=True
     )
-    gamer_tag = models.CharField(max_length=40, blank=True, null=True)
+    challenger_gamer_tag = models.CharField(max_length=40, blank=True, null=True)
+    respondent_gamer_tag = models.CharField(max_length=40, blank=True, null=True)
     # rename to challenger_gamer_tag and add resepondent_gamer_tag
     status = models.CharField(
         max_length=30, choices=WAGER_STATUS, default=AWAITING_RESPONSE
@@ -231,6 +235,9 @@ class Game(models.Model):
 
     def __repr__(self):
         return self.__str__()
+
+    def natural_key(self):
+        return f"{self.get_game_display()} for {self.get_platform_display()}"
 
 
 ## You should select the game first, then the platform and the terms.

@@ -33,8 +33,8 @@ def get_wager(user_a, user_b):
         amount=25.00,
         game=game,
         notes="lolnotes",
-        gamer_tag="SuperCoolGuyGamerTag",
         status=Wager.IN_PROGRESS,
+        challenger_gamer_tag="COOL_GUY_SN",
+        respondent_gamer_tag="COOLER_GUY_SN",
     )
-    # wager.generate_unique_code()
     return wager
