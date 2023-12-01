@@ -34,13 +34,12 @@ def challenge(request):
             platform = data["platform"]
             game = data["game"]
             game_obj, _ = Game.objects.get_or_create(platform=platform, game=game)
-            wager = Wager(
+            wager = Wager.objects.create(
                 challenger_id=request.user.id,
                 amount=data["amount"],
-                unique_code="new",
                 game=game_obj,
             )
-            wager.generate_unique_code()
+            # wager.generate_unique_code()
             # Probably want additional info about the challenge here
             return HttpResponseRedirect(f"challenge/{wager.unique_code}")
         else:
@@ -164,12 +163,12 @@ def challenge_winner(request, challenge_id):
         if user_id == challenge.challenger_id:
             challenge.challenger_vote = data["winner"]
             challenge.save()
-
         elif user_id == challenge.respondent_id:
             challenge.respondent_vote = data["winner"]
             challenge.save()
         else:
             return {"message": "You didnt participate"}
+
         if challenge.both_voted():
             if challenge.disputed():
                 challenge.status = Wager.DISPUTED
@@ -178,6 +177,7 @@ def challenge_winner(request, challenge_id):
             else:
                 challenge.status = Wager.COMPLETED
                 challenge.save()
+                challenge.determine_winner()
         return {"vote": f"You voted for {data['winner']}"}
 
     return {"errors": form.errors.get_json_data()}

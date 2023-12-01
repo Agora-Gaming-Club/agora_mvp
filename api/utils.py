@@ -1,3 +1,5 @@
+import random
+import string
 from django.core.paginator import Paginator, EmptyPage
 from django.core.validators import validate_email
 
@@ -92,3 +94,18 @@ def paginate(queryset, page, amt):
         "total_pages": paginator.num_pages,
         "total_amount": paginator.count,
     }
+
+
+def generate_unique_code():
+    """
+    Code should be 12 characters long
+    should be formatted like: 1234567890AB
+    will be used as url slug
+    """
+
+    def random_char():
+        return random.choice(string.ascii_letters)
+
+    pieces = [random_char() for x in range(12)]
+    code = "".join(pieces)
+    return code

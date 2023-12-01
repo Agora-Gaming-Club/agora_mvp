@@ -1,12 +1,13 @@
-import datetime
+from datetime import datetime, timedelta, timezone
 import random
 import string
 import uuid
 
-from datetime import datetime
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils.text import slugify
+
+from api.utils import generate_unique_code
 
 
 # Create your models here.
@@ -49,18 +50,14 @@ class UserProfile(models.Model):
 
 
 class Wager(models.Model):
-    CHALLENGER_WINS = "challenger_wins"
-    RESPONDENT_WINS = "respondent_wins"
-    ACCEPTED = "accepted"
-    IN_PROGRESS = "in_progress"
-    AWAITING_RESPONSE = "awaiting_response"
-    COMPLETED = "completed"
-    DISPUTED = "disputed"
-    EXPIRED = "expired"
+    ACCEPTED = "accepted"  # respondent has accepted the challenge
+    IN_PROGRESS = "in_progress"  # payment recieved
+    AWAITING_RESPONSE = "awaiting_response"  # just created (default)
+    COMPLETED = "completed"  # completed
+    DISPUTED = "disputed"  # disputed
+    EXPIRED = "expired"  # expired
 
     WAGER_STATUS = [
-        (CHALLENGER_WINS, "Challenger Wins"),
-        (RESPONDENT_WINS, "Respondent Wins"),
         (ACCEPTED, "Accepted"),
         (IN_PROGRESS, "In Progress"),
         (AWAITING_RESPONSE, "Awaiting Response"),
@@ -77,8 +74,6 @@ class Wager(models.Model):
     ]
 
     INACTIVE_STATUS = [
-        CHALLENGER_WINS,
-        RESPONDENT_WINS,
         COMPLETED,
         EXPIRED,
     ]
@@ -90,10 +85,17 @@ class Wager(models.Model):
     game = models.ForeignKey("Game", on_delete=models.CASCADE, blank=True)
     # terms = models.ForeignKey("Terms", on_delete=models.CASCADE, blank=True)
     notes = models.CharField(max_length=200, blank=True, null=True)
-    unique_code = models.CharField(max_length=40, blank=True)  # make this unique
+    unique_code = models.CharField(
+        default=generate_unique_code, max_length=40, blank=True
+    )
     gamer_tag = models.CharField(max_length=40, blank=True, null=True)
+    # rename to challenger_gamer_tag and add resepondent_gamer_tag
     status = models.CharField(
         max_length=30, choices=WAGER_STATUS, default=AWAITING_RESPONSE
+    )
+    in_progress_time = models.DateTimeField(null=True, blank=True)
+    winner = models.ForeignKey(
+        "UserProfile", on_delete=models.CASCADE, null=True, blank=True
     )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -108,21 +110,6 @@ class Wager(models.Model):
 
     def __repr__(self):
         return self.__str__()
-
-    def generate_unique_code(self):
-        """
-        Code should be 12 characters long
-        should be formatted like: 1234567890AB
-        will be used as url slug
-        """
-
-        def random_char():
-            return random.choice(string.ascii_letters)
-
-        pieces = [random_char() for x in range(12)]
-        code = "".join(pieces)
-        self.unique_code = code
-        self.save()
 
     def get_winner_choices(self):
         choice_a = self.challenger_id, User.objects.get(id=self.challenger_id)
@@ -145,7 +132,7 @@ class Wager(models.Model):
 
         Unsure if all challenges can expire at the same age, or if its per challenge
         """
-        one_day = datetime.timedelta(days=1)
+        one_day = timedelta(days=1)
         now = datetime.now()
         if self.created_at + one_day > now:
             if self.status == self.AWAITING_RESPONSE:
@@ -165,21 +152,38 @@ class Wager(models.Model):
         payments = Payment.objects.filter(user__id__in=challengers)
         if len(payments) == 2:
             self.status = Wager.IN_PROGRESS
+            self.in_progress_time = datetime.now(timezone.utc)
             self.save()
 
     def award_payment(self):
+        pass
+
+    def determine_winner(self):
+        challenger_vote = None
+        respondent_vote = None
+        if self.winner:
+            return self.winner
+
+        if self.challenger_vote:
+            challenger_vote = UserProfile.objects.get(id=self.challenger_vote)
+        if self.respondent_vote:
+            respondent_vote = UserProfile.objects.get(id=self.respondent_vote)
+
         # 1: Both people select the same person.
-        if self.challenger_vote == self.respondent_vote:
-            print("""Send it to the vote, minus the rake""")
+        if challenger_vote == respondent_vote:
+            self.winner = challenger_vote
         # 2: Only one votes.
-        elif self.challenger_vote and not self.respondent_vote:
-            print("""send it to the vote, minus the rake""")
+        elif challenger_vote and not respondent_vote:
+            self.winner = challenger_vote
         # 3: Only one votes.
-        elif not self.respondent_vote and self.challenger_vote:
-            print("""send it to the vote, minus the rake""")
+        elif not challenger_vote and respondent_vote:
+            self.winner = respondent_vote
         # 4: No one votes.
-        elif not self.respondent_vote and not self.challenger_vote:
-            print("""refund all, minus the rake""")
+        elif not respondent_vote and not challenger_vote:
+            self.winner = None
+
+        self.save()
+        return self.winner
 
 
 class Payment(models.Model):

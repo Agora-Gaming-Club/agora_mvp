@@ -3,7 +3,7 @@ Auth related endpooints
 
 TODO: Verify that @ensure_csrf_cookie is required (not 100% sure)
 """
-import datetime
+from datetime import datetime, timezone
 import json
 import uuid
 
@@ -140,9 +140,7 @@ def forgot_password(request):
             user_profile = UserProfile.objects.filter(email=email)
             if user_profile:
                 profile = user_profile.first()
-                profile.reset_password_time = datetime.datetime.now(
-                    datetime.timezone.utc
-                )
+                profile.reset_password_time = datetime.now(timezone.utc)
                 username = profile.username
                 profile.reset_password()
                 email = PasswordResetEmail(
