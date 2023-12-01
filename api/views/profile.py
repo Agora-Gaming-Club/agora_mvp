@@ -43,6 +43,4 @@ def profile_edit(request):
         serialized_dict = json.loads(serialized)[0]
         form = ProfileForm(initial=serialized_dict["fields"])
         context = {"form": form}
-        return {
-            "user": profile
-        }
+        return {"user": profile}

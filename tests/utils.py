@@ -36,5 +36,5 @@ def get_wager(user_a, user_b):
         gamer_tag="SuperCoolGuyGamerTag",
         status=Wager.IN_PROGRESS,
     )
-    wager.generate_unique_code()
+    # wager.generate_unique_code()
     return wager

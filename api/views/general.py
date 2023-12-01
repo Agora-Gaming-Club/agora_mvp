@@ -45,7 +45,7 @@ def dashboard(request):
             "created_at"
         )
         old = paginate(old_challenges, old_page, old_amt)
-
+        # TODO:  make a serializer for the challenges
         props = {
             "user": user,
             "active": active,

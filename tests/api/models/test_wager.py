@@ -56,6 +56,7 @@ class TestWager(InertiaTestCase):
             },
             content_type="application/json",
         )
+
         wager = Wager.objects.get(challenger_id=self.user_a.user.id)
         unique_code = wager.unique_code
         self.assertEqual(wager.status, Wager.AWAITING_RESPONSE)
@@ -259,6 +260,7 @@ class TestWager(InertiaTestCase):
         wager = Wager.objects.get(unique_code=wager.unique_code)
         self.assertEqual(wager.challenger_vote, wager.respondent_vote)
         self.assertEqual(wager.status, Wager.COMPLETED)
+        self.assertEqual(self.user_a, wager.winner)
 
     def test_selecting_disputed_winner(self):
         wager = get_wager(self.user_a, self.user_b)
