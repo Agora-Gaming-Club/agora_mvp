@@ -2,7 +2,11 @@ import * as React from 'react';
 import { FormEventHandler, FunctionComponent, useMemo, useState } from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Button, Card, Label, TextInput } from 'flowbite-react';
-import { BanknotesIcon, ClipboardIcon } from '@heroicons/react/24/solid';
+import {
+  ArrowUpOnSquareIcon,
+  BanknotesIcon,
+  ClipboardIcon,
+} from '@heroicons/react/24/solid';
 import { useCopyToClipboard } from '@/Hooks/useCopyToClipboard';
 import { formatUniqueCode } from '@/Utils/string';
 import { currencyFormatter } from '@/Utils/money';
@@ -10,6 +14,7 @@ import { UserProfile, Wager, WagerStatus } from '@/schema';
 import { useForm, usePage } from '@inertiajs/react';
 import Cookies from 'js-cookie';
 import { TransformedErrors, transformErrors } from '@/Utils/form';
+import { ArrowUpTrayIcon, ShareIcon } from '@heroicons/react/24/outline';
 
 type Props = {
   challenge: Wager;
@@ -111,6 +116,9 @@ const ChallengeDetail: FunctionComponent<{
           {new Date(challenge.created_at).toLocaleDateString()}
         </h1>
 
+        <p className="text-gray-400 text-xs">
+          Copy and share your challenge URL below:
+        </p>
         <div className="flex items-center justify-center">
           <div className="rounded w-full bg-dark flex items-center justify-between p-2 border border-gray-400">
             <h3 className="text-gray-500 uppercase">
@@ -127,8 +135,13 @@ const ChallengeDetail: FunctionComponent<{
           </small>
         )}
 
-        <a href="#" className="text-gray-300 underline">
-          Link to Discord
+        <a
+          href="https://discord.com"
+          target="_blank"
+          className="text-gray-300 underline inline-flex justify-center items-center"
+        >
+          Find Opponents on Discord{' '}
+          <ArrowUpOnSquareIcon className="h-4 w-4 ml-1" />
         </a>
       </Card>
     );
