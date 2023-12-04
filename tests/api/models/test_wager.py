@@ -1,6 +1,6 @@
 from inertia.test import InertiaTestCase
 
-from api.models import Game, Wager
+from api.models import Game, Wager, Payment
 from tests.utils import make_user, get_wager
 
 
@@ -187,6 +187,12 @@ class TestWager(InertiaTestCase):
         )
         wager = Wager.objects.get(unique_code=unique_code)
         self.assertEqual(wager.status, Wager.IN_PROGRESS)
+
+        payments = Payment.objects.filter(wager=wager)
+        self.assertEqual(len(payments), 2)
+
+        self.assertEqual(True, wager.challenger_paid)
+        self.assertEqual(True, wager.respondent_paid)
 
     def test_selecting_winner(self):
         wager = get_wager(self.user_a, self.user_b)

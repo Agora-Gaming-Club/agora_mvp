@@ -82,6 +82,8 @@ def serialize_wager(wager):
         "updated_at": wager.updated_at,
         # "challenger_vote": wager.challenger_vote,
         # "respondent_vote": wager.respondent_vote,
+        "challenger_paid": wager.challenger_paid,
+        "respondent_paid": wager.respondent_paid,
     }
     if wager.respondent_id:
         serialized["respondent"] = get_user(wager.respondent_id)

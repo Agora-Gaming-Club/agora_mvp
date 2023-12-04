@@ -106,6 +106,9 @@ class Wager(models.Model):
     challenger_vote = models.CharField(max_length=10, null=True, blank=True)
     respondent_vote = models.CharField(max_length=10, null=True, blank=True)
 
+    challenger_paid = models.BooleanField(default=False)
+    respondent_paid = models.BooleanField(default=False)
+
     def __str__(self):
         respondent = "NOT ACCEPTED"
         if self.respondent_id:
@@ -152,9 +155,14 @@ class Wager(models.Model):
         self.save()
 
     def all_payments_received(self):
-        challengers = [self.challenger_id, self.respondent_id]
-        payments = Payment.objects.filter(user__id__in=challengers)
-        if len(payments) == 2:
+        challenger = Payment.objects.filter(wager=self, user__id=self.challenger_id)
+        respondent = Payment.objects.filter(wager=self, user__id=self.respondent_id)
+        if challenger:
+            self.challenger_paid = True
+        if respondent:
+            self.respondent_paid = True
+
+        if self.challenger_paid and self.respondent_paid:
             self.status = Wager.IN_PROGRESS
             self.in_progress_time = datetime.now(timezone.utc)
             self.save()
