@@ -3,6 +3,7 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Card } from 'flowbite-react';
 import DeleteUserForm from '@/Pages/Profile/Partials/DeleteUserForm';
 import UpdateProfileInformationForm from '@/Pages/Profile/Partials/UpdateProfileInformationForm';
+import { UserProfile } from '@/schema';
 
 type Props = {
   user: UserProfile;

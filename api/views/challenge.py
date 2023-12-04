@@ -5,8 +5,9 @@ import json
 
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
+from django.urls import reverse
 from django.views.decorators.csrf import ensure_csrf_cookie
-from inertia import inertia
+from inertia import inertia, share
 
 from api.forms import (
     AcceptForm,
@@ -16,6 +17,7 @@ from api.forms import (
     WinnerForm,
 )
 from api.models import Game, Payment, UserProfile, Wager
+from api.serializers import serialize
 from api.utils import paginate
 
 from payment.authorize_client import AuthorizeClient
@@ -46,6 +48,7 @@ def challenge(request):
     return {"user": user, "games": Game.GAMES, "platforms": Game.PLATFORM}
 
 
+@ensure_csrf_cookie
 @inertia("Challenge/Show")
 def challenge_status(request, challenge_id):
     # QUESTION: Figure out if anyone can go here or if only authenticated ppl
@@ -53,22 +56,20 @@ def challenge_status(request, challenge_id):
     current_user = UserProfile.objects.filter(user=request.user)
     if current_user:
         current_user = current_user.first()
-    challenger = UserProfile.objects.get(user__id=challenge.challenger_id)
 
-    respondent = None
-    if challenge.respondent_id:
-        respondent = UserProfile.objects.filter(
-            user__id=challenge.respondent_id
-        ).first()
+    if request.method == "POST":
+        if challenge.status == Wager.AWAITING_RESPONSE:
+            return challenge_accept(request, challenge_id)
+        if challenge.status == Wager.ACCEPTED:
+            # expect payment
+            return challenge_ante(request, challenge_id)
+        if challenge.status == Wager.IN_PROGRESS:
+            # select winner
+            return challenge_winner(request, challenge_id)
 
     props = {
-        "challenge": challenge,
-        "created_at": challenge.created_at,
-        "game": challenge.game.get_game_display(),
-        "challenger": challenger,
+        "challenge": serialize(challenge),
         "user": current_user,
-        "respondent": respondent,
-        "viewer": current_user in [challenger, respondent],
     }
 
     return props
@@ -95,8 +96,6 @@ def challenge_search(request):
     return {"user": user}
 
 
-@ensure_csrf_cookie
-@inertia("Challenge/Accept")
 def challenge_accept(request, challenge_id):
     data = json.loads(request.body)
     challenge = get_object_or_404(Wager, unique_code=challenge_id)
@@ -110,16 +109,13 @@ def challenge_accept(request, challenge_id):
         respondent_gamer_tag = data["respondent_gamer_tag"]
         challenge.accept(respondent, respondent_gamer_tag)
         props = {
-            "respondent": respondent,
-            "challenger": challenger,
+            "challenge": challenge
         }
-        props.update({"errors": form.errors.get_json_data()})
         return props
     return {"errors": form.errors.get_json_data()}
 
 
-@ensure_csrf_cookie
-@inertia("Challenge/Ante")
+
 def challenge_ante(request, challenge_id):
     """
     Should take payment, and return something to indicate if
@@ -145,13 +141,12 @@ def challenge_ante(request, challenge_id):
             authorize_net_payment_status=payment_status["status"],
         )
         challenge.all_payments_received()
-        return {"status": payment.authorize_net_payment_status}
+        return {"status": payment.authorize_net_payment_status, "challenge": challenge}
 
     return {"error": "Bad Payment"}
 
 
-@ensure_csrf_cookie
-@inertia("Challenge/Winner")
+
 def challenge_winner(request, challenge_id):
     """Verify both people are supposed to be here"""
     data = json.loads(request.body)
@@ -177,7 +172,7 @@ def challenge_winner(request, challenge_id):
                 challenge.status = Wager.COMPLETED
                 challenge.save()
                 challenge.determine_winner()
-        return {"vote": f"You voted for {data['winner']}"}
+        return {"challenge": challenge}
 
     return {"errors": form.errors.get_json_data()}
 

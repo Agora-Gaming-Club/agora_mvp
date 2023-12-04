@@ -36,6 +36,9 @@ def log_in(request):
     User is to use email
     """
     errors = []
+    if request.user.is_authenticated:
+        return HttpResponseRedirect(reverse("dashboard"))
+
     if request.method == "POST":
         data = json.loads(request.body)
         form = LoginForm(data)
@@ -68,14 +71,15 @@ def log_in(request):
 @ensure_csrf_cookie
 def log_out(request):
     logout(request)
-    print("LOGGED OUT")
     return HttpResponseRedirect(reverse("landing"))
 
 
 @ensure_csrf_cookie
 @inertia("Auth/Register")
 def register(request):
-    share(request, user={"user": "test"})
+    if request.user.is_authenticated:
+        return HttpResponseRedirect(reverse("dashboard"))
+
     if request.method == "POST":
         data = json.loads(request.body)
         form = RegisterForm(data)
