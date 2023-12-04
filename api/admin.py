@@ -8,6 +8,7 @@ class GameAdmin(admin.ModelAdmin):
     list_display = [
         "game",
         "platform",
+        "terms",
         "discord_link",
     ]
 
@@ -32,6 +33,7 @@ class UserProfileAdmin(admin.ModelAdmin):
         "email",
         "state",
         "birthday",
+        "winnings",
         "phone_number",
         "acct_verified",
         "created_at",
@@ -46,12 +48,20 @@ class WagerAdmin(admin.ModelAdmin):
         "amount",
         "unique_code",
         "status",
+        "challenger_paid",
+        "respondent_paid",
+        "challenger_gamer_tag",
+        "respondent_gamer_tag",
+        "challenger_vote",
+        "respondent_vote",
+        "winner",
         "created_at",
         "updated_at",
     ]
+    list_filter = ["status"]
 
 
+admin.site.register(Game, GameAdmin)
 admin.site.register(Payment, PaymentAdmin)
 admin.site.register(UserProfile, UserProfileAdmin)
 admin.site.register(Wager, WagerAdmin)
-admin.site.register(Game, GameAdmin)

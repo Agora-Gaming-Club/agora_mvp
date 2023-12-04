@@ -34,6 +34,7 @@ def serialize_game(game):
     return {
         "game": game.get_game_display(),
         "platform": game.get_platform_display(),
+        "terms": game.terms,
     }
 
 

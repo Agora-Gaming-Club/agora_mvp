@@ -236,6 +236,7 @@ class Game(models.Model):
     ]
     platform = models.CharField(max_length=20, choices=PLATFORM)
     game = models.CharField(max_length=20, choices=GAMES)
+    terms = models.CharField(max_length=200, blank=True, null=True)
     discord_link = models.URLField(null=False, blank=False)
 
     def __str__(self):

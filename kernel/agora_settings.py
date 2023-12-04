@@ -12,7 +12,10 @@ PASSWORD_CHANGE_EXPIRE_TIME = timedelta(minutes=60)
 
 # This list will have 3 additional states added eventually
 FORBIDDEN_STATES = [
-    "UT",
-    "HI",
+    "AZ",
+    "LA",
+    "MT",
+    "SC",
+    "SD",
 ]
 LEGAL_GAMBLING_AGE = 18
