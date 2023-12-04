@@ -81,7 +81,7 @@ class TestCron(InertiaTestCase):
             f"/challenge/accept/{unique_code}",
             {
                 "accept": True,
-                "gamer_tag": "omgitsnotwanda",
+                "respondent_gamer_tag": "omgitsnotwanda",
             },
             content_type="application/json",
         )
