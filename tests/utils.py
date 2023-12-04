@@ -38,3 +38,21 @@ def get_wager(user_a, user_b):
         respondent_gamer_tag="COOLER_GUY_SN",
     )
     return wager
+
+
+def get_payment_info():
+    return {
+        "card_number": "4111111111111111",
+        "exp_date": "2035-12",
+        "cvv2": "123",
+        "amount": "10.00",
+        "firstname": "Ellen",
+        "lastname": "Johnson",
+        "company": "Souveniropolis",
+        "address": "14 Main Street",
+        "city": "Pecan Springs",
+        "state": "TX",
+        "zipcode": "44628",
+        "country": "USA",
+        "email": "EllenJohnson@example.com",
+    }

@@ -175,6 +175,7 @@ api/migrations
 
 #secrets
 secrets.json
+secrets/
 
 # Node Modules
 node_modules/

@@ -106,6 +106,11 @@ class Wager(models.Model):
     challenger_vote = models.CharField(max_length=10, null=True, blank=True)
     respondent_vote = models.CharField(max_length=10, null=True, blank=True)
 
+    """
+    challenger_paid = models.BooleanField(default=False)
+    respondent_paid = models.BooleanField(default=False)
+    """
+
     def __str__(self):
         respondent = "NOT ACCEPTED"
         if self.respondent_id:

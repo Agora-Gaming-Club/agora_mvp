@@ -206,7 +206,18 @@ class AnteForm(forms.Form):
     unsure atm.
     """
 
-    payment_info = forms.CharField(max_length=400)
+    card_number = forms.CharField(max_length=16)
+    exp_date = forms.CharField(max_length=7)
+    cvv2 = forms.CharField(max_length=4)
+    firstName = forms.CharField(max_length=400)
+    lastName = forms.CharField(max_length=400)
+    company = forms.CharField(max_length=400)
+    address = forms.CharField(max_length=400)
+    city = forms.CharField(max_length=400)
+    state = forms.CharField(max_length=2)
+    zipcode = forms.CharField(max_length=6)
+    country = forms.CharField(max_length=3)
+    email = forms.EmailField()
 
 
 def phone_number_validator(phone_number):

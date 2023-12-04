@@ -1,7 +1,25 @@
 """
 Example local settings file.
 """
+import json
+import glob
+import os
+
 from kernel.settings import *
 
 
 ALLOWED_HOSTS = ["192.168.0.138", "localhost"]
+
+
+def load_secrets():
+    """Put everything in the secrets folder into the environment variables"""
+    files = glob.glob("secrets/*.json")
+    for file_path in files:
+        with open(file_path) as file:
+            json_file = json.load(file)
+            for key, value in json_file.items():
+                print(key, value)
+                os.environ[key] = value
+
+
+load_secrets()
