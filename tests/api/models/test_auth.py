@@ -236,8 +236,9 @@ class TestAuth(InertiaTestCase):
             base_data,
             content_type="application/json",
         )
-        self.assertIn("username", self.props().get("errors", []))
-        self.assertIn("email", self.props().get("errors", []))
+
+        users = UserProfile.objects.filter(email=base_data["email"])
+        self.assertEqual(1, len(users))
 
     # Password Reset
     def test_forgot_password_happy(self):

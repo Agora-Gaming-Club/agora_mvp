@@ -78,7 +78,7 @@ class TestCron(InertiaTestCase):
         # log in as other user and accept challenge
         self.client.login(username="user_b", password="password")
         response = self.client.post(
-            f"/challenge/accept/{unique_code}",
+            f"/challenge/{unique_code}",
             {
                 "accept": True,
                 "respondent_gamer_tag": "omgitsnotwanda",
@@ -91,7 +91,7 @@ class TestCron(InertiaTestCase):
         # login as first user and make payment
         self.client.login(username="user_a", password="password")
         response = self.client.post(
-            f"/challenge/ante/{unique_code}",
+            f"/challenge/{unique_code}",
             {
                 "payment_info": "This is extremely mocked right now",
             },
@@ -101,7 +101,7 @@ class TestCron(InertiaTestCase):
         # login as second user and make payment
         self.client.login(username="user_b", password="password")
         response = self.client.post(
-            f"/challenge/ante/{unique_code}",
+            f"/challenge/{unique_code}",
             {
                 "payment_info": "This is extremely mocked right now",
             },
@@ -114,7 +114,7 @@ class TestCron(InertiaTestCase):
         self.client.login(username="user_a", password="password")
         winner = 1
         response = self.client.post(
-            f"/challenge/winner/{wager.unique_code}",
+            f"/challenge/{wager.unique_code}",
             {
                 "winner": winner,
             },

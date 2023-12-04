@@ -108,12 +108,9 @@ def challenge_accept(request, challenge_id):
             return {"errors": form.errors.get_json_data()}
         respondent_gamer_tag = data["respondent_gamer_tag"]
         challenge.accept(respondent, respondent_gamer_tag)
-        props = {
-            "challenge": challenge
-        }
+        props = {"challenge": challenge}
         return props
     return {"errors": form.errors.get_json_data()}
-
 
 
 def challenge_ante(request, challenge_id):
@@ -144,7 +141,6 @@ def challenge_ante(request, challenge_id):
         return {"status": payment.authorize_net_payment_status, "challenge": challenge}
 
     return {"error": "Bad Payment"}
-
 
 
 def challenge_winner(request, challenge_id):

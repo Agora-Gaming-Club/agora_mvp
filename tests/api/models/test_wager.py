@@ -65,7 +65,7 @@ class TestWager(InertiaTestCase):
 
         self.client.login(username="user_b", password="password")
         response = self.client.post(
-            f"/challenge/accept/{unique_code}",
+            f"/challenge/{unique_code}",
             {
                 "accept": True,
                 "respondent_gamer_tag": "omgitsnotwanda",
@@ -95,7 +95,7 @@ class TestWager(InertiaTestCase):
 
         self.client.login(username="user_a", password="password")
         response = self.client.post(
-            f"/challenge/accept/{unique_code}",
+            f"/challenge/{unique_code}",
             {
                 "accept": True,
                 "respondent_gamer_tag": "XxXx_SUPERCOOL_xXxX",
@@ -126,7 +126,7 @@ class TestWager(InertiaTestCase):
 
         self.client.login(username="user_b", password="password")
         response = self.client.post(
-            f"/challenge/accept/{unique_code}",
+            f"/challenge/{unique_code}",
             {
                 "accept": True,
             },
@@ -156,7 +156,7 @@ class TestWager(InertiaTestCase):
         # log in as other user and accept challenge
         self.client.login(username="user_b", password="password")
         response = self.client.post(
-            f"/challenge/accept/{unique_code}",
+            f"/challenge/{unique_code}",
             {
                 "accept": True,
                 "respondent_gamer_tag": "omgitsnotwanda",
@@ -169,7 +169,7 @@ class TestWager(InertiaTestCase):
         # login as first user and make payment
         self.client.login(username="user_a", password="password")
         response = self.client.post(
-            f"/challenge/ante/{unique_code}",
+            f"/challenge/{unique_code}",
             {
                 "payment_info": "This is extremely mocked right now",
             },
@@ -179,7 +179,7 @@ class TestWager(InertiaTestCase):
         # login as second user and make payment
         self.client.login(username="user_b", password="password")
         response = self.client.post(
-            f"/challenge/ante/{unique_code}",
+            f"/challenge/{unique_code}",
             {
                 "payment_info": "This is extremely mocked right now",
             },
@@ -196,7 +196,7 @@ class TestWager(InertiaTestCase):
         self.client.login(username="user_a", password="password")
         winner = 1
         response = self.client.post(
-            f"/challenge/winner/{wager.unique_code}",
+            f"/challenge/{wager.unique_code}",
             {
                 "winner": winner,
             },
@@ -213,7 +213,7 @@ class TestWager(InertiaTestCase):
         self.client.login(username="user_a", password="password")
         winner = 3
         response = self.client.post(
-            f"/challenge/winner/{wager.unique_code}",
+            f"/challenge/{wager.unique_code}",
             {
                 "winner": winner,
             },
@@ -230,7 +230,7 @@ class TestWager(InertiaTestCase):
         self.client.login(username="user_c", password="password")
         winner = 1
         response = self.client.post(
-            f"/challenge/winner/{wager.unique_code}",
+            f"/challenge/{wager.unique_code}",
             {
                 "winner": winner,
             },
@@ -247,7 +247,7 @@ class TestWager(InertiaTestCase):
 
         self.client.login(username="user_a", password="password")
         response = self.client.post(
-            f"/challenge/winner/{wager.unique_code}",
+            f"/challenge/{wager.unique_code}",
             {
                 "winner": winner,
             },
@@ -256,7 +256,7 @@ class TestWager(InertiaTestCase):
 
         self.client.login(username="user_b", password="password")
         response = self.client.post(
-            f"/challenge/winner/{wager.unique_code}",
+            f"/challenge/{wager.unique_code}",
             {
                 "winner": winner,
             },
@@ -274,7 +274,7 @@ class TestWager(InertiaTestCase):
 
         self.client.login(username="user_a", password="password")
         response = self.client.post(
-            f"/challenge/winner/{wager.unique_code}",
+            f"/challenge/{wager.unique_code}",
             {
                 "winner": 1,
             },
@@ -283,7 +283,7 @@ class TestWager(InertiaTestCase):
 
         self.client.login(username="user_b", password="password")
         response = self.client.post(
-            f"/challenge/winner/{wager.unique_code}",
+            f"/challenge/{wager.unique_code}",
             {
                 "winner": 2,
             },
