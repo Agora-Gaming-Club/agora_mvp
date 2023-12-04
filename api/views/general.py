@@ -1,3 +1,5 @@
+from django.http import HttpResponseRedirect
+from django.urls import reverse
 from inertia import inertia
 
 from api.models import UserProfile, Wager
@@ -8,6 +10,8 @@ from api.utils import paginate
 # Create your views here.
 @inertia("Welcome")
 def landing(request):
+    if request.user.is_authenticated:
+        return HttpResponseRedirect(reverse("dashboard"))
     return {}
 
 

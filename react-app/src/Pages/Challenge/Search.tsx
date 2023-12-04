@@ -6,6 +6,7 @@ import { Button, Card, Label, TextInput } from 'flowbite-react';
 import { formatUniqueCodeWhileTyping } from '@/Utils/string';
 import { TransformedErrors, transformErrors } from '@/Utils/form';
 import Cookies from 'js-cookie';
+import { UserProfile } from '@/schema';
 
 type Props = {
   user: UserProfile;
@@ -34,7 +35,7 @@ const Search: FunctionComponent<Props> = ({ user }) => {
       title="Enter Challenge Code"
       description="Enter a challenge code to join a matchup."
     >
-      <div className="max-w-7xl mt-8 px-5">
+      <div className="container mx-auto mt-8 px-5">
         <Card className="max-w-2xl mx-auto">
           <form className="space-y-4" onSubmit={submit}>
             <div>

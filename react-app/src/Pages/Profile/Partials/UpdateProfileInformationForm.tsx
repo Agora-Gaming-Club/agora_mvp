@@ -2,6 +2,7 @@ import { useForm } from '@inertiajs/react';
 import React, { FormEventHandler } from 'react';
 import { Label, TextInput } from 'flowbite-react';
 import { formatPhoneNumber } from '@/Utils/phone';
+import { UserProfile } from '@/schema';
 
 export default function UpdateProfileInformation({
   className = '',
