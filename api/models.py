@@ -107,7 +107,7 @@ class Wager(models.Model):
 
     challenger_paid = models.BooleanField(default=False)
     respondent_paid = models.BooleanField(default=False)
-    # winner_paypal = models.CharField(max_length=100, blank=True, null=True)
+    winner_paypal = models.CharField(max_length=100, blank=True, null=True)
 
     def __str__(self):
         respondent = "NOT ACCEPTED"
