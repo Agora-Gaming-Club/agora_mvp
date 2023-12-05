@@ -25,6 +25,8 @@ export type Wager = {
   respondent_vote: string | null;
   challenger?: UserProfile;
   respondent?: UserProfile;
+  challenger_paid: boolean;
+  respondent_paid: boolean;
 };
 
 export type UserProfile = {

@@ -5,7 +5,9 @@ import { useCopyToClipboard } from '@/Hooks/useCopyToClipboard';
 import { UserProfile, Wager, WagerStatus } from '@/schema';
 import { usePage } from '@inertiajs/react';
 import AcceptChallengePartial from '@/Components/Partials/Challenge/AcceptChallengePartial';
+// @ts-ignore
 import RequireChallengePaymentPartial from '@/Components/Partials/Challenge/RequireChallengePaymentPartial';
+// @ts-ignore
 import ShareChallengePartial from '@/Components/Partials/Challenge/ShareChallengePartial';
 import { HostedForm } from 'react-acceptjs';
 import { AcceptHosted } from 'react-acceptjs';
@@ -62,61 +64,58 @@ const ChallengeDetail: FunctionComponent<{
   challenge: Wager;
   user: UserProfile;
 }> = ({ challenge, user }) => {
-  const props = usePage().props;
-  const [copied, setCopied] = useState(false);
-  const [copiedValue, copy] = useCopyToClipboard();
-  const handleCopy = async () => {
-    await copy(location.host + '/challenge/' + challenge.unique_code);
-  };
-  // accepted & respondent or creator -> select winner
-  // disputed -> "oops"
-  // completed & is_winner -> winner screen
-  // completed & challenge.payment_id === null -> add paypal screen
-  if (
-    challenge.status === WagerStatus.AWAITING_RESPONSE &&
-    user.user === challenge.challenger_id
-  ) {
-    // awaiting response & creator -> share link
-    return <ShareChallengePartial challenge={challenge} user={user} />;
+  console.log(challenge);
+
+  const isChallenger = user.user === challenge.challenger_id;
+  const isRespondent = user.user === challenge.respondent_id;
+  const isAwaitingResponse = challenge.status === WagerStatus.AWAITING_RESPONSE;
+  const isAccepted = challenge.status === WagerStatus.ACCEPTED;
+
+  const awaitingResponseAndChallenger = () =>
+    isAwaitingResponse && isChallenger;
+  const awaitingResponseAndNotChallenger = () =>
+    isAwaitingResponse && challenge.respondent_id === null;
+  const acceptedAndChallengerNotPaid = () =>
+    isAccepted && !challenge.challenger_paid && isChallenger;
+  const acceptedAndRespondentNotPaid = () =>
+    isAccepted && !challenge.respondent_paid && isRespondent;
+  const acceptedAndChallengerPaid = () =>
+    isAccepted && challenge.challenger_paid && isChallenger;
+  const acceptedAndRespondentPaid = () =>
+    isAccepted && challenge.respondent_paid && isRespondent;
+
+  switch (challenge.status) {
+    case WagerStatus.AWAITING_RESPONSE:
+      if (awaitingResponseAndChallenger()) {
+        return <ShareChallengePartial challenge={challenge} user={user} />;
+      }
+      if (awaitingResponseAndNotChallenger()) {
+        return <AcceptChallengePartial challenge={challenge} user={user} />;
+      }
+      break;
+    case WagerStatus.ACCEPTED:
+      if (acceptedAndChallengerNotPaid() || acceptedAndRespondentNotPaid()) {
+        return (
+          <RequireChallengePaymentPartial challenge={challenge} user={user} />
+        );
+      }
+      if (acceptedAndChallengerPaid() || acceptedAndRespondentPaid()) {
+        return (
+          <div>
+            <h1 className="text-white">waiting on other person to pay</h1>
+          </div>
+        );
+      }
+      break;
+    case WagerStatus.IN_PROGRESS:
+      return <h1>select by username, value id</h1>;
+    case WagerStatus.DISPUTED:
+      return <h1>show disputed</h1>;
+    case WagerStatus.COMPLETED:
+      return <h1>completed</h1>;
+    default:
+      return <></>;
   }
-
-  if (
-    challenge.status === WagerStatus.AWAITING_RESPONSE &&
-    challenge.respondent_id === null
-  ) {
-    // awaiting response & not creator -> accept challenge
-    return <AcceptChallengePartial challenge={challenge} user={user} />;
-  }
-
-  if (challenge.status === WagerStatus.ACCEPTED) {
-    const authData = {
-      apiLoginID: '5UQt6rAa8T',
-      clientKey: '47xHPz97xFXz2A3t',
-    };
-
-    type BasicCardInfo = {
-      cardNumber: string;
-      cardCode: string;
-      month: string;
-      year: string;
-    };
-    const handleSubmit = (response: any) => {
-      console.log('Received response:', response);
-    };
-    const formToken =
-      'BiQ/NHbH+6PvrbidOG2Efnga52QAuR9ffiHYJqEt6Q3DUSX4limPklTRR+DLpQ02foTRVDsTqfCoRkQASkzE8iFoTHzecbQMP1hNqOX/UzUfISnTCBQwkN3awNXNRIGcKQwizvn+aoEqjy/PvYw9GIQsfjQeRzIeCFQ6/wmRLuktRIPQDbCOLiuzpG2YTNV7vkhHS4nbS1ARkjBuopynWrpZNS7oDQKn6ef+A2xRHIPnCtperLmEVpMltgmfSLxU09VITiLmDxr8GtYz0fl5Zcs49SrhU0Y4gRs1NNDHWmhB+rYUzXUGIvT8/XGkrkrQc0hBG0fqYUPbRH62joxXiW92k25MmnJ7YnsFf4bomH9VBG9EzZ0sQ/E6ipcpA5lHSvCLs2waAb+ydMfPILnfB8ceBTGqp+GiVM7BISeWITfuUNIV5AGUV2CWxIr1FOKDGTXXesuQECShNPRHyCECJUTESVeGxanSbG8qYE4EkDPC3ZFop3Hg44LgDDTRBTJTvMgACkWQT4LeQG1oLD07XCLfdUV4D3CbVlUAYZEBIMZrPTRvQeOWkeBlQCrofSadDj35SIEeKL0TN6wedFe8U+dmgOEb9zYVs5k5svKxGCVnNWo5/RmhXzUqa5FtjRipQMkF2d6W3lMo+gIwkV0D/lP+r2RpffCccRo8/CDspDWPitWqPrflBDafSD82hvlFhC/n5PV4CdMhdKT/c12u1KObG59SHA1hPMYTGEKxKpAuYpTtXiRT1HUtiZ4C9y1C4qYz3aqQbQ9LsPwb5E3tnA44qnsmIpncW7ilJ+8hMAPMytaMKjcouk08j+0sJ8fyFy5NgVqz4z2CD7cdTNrE8+5lEqLlxv+FOw5Azvqfv7M=.5UQt6rAa8T';
-    return <RequireChallengePaymentPartial challenge={challenge} user={user} />;
-  }
-
-  if (challenge.status === WagerStatus.DISPUTED) {
-    return <h1>show disputed</h1>;
-  }
-
-  if (challenge.status === WagerStatus.COMPLETED) {
-    return <h1>completed</h1>;
-  }
-
-  return <></>;
 };
 
 export default Show;
