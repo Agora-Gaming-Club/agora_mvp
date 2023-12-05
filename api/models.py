@@ -185,9 +185,9 @@ class Wager(models.Model):
             return self.winner
 
         if self.challenger_vote:
-            challenger_vote = UserProfile.objects.get(id=self.challenger_vote)
+            challenger_vote = UserProfile.objects.get(user__id=self.challenger_vote)
         if self.respondent_vote:
-            respondent_vote = UserProfile.objects.get(id=self.respondent_vote)
+            respondent_vote = UserProfile.objects.get(user__id=self.respondent_vote)
 
         # 1: Both people select the same person.
         if challenger_vote == respondent_vote:

@@ -1,8 +1,12 @@
 import json
+from lxml import etree
 import os
 
 from authorizenet import apicontractsv1
 from authorizenet.apicontrollers import createTransactionController
+
+
+from django.conf import settings
 
 from api.utils import generate_unique_code
 
@@ -14,10 +18,8 @@ class AuthorizeClient:
     def send_payment(self, data_value, amount, wager, user):
         # Set up merchant authentication
         merchantAuth = apicontractsv1.merchantAuthenticationType()
-        print(os.environ.get("AUTHORIZE_LOGIN_ID"))
-        print(os.environ.get("AUTHORIZE_TRANSACTION_KEY"))
-        merchantAuth.name = os.environ.get("AUTHORIZE_LOGIN_ID")
-        merchantAuth.transactionKey = os.environ.get("AUTHORIZE_TRANSACTION_KEY")
+        merchantAuth.name = settings.AUTHORIZE_LOGIN_ID
+        merchantAuth.transactionKey = settings.AUTHORIZE_TRANSACTION_KEY
 
         # Create a payment object with the opaque data
         payment = apicontractsv1.paymentType()
@@ -43,9 +45,7 @@ class AuthorizeClient:
 
         # Get the response
         response = controller.getresponse()
-
-        print(type(response))
-        # convert this to JSON for simple life
+        # TODO: convert this to JSON for simple life
 
         if response is not None:
             # Check to see if the API request was successfully received and acted upon

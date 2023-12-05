@@ -175,6 +175,10 @@ EMAIL_ENABLED = False
 # Set to True inside tests to prevent emails from printing or sending
 EMAIL_TEST_MODE = False
 
+# Authorizenet settings
+AUTHORIZE_LOGIN_ID = os.getenv("AUTHORIZE_LOGIN_ID")
+AUTHORIZE_TRANSACTION_KEY = os.getenv("AUTHORIZE_TRANSACTION_KEY")
+
 
 CRONJOBS = [
     ("*/10 * * * *", "api.cron.challenge_creation_expired"),
