@@ -1,7 +1,11 @@
+from django.conf import settings
+
 from inertia.test import InertiaTestCase
 
 from api.models import Game, Wager, Payment
 from tests.utils import make_user, get_wager
+
+settings.EMAIL_TEST_MODE = True
 
 
 class TestWager(InertiaTestCase):
