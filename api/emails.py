@@ -6,10 +6,11 @@ from django.conf import settings
 
 
 class Email:
-    def __init__(self, email_type, context, target):
+    def __init__(self, email_type, context, target=None, bcc=None):
         self.email_type = email_type
         self.context = context
         self.target = target
+        self.bcc = bcc
         self.subject = ""
 
     def send(self):
@@ -24,6 +25,7 @@ class Email:
             text_content,
             from_email,
             [self.target],
+            bcc=self.bcc,
         )
         message.attach_alternative(html_content, "text/html")
         if settings.EMAIL_ENABLED:
@@ -38,6 +40,7 @@ class Email:
         else:
             print("FAKE EMAIL SENT:")
             print(f"TO: {self.target}")
+            print(f"BCC: {self.bcc}")
             print(f"FROM: {settings.EMAIL_DEFAULT_SENDER}")
             print(f"SUBJECT: {self.subject}")
             print(f"HTMLBODY: {html_content}")
@@ -46,15 +49,21 @@ class Email:
 
 
 class WelcomeEmail(Email):
-    def __init__(self, context, target):
+    def __init__(self, context, target=None):
         super().__init__("welcome", context, target)
         self.subject = "Welcome"
 
 
 class PasswordResetEmail(Email):
-    def __init__(self, context, target):
+    def __init__(self, context, target=None):
         super().__init__("password_reset", context, target)
         self.subject = "Password Reset"
+
+
+class DisputeEmail(Email):
+    def __init__(self, context, target=None, bcc=None):
+        super().__init__("dispute", context, target, bcc)
+        self.subject = "Challenge Dispute"
 
 
 # class VerificationEmail(Email):

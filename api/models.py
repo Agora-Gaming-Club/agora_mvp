@@ -124,6 +124,14 @@ class Wager(models.Model):
         choices = choice_a, choice_b
         return choices
 
+    def get_competitors(self):
+        return {
+            "challenger": User.objects.get(id=self.challenger_id),
+            "respondent": User.objects.get(id=self.respondent_id),
+            "challenger_vote": User.objects.get(id=self.challenger_vote),
+            "respondent_vote": User.objects.get(id=self.respondent_vote),
+        }
+
     def both_voted(self):
         return self.challenger_vote and self.respondent_vote
 

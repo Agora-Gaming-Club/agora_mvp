@@ -1,0 +1,12 @@
+The following dispute has been issued for the challenge code {{challenge.unique_code}} and requires resolution.
+
+Usernames: {{challenger}} vs {{respondent}}
+
+Game Played: {{game.get_game_display}} for {{game.get_platform_display}}
+
+Outcome:
+{{challenger}} selected {{challenger_vote}} as the winner
+{{respondent}} selectd {{respondent_vote}} as the winner
+
+Please reply to this email with any supporting evidence for your claim, and the Agora
+team will resolve the dispute and issue payment to the determined winner.

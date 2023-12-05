@@ -9,6 +9,7 @@ from django.urls import reverse
 from django.views.decorators.csrf import ensure_csrf_cookie
 from inertia import inertia, share
 
+from api.emails import DisputeEmail
 from api.forms import (
     AcceptForm,
     AnteForm,
@@ -162,8 +163,19 @@ def challenge_winner(request, challenge_id):
         if challenge.both_voted():
             if challenge.disputed():
                 challenge.status = Wager.DISPUTED
+                email_context = challenge.get_competitors()
+                email_context["challenge"] = challenge
+                email_context["game"] = challenge.game
+                email = DisputeEmail(
+                    email_context,
+                    target="product@agoragaming.gg",
+                    bcc=[
+                        email_context["challenger"].email,
+                        email_context["respondent"].email,
+                    ],
+                )
+                email.send()
                 challenge.save()
-                # fire off a email, or keep voting open if they change their mind?
             else:
                 challenge.status = Wager.COMPLETED
                 challenge.save()
