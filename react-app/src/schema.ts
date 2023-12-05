@@ -53,4 +53,6 @@ export type Pagination<T> = {
 export type Game = {
   game: string;
   platform: string;
+  terms: string;
+  slug: string;
 };

@@ -1,23 +1,31 @@
 import * as React from 'react';
-import { FormEventHandler, FunctionComponent, useState } from 'react';
+import { FormEventHandler, FunctionComponent, useMemo, useState } from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { useForm } from '@inertiajs/react';
-import { Button, Label, Select, Textarea, TextInput } from 'flowbite-react';
+import {
+  Alert,
+  Button,
+  Label,
+  Select,
+  Textarea,
+  TextInput,
+} from 'flowbite-react';
 import { amounts } from '@/Data/amounts';
 import { TransformedErrors, transformErrors } from '@/Utils/form';
 import Cookies from 'js-cookie';
-import { UserProfile } from '@/schema';
+import { Game, UserProfile } from '@/schema';
+import { InformationCircleIcon } from '@heroicons/react/24/outline';
 
 type Props = {
   platforms: any;
-  games: any;
+  games: Game[];
   user: UserProfile;
 };
 
 const Create: FunctionComponent<Props> = ({ platforms, games, user }) => {
+  console.log(games);
   const [formErrors, setFormErrors] = useState<TransformedErrors | null>(null);
   const { data, setData, post, processing } = useForm({
-    notes: '',
     amount: '',
     platform: '',
     game: '',
@@ -33,8 +41,10 @@ const Create: FunctionComponent<Props> = ({ platforms, games, user }) => {
         // window.location.href = data.props.url as unknown as string; // work around
       },
       onError: (err) => {
+        console.log(err);
         setFormErrors(transformErrors(err));
       },
+      only: ['errors'],
     });
   };
 
@@ -80,9 +90,9 @@ const Create: FunctionComponent<Props> = ({ platforms, games, user }) => {
               <option disabled value="" selected>
                 Select a Game
               </option>
-              {games.map((game: any) => (
-                <option key={game[0]} value={game[0]}>
-                  {game[1]}
+              {games.map((game) => (
+                <option key={game.game} value={game.slug}>
+                  {game.game}
                 </option>
               ))}
             </Select>
@@ -121,18 +131,12 @@ const Create: FunctionComponent<Props> = ({ platforms, games, user }) => {
             </Select>
           </div>
 
-          <div className="col-span-1">
-            <div className="mb-2 block">
-              <Label htmlFor="terms" value="Game Mode" />
-            </div>
-            <Textarea
-              id="terms"
-              value={data.notes}
-              placeholder="Any details on game mode or notes that you’d like your opponent to know. "
-              rows={3}
-              disabled
-            />
-          </div>
+          {data.game && games.length > 1 ? (
+            <Alert color="info">
+              <span className="font-medium">Game Terms!</span>
+              {games.find((g) => g.slug == data.game)?.terms}
+            </Alert>
+          ) : null}
 
           <Button color="blue" type="submit">
             Create

@@ -18,7 +18,7 @@ from api.forms import (
     WinnerForm,
 )
 from api.models import Game, Payment, UserProfile, Wager
-from api.serializers import serialize
+from api.serializers import serialize, serialize_objs
 from api.utils import paginate
 
 from payment.authorize_client import AuthorizeClient
@@ -46,7 +46,7 @@ def challenge(request):
             return HttpResponseRedirect(f"challenge/{wager.unique_code}")
         else:
             return {"errors": form.errors.get_json_data()}
-    return {"user": user, "games": Game.GAMES, "platforms": Game.PLATFORM}
+    return {"user": user, "games": serialize_objs(Game.objects.all()), "platforms": Game.PLATFORM}
 
 
 @ensure_csrf_cookie
