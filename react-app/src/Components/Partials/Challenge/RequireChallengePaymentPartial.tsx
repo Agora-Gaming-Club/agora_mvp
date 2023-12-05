@@ -26,10 +26,15 @@ type BasicCardInfo = {
   year: string;
 };
 
-const RequireChallengePaymentPartial: FunctionComponent<{
+type Props = {
   challenge: Wager;
   user: UserProfile;
-}> = ({ challenge, user }) => {
+};
+
+const RequireChallengePaymentPartial: FunctionComponent<Props> = ({
+  challenge,
+  user,
+}) => {
   const [openModal, setOpenModal] = useState(false);
   const { dispatchData, loading, error } = useAcceptJs({ authData });
   const [creditCard, setCreditCard] = useState({

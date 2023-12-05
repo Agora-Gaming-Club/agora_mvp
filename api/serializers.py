@@ -27,7 +27,9 @@ def serialize_objs(objs):
 
 
 def get_user(id):
-    return serialize_user_profile(UserProfile.objects.get(id=id))
+    print(id)
+    user = UserProfile.objects.get(user__id=id)
+    return serialize_user_profile(user)
 
 
 def serialize_game(game):

@@ -1,9 +1,11 @@
 import { FunctionComponent } from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Card } from 'flowbite-react';
+import { Button, Card } from 'flowbite-react';
 import CountUp from 'react-countup';
 import ChallengeCard from '@/Components/ChallengeCard';
 import { Pagination, UserProfile, Wager } from '@/schema';
+import { Link } from '@inertiajs/react';
+import * as React from 'react';
 
 type Props = {
   user: UserProfile;
@@ -29,23 +31,45 @@ const Dashboard: FunctionComponent<Props> = ({ user, active, old }) => {
         </Card>
       </div>
 
-      <div className="container mx-auto px-5">
-        <h3 className="text-gray-500 text-lg">Active</h3>
-        <ul className="space-y-1 w-full">
-          {active.result.map((wager) => (
-            <ChallengeCard key={wager.unique_code} wager={wager} />
-          ))}
-        </ul>
-      </div>
+      {active.result.length > 0 && (
+        <div className="container mx-auto px-5">
+          <h3 className="text-gray-500 text-lg">Active</h3>
+          <ul className="space-y-1 w-full">
+            {active.result.map((wager) => (
+              <ChallengeCard key={wager.unique_code} wager={wager} />
+            ))}
+          </ul>
+        </div>
+      )}
 
-      <div className="container mx-auto px-5 py-8">
-        <h3 className="text-gray-500 text-lg">Old</h3>
-        <ul className="space-y-1 w-full">
-          {old.result.map((wager) => (
-            <ChallengeCard key={wager.unique_code} wager={wager} />
-          ))}
-        </ul>
-      </div>
+      {old.result.length > 0 && (
+        <div className="container mx-auto px-5 py-8">
+          <h3 className="text-gray-500 text-lg">Old</h3>
+          <ul className="space-y-1 w-full">
+            {old.result.map((wager) => (
+              <ChallengeCard key={wager.unique_code} wager={wager} />
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {old.result.length < 1 && active.result.length < 1 ? (
+        <Card className="max-w-md mx-auto">
+          <h5 className="text-center text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+            Initiate
+          </h5>
+          <p className="font-normal text-gray-700 dark:text-gray-400">
+            Start here to create your own challenge. You’ll choose a game and
+            the amount you want to wager to generate a unique link to share with
+            an opponent.
+          </p>
+
+          {/*@ts-ignore*/}
+          <Button as={Link} href="/challenge" color="blue">
+            Create Challenge
+          </Button>
+        </Card>
+      ) : null}
     </AuthenticatedLayout>
   );
 };
