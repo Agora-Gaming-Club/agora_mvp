@@ -2,6 +2,7 @@ import { FunctionComponent } from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Card } from 'flowbite-react';
 import UpdatePasswordForm from '@/Pages/Profile/Partials/UpdatePasswordForm';
+import { UserProfile } from '@/schema';
 
 type Props = {
   user: UserProfile;
