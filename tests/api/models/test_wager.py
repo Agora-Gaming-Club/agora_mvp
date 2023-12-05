@@ -139,7 +139,7 @@ class TestWager(InertiaTestCase):
         self.assertIn("respondent_gamer_tag", self.props().get("errors", []))
 
     def test_wager_accept_payment(self):
-        """Regular Accept Flow but with payment"""
+        """Regular Accept Flow but with payment WILL FAIL RN"""
         # login as user and make challenge
         self.client.login(username="user_a", password="password")
         response = self.client.post(
@@ -175,17 +175,17 @@ class TestWager(InertiaTestCase):
         response = self.client.post(
             f"/challenge/{unique_code}",
             {
-                "payment_info": "This is extremely mocked right now",
+                "data_value": "eyJjb2RlIjoiNTBfMl8wNjAwMDUyMDIwMzAwRDc5QTMwQjQzMTg4QTc0MkUxOUNDNkQ5N0JEOTVGNTQ4NDcyNTE2MkEwQjc2ODc0RTc3RDI1RkU1OTQ1MEI3RDZDRjMzQTkwNDRFQkRGMUZFQUFBQzk3QjZCIiwidG9rZW4iOiI5NzAxNzk3Mzc4MDg2NTg4MzA0NjAxIiwidiI6IjEuMSJ9",
             },
             content_type="application/json",
         )
-
+        raise Exception("STOPPED ON PURPOSE")
         # login as second user and make payment
         self.client.login(username="user_b", password="password")
         response = self.client.post(
             f"/challenge/{unique_code}",
             {
-                "payment_info": "This is extremely mocked right now",
+                "data_value": "eyJjb2RlIjoiNTBfMl8wNjAwMDUzODRDMzdFQkFBMTMzQkQ1M0JBMDQ3MDlFRTdDRDc3QjVFMEJDNjU0MDhDNkZCRUY3QjEzOTU2ODgxN0U1MEEyNDEwRkEzODMxNzE4RDg5RTcxMEZGNkM4MDUxNUI1RTU1IiwidG9rZW4iOiI5NzAxNzkzNDg5MTYxNTY2MDA0NjAxIiwidiI6IjEuMSJ9",
             },
             content_type="application/json",
         )

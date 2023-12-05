@@ -125,21 +125,44 @@ def challenge_ante(request, challenge_id):
     if request.user.id not in challengers:
         raise Exception("Why are you here if you arent part of this?")
 
-    if request.method == "POST":
-        # form = AnteForm(request.POST)
-        amount = challenge.amount
+    data = json.loads(request.body)
+    form = AnteForm(data)
+    if form.is_valid():
+        data_value = data.get("data_value")
 
         payment_client = AuthorizeClient("token")
-        payment_status = payment_client.send_payment("source", "target", amount)
-
-        payment, _ = Payment.objects.get_or_create(
-            user=request.user,
+        payment_status = payment_client.send_payment(
+            data_value=data_value,
+            amount=challenge.amount,
             wager=challenge,
-            authorize_net_payment_id=payment_status["id"],
-            authorize_net_payment_status=payment_status["status"],
+            user=request.user,
         )
-        challenge.all_payments_received()
-        return {"status": payment.authorize_net_payment_status, "challenge": challenge}
+        print(payment_status)
+        {
+            "transId": 120010835157,
+            "responseCode": 1,
+            "code": 1,
+            "description": "This transaction has been approved.",
+        }
+        {
+            "errorCode": 11,
+            "errorText": "A duplicate transaction has been submitted.",
+        }
+        status = Payment.BAD
+        if payment_status.get("responseCode"):
+            status = Payment.GOOD
+            payment, _ = Payment.objects.get_or_create(
+                user=request.user,
+                wager=challenge,
+                authorize_net_payment_id=payment_status.get("transId"),
+                authorize_net_payment_status=status,
+                description=payment_status["description"],
+            )
+            challenge.all_payments_received()
+            return {
+                "status": payment.authorize_net_payment_status,
+                "challenge": challenge,
+            }
 
     return {"error": "Bad Payment"}
 
