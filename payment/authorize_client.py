@@ -1,14 +1,14 @@
 import json
+from lxml import etree
 import os
 
 from authorizenet import apicontractsv1
 from authorizenet.apicontrollers import createTransactionController
 
-<<<<<<< HEAD
+
 from django.conf import settings
-=======
+
 from api.utils import generate_unique_code
->>>>>>> main
 
 
 class AuthorizeClient:
