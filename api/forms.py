@@ -209,6 +209,10 @@ class AnteForm(forms.Form):
     data_value = forms.CharField(max_length=400)
 
 
+class PayPalForm(forms.Form):
+    paypal_email = forms.EmailField()
+
+
 def phone_number_validator(phone_number):
     import re
 

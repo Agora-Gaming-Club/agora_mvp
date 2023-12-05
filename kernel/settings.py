@@ -25,7 +25,7 @@ SECRET_KEY = "django-insecure-*qr-#1n!5qq@gg1xk7y4i$!iz*r)=6ezk7zmcxr8$a$zjs3u(l
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["127.0.0.1"]
+ALLOWED_HOSTS = ["127.0.0.1", "localhost"]
 
 # Application definition
 
@@ -172,6 +172,10 @@ EMAIL_USE_TLS = True
 EMAIL_ENABLED = False
 # Set to True inside tests to prevent emails from printing or sending
 EMAIL_TEST_MODE = False
+
+# Authorizenet settings
+AUTHORIZE_LOGIN_ID = os.getenv("AUTHORIZE_LOGIN_ID")
+AUTHORIZE_TRANSACTION_KEY = os.getenv("AUTHORIZE_TRANSACTION_KEY")
 
 
 CRONJOBS = [

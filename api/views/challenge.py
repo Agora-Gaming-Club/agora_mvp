@@ -137,17 +137,6 @@ def challenge_ante(request, challenge_id):
             wager=challenge,
             user=request.user,
         )
-        print(payment_status)
-        {
-            "transId": 120010835157,
-            "responseCode": 1,
-            "code": 1,
-            "description": "This transaction has been approved.",
-        }
-        {
-            "errorCode": 11,
-            "errorText": "A duplicate transaction has been submitted.",
-        }
         status = Payment.BAD
         if payment_status.get("responseCode"):
             status = Payment.GOOD
