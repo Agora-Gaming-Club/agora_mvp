@@ -12,10 +12,11 @@ import { UserProfile, Wager } from '@/schema';
 import { useAcceptJs } from 'react-acceptjs';
 import { PaymentInputsWrapper, usePaymentInputs } from 'react-payment-inputs';
 import images from 'react-payment-inputs/images';
+import { useForm } from '@inertiajs/react';
 
 const authData = {
   apiLoginID: '5UQt6rAa8T',
-  clientKey: '47xHPz97xFXz2A3t',
+  clientKey: '4tNj6v78h5c8xtNxKYCG25r79VE5Qa9963n7HTvqDFTxzNf47eVce4k26u9Htjcp',
 };
 
 type BasicCardInfo = {
@@ -36,6 +37,10 @@ const RequireChallengePaymentPartial: FunctionComponent<{
     expYear: '',
     cvc: '',
   });
+  const { data, setData, post } = useForm({
+    data_value: '',
+  });
+  const [errorMessage, setErrorMessage] = useState('');
 
   const {
     meta,
@@ -61,15 +66,23 @@ const RequireChallengePaymentPartial: FunctionComponent<{
       cardCode: creditCard.cvc.replaceAll(' ', ''),
     };
 
-    console.log(authorizeNetCard);
     // Dispatch CC data to Authorize.net and receive payment nonce for use on your server
-    const response = await dispatchData({
-      cardData: authorizeNetCard,
-    });
+    try {
+      const { messages, opaqueData } = await dispatchData({
+        cardData: authorizeNetCard,
+      });
 
-    console.log(error);
-
-    console.log('Received response:', response);
+      setData('data_value', opaqueData.dataValue);
+      post(`/challenge/${challenge.unique_code}`, {
+        onError: (err) => {
+          console.log(err);
+          // setFormErrors(transformErrors(err));
+        },
+        only: ['errors', 'challenge'],
+      });
+    } catch (e: any) {
+      setErrorMessage(e.messages.message[0].text);
+    }
   };
 
   return (
@@ -140,6 +153,9 @@ const RequireChallengePaymentPartial: FunctionComponent<{
                 />
               </PaymentInputsWrapper>
             </div>
+            {errorMessage && (
+              <span className="text-red-500 text-xs mt-1">{errorMessage}</span>
+            )}
           </Modal.Body>
           <Modal.Footer>
             <Button
