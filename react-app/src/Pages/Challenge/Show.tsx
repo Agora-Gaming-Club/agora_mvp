@@ -1,20 +1,14 @@
 import * as React from 'react';
-import { FormEventHandler, FunctionComponent, useMemo, useState } from 'react';
+import { FunctionComponent, useMemo, useState } from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Button, Card, Label, TextInput } from 'flowbite-react';
-import {
-  ArrowUpOnSquareIcon,
-  BanknotesIcon,
-  ClipboardIcon,
-} from '@heroicons/react/24/solid';
 import { useCopyToClipboard } from '@/Hooks/useCopyToClipboard';
-import { formatUniqueCode } from '@/Utils/string';
-import { currencyFormatter } from '@/Utils/money';
 import { UserProfile, Wager, WagerStatus } from '@/schema';
-import { useForm, usePage } from '@inertiajs/react';
-import Cookies from 'js-cookie';
-import { TransformedErrors, transformErrors } from '@/Utils/form';
-import { ArrowUpTrayIcon, ShareIcon } from '@heroicons/react/24/outline';
+import { usePage } from '@inertiajs/react';
+import AcceptChallengePartial from '@/Components/Partials/Challenge/AcceptChallengePartial';
+import RequireChallengePaymentPartial from '@/Components/Partials/Challenge/RequireChallengePaymentPartial';
+import ShareChallengePartial from '@/Components/Partials/Challenge/ShareChallengePartial';
+import { HostedForm } from 'react-acceptjs';
+import { AcceptHosted } from 'react-acceptjs';
 
 type Props = {
   challenge: Wager;
@@ -28,26 +22,6 @@ const ShareChallengeCard = () => {
 };
 
 const Show: FunctionComponent<Props> = ({ challenge, user }) => {
-  // show unique if status: awaiting_response & if they created it
-  // show "accept": awaiting_response & if they did not create it
-  const getDescription = () => {
-    if (
-      challenge.status === WagerStatus.AWAITING_RESPONSE &&
-      challenge.challenger_id == user.user
-    ) {
-      return 'Send the code below to challenge your opponent.';
-    }
-
-    if (
-      challenge.status === WagerStatus.AWAITING_RESPONSE &&
-      challenge.respondent_id == null
-    ) {
-      return 'Accept the challenge';
-    }
-
-    return '';
-  };
-
   const [description] = useMemo(() => {
     let description = '';
 
@@ -94,8 +68,6 @@ const ChallengeDetail: FunctionComponent<{
   const handleCopy = async () => {
     await copy(location.host + '/challenge/' + challenge.unique_code);
   };
-  // awaiting response & creator -> share link
-  // awaiting response & not creator -> accept challenge
   // accepted & respondent or creator -> select winner
   // disputed -> "oops"
   // completed & is_winner -> winner screen
@@ -104,175 +76,36 @@ const ChallengeDetail: FunctionComponent<{
     challenge.status === WagerStatus.AWAITING_RESPONSE &&
     user.user === challenge.challenger_id
   ) {
-    // show share link
-    return (
-      <Card className="max-w-xl text-center mx-auto">
-        <h3 className="text-gray-500 font-medium text-sm">Challenge</h3>
-        <h1 className="text-white text-2xl font-semibold">
-          {challenge.game.game}
-        </h1>
-        <h1 className="text-gray-300 font-medium">
-          {/*TODO: Add dayjs as dependency*/}
-          {new Date(challenge.created_at).toLocaleDateString()}
-        </h1>
-
-        <p className="text-gray-400 text-xs">
-          Copy and share your challenge URL below:
-        </p>
-        <div className="flex items-center justify-center">
-          <div className="rounded w-full bg-dark flex items-center justify-between p-2 border border-gray-400">
-            <h3 className="text-gray-500 uppercase">
-              {formatUniqueCode(challenge.unique_code)}
-            </h3>
-            <button onClick={handleCopy}>
-              <ClipboardIcon className="text-blue-500 h-6 w-6" />
-            </button>
-          </div>
-        </div>
-        {copiedValue && (
-          <small className="mt-1 text-green-500 text-sm">
-            Copied challenge code to clipboard.
-          </small>
-        )}
-
-        <a
-          href="https://discord.com"
-          target="_blank"
-          className="text-gray-300 underline inline-flex justify-center items-center"
-        >
-          Find Opponents on Discord{' '}
-          <ArrowUpOnSquareIcon className="h-4 w-4 ml-1" />
-        </a>
-      </Card>
-    );
+    // awaiting response & creator -> share link
+    return <ShareChallengePartial challenge={challenge} user={user} />;
   }
 
   if (
     challenge.status === WagerStatus.AWAITING_RESPONSE &&
     challenge.respondent_id === null
   ) {
-    const [formErrors, setFormErrors] = useState<TransformedErrors | null>(
-      null
-    );
-    const { data, setData, post } = useForm({
-      respondent_gamer_tag: '',
-      csrfmiddelwaretoken: Cookies.get('XSRF-TOKEN'),
-      accept: true,
-    });
-    const submit: FormEventHandler = (e) => {
-      e.preventDefault();
-
-      post(`/challenge/${challenge.unique_code}`, {
-        onError: (err) => {
-          console.log(err);
-          setFormErrors(transformErrors(err));
-        },
-        only: ['errors', 'challenge'],
-      });
-      console.log('to accept');
-    };
-
-    return (
-      <Card className="max-w-xl text-center mx-auto">
-        <div className="mt-6">
-          <dl className="space-y">
-            <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-              <dt className="text-sm font-medium leading-6 text-white">
-                Challenger
-              </dt>
-              <dd className="mt-1 text-sm leading-6 text-gray-400 sm:col-span-2 sm:mt-0">
-                @{challenge.challenger_gamer_tag}
-              </dd>
-            </div>
-            <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-              <dt className="text-sm font-medium leading-6 text-white">Game</dt>
-              <dd className="mt-1 text-sm leading-6 text-gray-400 sm:col-span-2 sm:mt-0">
-                {challenge.game.game}
-              </dd>
-            </div>
-            <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-              <dt className="text-sm font-medium leading-6 text-white">
-                Platform
-              </dt>
-              <dd className="mt-1 text-sm leading-6 text-gray-400 sm:col-span-2 sm:mt-0">
-                {challenge.game.platform}
-              </dd>
-            </div>
-            <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-              <dt className="text-sm font-medium leading-6 text-white">
-                Game Mode
-              </dt>
-              <dd className="mt-1 text-sm leading-6 text-gray-400 sm:col-span-2 sm:mt-0">
-                {challenge.notes}
-              </dd>
-            </div>
-
-            <div className="bg-dark rounded-full p-2 text-lg text-white flex items-center justify-center">
-              <span className="bg-green-400 rounded-full p-1 flex items-center justify-center mr-2">
-                <BanknotesIcon className="h-5 w-5" />
-              </span>
-              <h1>
-                Pay {currencyFormatter.format(Number(challenge.amount))}, Win{' '}
-                {currencyFormatter.format(Number(challenge.amount * 1.8))}
-              </h1>
-            </div>
-          </dl>
-        </div>
-
-        <form onSubmit={submit} className="mt-6 space-y-6">
-          <div>
-            <Label htmlFor="password" value="Gamer Tag" />
-
-            <TextInput
-              id="gamerTag"
-              value={data.respondent_gamer_tag}
-              onChange={(e) => setData('respondent_gamer_tag', e.target.value)}
-              type="text"
-              className="mt-1 w-full"
-              placeholder="Enter your Gamer Tag"
-              required
-              color={
-                formErrors?.errors.respondent_gamer_tag ? 'failure' : 'gray'
-              }
-              helperText={formErrors?.errors.respondent_gamer_tag ?? ''}
-            />
-          </div>
-
-          <div>
-            <Button className="w-full" type="submit" color="blue">
-              Accept Challenge
-            </Button>
-          </div>
-        </form>
-      </Card>
-    );
+    // awaiting response & not creator -> accept challenge
+    return <AcceptChallengePartial challenge={challenge} user={user} />;
   }
 
   if (challenge.status === WagerStatus.ACCEPTED) {
-    return (
-      <Card className="max-w-xl text-center mx-auto">
-        <h3 className="text-white font-medium text-sm">Stake Your Claim</h3>
-        <p className="text-gray-400 text-xs">
-          One last step before you get started - you both need to make the wager
-          payment agreed to for the challenge. The winner will receive the below
-          payout after you play!
-        </p>
+    const authData = {
+      apiLoginID: '5UQt6rAa8T',
+      clientKey: '47xHPz97xFXz2A3t',
+    };
 
-        <div className="bg-dark rounded-full p-2 text-lg text-white flex items-center justify-center">
-          <span className="bg-green-400 rounded-full p-1 flex items-center justify-center mr-2">
-            <BanknotesIcon className="h-5 w-5" />
-          </span>
-          <h1>
-            Pay {currencyFormatter.format(Number(challenge.amount))}, Win{' '}
-            {currencyFormatter.format(Number(challenge.amount * 1.8))}
-          </h1>
-        </div>
-
-        <Button className="w-full mt-5" color="blue">
-          Pay Now
-        </Button>
-      </Card>
-    );
+    type BasicCardInfo = {
+      cardNumber: string;
+      cardCode: string;
+      month: string;
+      year: string;
+    };
+    const handleSubmit = (response: any) => {
+      console.log('Received response:', response);
+    };
+    const formToken =
+      'BiQ/NHbH+6PvrbidOG2Efnga52QAuR9ffiHYJqEt6Q3DUSX4limPklTRR+DLpQ02foTRVDsTqfCoRkQASkzE8iFoTHzecbQMP1hNqOX/UzUfISnTCBQwkN3awNXNRIGcKQwizvn+aoEqjy/PvYw9GIQsfjQeRzIeCFQ6/wmRLuktRIPQDbCOLiuzpG2YTNV7vkhHS4nbS1ARkjBuopynWrpZNS7oDQKn6ef+A2xRHIPnCtperLmEVpMltgmfSLxU09VITiLmDxr8GtYz0fl5Zcs49SrhU0Y4gRs1NNDHWmhB+rYUzXUGIvT8/XGkrkrQc0hBG0fqYUPbRH62joxXiW92k25MmnJ7YnsFf4bomH9VBG9EzZ0sQ/E6ipcpA5lHSvCLs2waAb+ydMfPILnfB8ceBTGqp+GiVM7BISeWITfuUNIV5AGUV2CWxIr1FOKDGTXXesuQECShNPRHyCECJUTESVeGxanSbG8qYE4EkDPC3ZFop3Hg44LgDDTRBTJTvMgACkWQT4LeQG1oLD07XCLfdUV4D3CbVlUAYZEBIMZrPTRvQeOWkeBlQCrofSadDj35SIEeKL0TN6wedFe8U+dmgOEb9zYVs5k5svKxGCVnNWo5/RmhXzUqa5FtjRipQMkF2d6W3lMo+gIwkV0D/lP+r2RpffCccRo8/CDspDWPitWqPrflBDafSD82hvlFhC/n5PV4CdMhdKT/c12u1KObG59SHA1hPMYTGEKxKpAuYpTtXiRT1HUtiZ4C9y1C4qYz3aqQbQ9LsPwb5E3tnA44qnsmIpncW7ilJ+8hMAPMytaMKjcouk08j+0sJ8fyFy5NgVqz4z2CD7cdTNrE8+5lEqLlxv+FOw5Azvqfv7M=.5UQt6rAa8T';
+    return <RequireChallengePaymentPartial challenge={challenge} user={user} />;
   }
 
   if (challenge.status === WagerStatus.DISPUTED) {

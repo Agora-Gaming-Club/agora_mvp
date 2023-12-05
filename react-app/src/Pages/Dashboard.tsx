@@ -1,19 +1,17 @@
 import { FunctionComponent } from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Card } from 'flowbite-react';
-import { ChevronRightIcon } from '@heroicons/react/24/outline';
 import CountUp from 'react-countup';
-import { classNames } from '@/Utils/styles';
-import { currencyFormatter } from '@/Utils/money';
 import ChallengeCard from '@/Components/ChallengeCard';
 import { Pagination, UserProfile, Wager } from '@/schema';
 
 type Props = {
   user: UserProfile;
   active: Pagination<Wager>;
+  old: Pagination<Wager>;
 };
 
-const Dashboard: FunctionComponent<Props> = ({ user, active }) => {
+const Dashboard: FunctionComponent<Props> = ({ user, active, old }) => {
   return (
     <AuthenticatedLayout user={user} title="Dashboard">
       <div className="max-w-xl mx-auto">
@@ -35,6 +33,15 @@ const Dashboard: FunctionComponent<Props> = ({ user, active }) => {
         <h3 className="text-gray-500 text-lg">Active</h3>
         <ul className="space-y-1 w-full">
           {active.result.map((wager) => (
+            <ChallengeCard key={wager.unique_code} wager={wager} />
+          ))}
+        </ul>
+      </div>
+
+      <div className="container mx-auto px-5 py-8">
+        <h3 className="text-gray-500 text-lg">Old</h3>
+        <ul className="space-y-1 w-full">
+          {old.result.map((wager) => (
             <ChallengeCard key={wager.unique_code} wager={wager} />
           ))}
         </ul>
