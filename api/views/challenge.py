@@ -164,7 +164,7 @@ def challenge_ante(request, challenge_id):
                 "challenge": challenge,
             }
 
-    return {"error": "Bad Payment"}
+    return {"errors": "Bad Payment"}
 
 
 def challenge_winner(request, challenge_id):

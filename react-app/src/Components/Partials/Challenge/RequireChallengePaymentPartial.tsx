@@ -72,7 +72,8 @@ const RequireChallengePaymentPartial: FunctionComponent<{
         cardData: authorizeNetCard,
       });
 
-      setData('data_value', opaqueData.dataValue);
+      console.log(opaqueData.dataValue);
+      data.data_value = opaqueData.dataValue;
       post(`/challenge/${challenge.unique_code}`, {
         onError: (err) => {
           console.log(err);

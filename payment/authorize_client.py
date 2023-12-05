@@ -1,26 +1,15 @@
 import json
-from lxml import etree
 import os
 
 from authorizenet import apicontractsv1
 from authorizenet.apicontrollers import createTransactionController
 
-
-class FakeRequest:
-    @staticmethod
-    def request(method, url):
-        return {"id": 1234, "status": "go"}
+from api.utils import generate_unique_code
 
 
 class AuthorizeClient:
     def __init__(self, token):
         self.token = token
-
-    def send_payment_old(self, source, target, amount):
-        """I havent looked at the API yet, so this is fake"""
-        payment_url = f"http://some_site.com/payment/{source}/to/{target}/for/{amount}"
-        response = FakeRequest.request("GET", payment_url)
-        return response
 
     def send_payment(self, data_value, amount, wager, user):
         # Set up merchant authentication
@@ -45,7 +34,7 @@ class AuthorizeClient:
         # Create the request
         createtransactionrequest = apicontractsv1.createTransactionRequest()
         createtransactionrequest.merchantAuthentication = merchantAuth
-        createtransactionrequest.refId = f"{wager.unique_code}: {user}"
+        createtransactionrequest.refId = generate_unique_code()
         createtransactionrequest.transactionRequest = transactionrequest
 
         # Make the API Call

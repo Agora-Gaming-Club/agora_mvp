@@ -173,7 +173,7 @@ class Wager(models.Model):
         if self.challenger_paid and self.respondent_paid:
             self.status = Wager.IN_PROGRESS
             self.in_progress_time = datetime.now(timezone.utc)
-            self.save()
+        self.save()
 
     def award_payment(self):
         pass
