@@ -25,7 +25,7 @@ SECRET_KEY = "django-insecure-*qr-#1n!5qq@gg1xk7y4i$!iz*r)=6ezk7zmcxr8$a$zjs3u(l
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["127.0.0.1"]
 
 # Application definition
 
@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     # D.I.R.T Stack apps
     "django_vite",
     "inertia",
+    "django_extensions",
 ]
 
 MIDDLEWARE = [

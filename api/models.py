@@ -93,7 +93,6 @@ class Wager(models.Model):
     )
     challenger_gamer_tag = models.CharField(max_length=40, blank=True, null=True)
     respondent_gamer_tag = models.CharField(max_length=40, blank=True, null=True)
-    # rename to challenger_gamer_tag and add resepondent_gamer_tag
     status = models.CharField(
         max_length=30, choices=WAGER_STATUS, default=AWAITING_RESPONSE
     )
@@ -108,6 +107,7 @@ class Wager(models.Model):
 
     challenger_paid = models.BooleanField(default=False)
     respondent_paid = models.BooleanField(default=False)
+    # winner_paypal = models.CharField(max_length=100, blank=True, null=True)
 
     def __str__(self):
         respondent = "NOT ACCEPTED"
@@ -223,6 +223,7 @@ class Payment(models.Model):
     authorize_net_payment_status = models.CharField(
         max_length=2, choices=PAYMENT_STATUS, default=GOOD
     )
+    description = models.CharField(max_length=100, null=False, blank=True, default="")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

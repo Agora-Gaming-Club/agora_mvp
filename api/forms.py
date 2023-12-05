@@ -206,7 +206,7 @@ class AnteForm(forms.Form):
     unsure atm.
     """
 
-    payment_info = forms.CharField(max_length=400)
+    data_value = forms.CharField(max_length=400)
 
 
 def phone_number_validator(phone_number):
