@@ -26,10 +26,15 @@ type BasicCardInfo = {
   year: string;
 };
 
-const RequireChallengePaymentPartial: FunctionComponent<{
+type Props = {
   challenge: Wager;
   user: UserProfile;
-}> = ({ challenge, user }) => {
+};
+
+const RequireChallengePaymentPartial: FunctionComponent<Props> = ({
+  challenge,
+  user,
+}) => {
   const [openModal, setOpenModal] = useState(false);
   const { dispatchData, loading, error } = useAcceptJs({ authData });
   const [creditCard, setCreditCard] = useState({
@@ -72,7 +77,8 @@ const RequireChallengePaymentPartial: FunctionComponent<{
         cardData: authorizeNetCard,
       });
 
-      setData('data_value', opaqueData.dataValue);
+      console.log(opaqueData.dataValue);
+      data.data_value = opaqueData.dataValue;
       post(`/challenge/${challenge.unique_code}`, {
         onError: (err) => {
           console.log(err);

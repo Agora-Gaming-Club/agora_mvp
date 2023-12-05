@@ -18,7 +18,7 @@ from api.forms import (
     WinnerForm,
 )
 from api.models import Game, Payment, UserProfile, Wager
-from api.serializers import serialize
+from api.serializers import serialize, serialize_objs
 from api.utils import paginate
 
 from payment.authorize_client import AuthorizeClient
@@ -37,6 +37,7 @@ def challenge(request):
             platform = data["platform"]
             game = data["game"]
             game_obj, _ = Game.objects.get_or_create(platform=platform, game=game)
+            print('hello?')
             wager = Wager.objects.create(
                 challenger_id=request.user.id,
                 challenger_gamer_tag=data["challenger_gamer_tag"],
@@ -46,7 +47,7 @@ def challenge(request):
             return HttpResponseRedirect(f"challenge/{wager.unique_code}")
         else:
             return {"errors": form.errors.get_json_data()}
-    return {"user": user, "games": Game.GAMES, "platforms": Game.PLATFORM}
+    return {"user": user, "games": serialize_objs(Game.objects.all()), "platforms": Game.PLATFORM}
 
 
 @ensure_csrf_cookie
@@ -153,7 +154,7 @@ def challenge_ante(request, challenge_id):
                 "challenge": challenge,
             }
 
-    return {"error": "Bad Payment"}
+    return {"errors": "Bad Payment"}
 
 
 def challenge_winner(request, challenge_id):

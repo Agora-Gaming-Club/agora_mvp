@@ -6,10 +6,15 @@ import { ArrowUpOnSquareIcon, ClipboardIcon } from '@heroicons/react/24/solid';
 import { UserProfile, Wager } from '@/schema';
 import { useCopyToClipboard } from '@/Hooks/useCopyToClipboard';
 
-const ShareChallengePartial: FunctionComponent<{
+type Props = {
   challenge: Wager;
   user: UserProfile;
-}> = ({ challenge, user }) => {
+};
+
+const ShareChallengePartial: FunctionComponent<Props> = ({
+  challenge,
+  user,
+}) => {
   const [copied, setCopied] = useState(false);
   const [copiedValue, copy] = useCopyToClipboard();
   const handleCopy = async () => {

@@ -25,6 +25,8 @@ export type Wager = {
   respondent_vote: string | null;
   challenger?: UserProfile;
   respondent?: UserProfile;
+  challenger_paid: boolean;
+  respondent_paid: boolean;
 };
 
 export type UserProfile = {
@@ -53,4 +55,6 @@ export type Pagination<T> = {
 export type Game = {
   game: string;
   platform: string;
+  terms: string;
+  slug: string;
 };
