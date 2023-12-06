@@ -257,6 +257,24 @@ class Game(models.Model):
     def natural_key(self):
         return f"{self.get_game_display()} for {self.get_platform_display()}"
 
+    @staticmethod
+    def get_selections():
+        games = Game.objects.all()
+
+        pass
+
+
+class GameName(models.Model):
+    name = models.CharField(max_length=200, blank=False, null=False)
+
+
+class Platform(models.Model):
+    name = models.CharField(max_length=200, blank=False, null=False)
+
+
+class Terms(models.Model):
+    terms = models.CharField(max_length=200, blank=False, null=False)
+
 
 ## You should select the game first, then the platform and the terms.
 
