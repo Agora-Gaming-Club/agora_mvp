@@ -15,6 +15,7 @@ from api.forms import (
     AnteForm,
     ChallengeForm,
     ChallengeSearchForm,
+    PayPalForm,
     WinnerForm,
 )
 from api.models import Game, Payment, UserProfile, Wager
@@ -36,18 +37,24 @@ def challenge(request):
         if form.is_valid():
             platform = data["platform"]
             game = data["game"]
+            # TODO REPLACE THIS NEXT LINE WITH A GET
             game_obj, _ = Game.objects.get_or_create(platform=platform, game=game)
-            print('hello?')
             wager = Wager.objects.create(
                 challenger_id=request.user.id,
                 challenger_gamer_tag=data["challenger_gamer_tag"],
                 amount=data["amount"],
                 game=game_obj,
             )
+            wager.winning_amt = wager.calculate_winning_payment()
+            wager.save()
             return HttpResponseRedirect(f"challenge/{wager.unique_code}")
         else:
             return {"errors": form.errors.get_json_data()}
-    return {"user": user, "games": serialize_objs(Game.objects.all()), "platforms": Game.PLATFORM}
+    return {
+        "user": user,
+        "games": serialize_objs(Game.objects.all()),
+        "platforms": Game.PLATFORM,
+    }
 
 
 @ensure_csrf_cookie
@@ -196,6 +203,20 @@ def challenge_winner(request, challenge_id):
         return {"challenge": challenge}
 
     return {"errors": form.errors.get_json_data()}
+
+
+def challenge_award(request, challenge_id):
+    data = json.loads(request.body)
+    challenge = get_object_or_404(Wager, unique_code=challenge_id)
+    form = PayPalForm(data)
+    if form.is_valid():
+        email = data.get("email")
+        challenge.winner_paypal = email
+        challenge.save()
+        return {"challenge": challenge}
+    else:
+        return {"errors": form.errors.get_json_data()}
+    return {}
 
 
 @inertia("Challenge/Index")

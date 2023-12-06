@@ -80,13 +80,20 @@ class Wager(models.Model):
         COMPLETED,
         EXPIRED,
     ]
+    TEN = 10
+    TWENTYFIVE = 25
+    FIFTY = 50
+    AMOUNT_CHOICES = [
+        (TEN, 10.00),
+        (TWENTYFIVE, 25.00),
+        (FIFTY, 50.00),
+    ]
 
     challenger_id = models.IntegerField()
     respondent_id = models.IntegerField(blank=True, null=True)
     # make amount a choice box
-    amount = models.DecimalField(max_digits=6, decimal_places=2)
+    amount = models.DecimalField(choices=AMOUNT_CHOICES, max_digits=6, decimal_places=2)
     game = models.ForeignKey("Game", on_delete=models.CASCADE, blank=True)
-    # terms = models.ForeignKey("Terms", on_delete=models.CASCADE, blank=True)
     notes = models.CharField(max_length=200, blank=True, null=True)
     unique_code = models.CharField(
         default=generate_unique_code, max_length=40, blank=True
@@ -97,9 +104,6 @@ class Wager(models.Model):
         max_length=30, choices=WAGER_STATUS, default=AWAITING_RESPONSE
     )
     in_progress_time = models.DateTimeField(null=True, blank=True)
-    winner = models.ForeignKey(
-        "UserProfile", on_delete=models.CASCADE, null=True, blank=True
-    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     challenger_vote = models.CharField(max_length=10, null=True, blank=True)
@@ -107,7 +111,12 @@ class Wager(models.Model):
 
     challenger_paid = models.BooleanField(default=False)
     respondent_paid = models.BooleanField(default=False)
+
+    winner = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
+    winning_amt = models.DecimalField(default=0.00, max_digits=6, decimal_places=2)
     winner_paypal = models.CharField(max_length=100, blank=True, null=True)
+    paypal_payment_id = models.CharField(max_length=40, null=True, blank=True)
+    winner_paid = models.BooleanField(default=False)
 
     def __str__(self):
         respondent = "NOT ACCEPTED"
@@ -175,9 +184,6 @@ class Wager(models.Model):
             self.in_progress_time = datetime.now(timezone.utc)
         self.save()
 
-    def award_payment(self):
-        pass
-
     def determine_winner(self):
         challenger_vote = None
         respondent_vote = None
@@ -203,7 +209,35 @@ class Wager(models.Model):
             self.winner = None
 
         self.save()
+        self.award_payment()
         return self.winner
+
+    def calculate_winning_payment(self):
+        if self.amount == 10.00:
+            return 18.00
+        elif self.amount == 25.00:
+            return 45.00
+        elif self.amount == 50.00:
+            return 90.00
+
+    def award_payment(self):
+        winning = self.calculate_winning_payment()
+        self.winner.winnings += winning
+        self.winner.save()
+
+
+class WagerDisputeProxy(Wager):
+    class Meta:
+        proxy = True
+        verbose_name = "Wager Dispute"
+        verbose_name_plural = "Wager Disputes"
+
+
+class WagerPayoutProxy(Wager):
+    class Meta:
+        proxy = True
+        verbose_name = "Payout"
+        verbose_name_plural = "Payouts"
 
 
 class Payment(models.Model):

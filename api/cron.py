@@ -13,8 +13,7 @@ def my_cron_job():
 
 
 def challenge_creation_expired():
-    # TODO: i think this is supposed to be AWAITING_RESPONSE??
-    challenges = Wager.objects.filter(status=Wager.IN_PROGRESS)
+    challenges = Wager.objects.filter(status=Wager.AWAITING_RESPONSE)
     now = datetime.now(timezone.utc)
     for challenge in challenges:
         if challenge.created_at + CHALLENGE_EXPIRE_TIME < now:
