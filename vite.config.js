@@ -11,6 +11,7 @@ module.exports = {
   root: resolve('./frontend'),
   base: '/static/',
   server: {
+    https: true,
     // host: 'localhost',
     // port: 5172,
     // open: false,
