@@ -97,9 +97,7 @@ class Wager(models.Model):
         max_length=30, choices=WAGER_STATUS, default=AWAITING_RESPONSE
     )
     in_progress_time = models.DateTimeField(null=True, blank=True)
-    winner = models.ForeignKey(
-        "UserProfile", on_delete=models.CASCADE, null=True, blank=True
-    )
+    winner = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     challenger_vote = models.CharField(max_length=10, null=True, blank=True)
@@ -108,6 +106,8 @@ class Wager(models.Model):
     challenger_paid = models.BooleanField(default=False)
     respondent_paid = models.BooleanField(default=False)
     winner_paypal = models.CharField(max_length=100, blank=True, null=True)
+    paypal_payment_id = models.CharField(max_length=40, null=True, blank=True)
+    winner_paid = models.BooleanField(default=False)
 
     def __str__(self):
         respondent = "NOT ACCEPTED"
@@ -204,6 +204,20 @@ class Wager(models.Model):
 
         self.save()
         return self.winner
+
+
+class WagerDisputeProxy(Wager):
+    class Meta:
+        proxy = True
+        verbose_name = "Wager Dispute"
+        verbose_name_plural = "Wager Disputes"
+
+
+class WagerPayoutProxy(Wager):
+    class Meta:
+        proxy = True
+        verbose_name = "Payout"
+        verbose_name_plural = "Payouts"
 
 
 class Payment(models.Model):

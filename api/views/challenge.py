@@ -37,7 +37,6 @@ def challenge(request):
             platform = data["platform"]
             game = data["game"]
             game_obj, _ = Game.objects.get_or_create(platform=platform, game=game)
-            print('hello?')
             wager = Wager.objects.create(
                 challenger_id=request.user.id,
                 challenger_gamer_tag=data["challenger_gamer_tag"],
@@ -47,7 +46,11 @@ def challenge(request):
             return HttpResponseRedirect(f"challenge/{wager.unique_code}")
         else:
             return {"errors": form.errors.get_json_data()}
-    return {"user": user, "games": serialize_objs(Game.objects.all()), "platforms": Game.PLATFORM}
+    return {
+        "user": user,
+        "games": serialize_objs(Game.objects.all()),
+        "platforms": Game.PLATFORM,
+    }
 
 
 @ensure_csrf_cookie
