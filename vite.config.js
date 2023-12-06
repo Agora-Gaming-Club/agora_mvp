@@ -11,8 +11,8 @@ module.exports = {
   root: resolve('./frontend'),
   base: '/static/',
   server: {
-    // host: 'localhost',
-    // port: 3000,
+    host: 'localhost',
+    port: 5173,
     open: false,
     watch: {
       usePolling: true,
