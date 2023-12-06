@@ -220,7 +220,7 @@ class Wager(models.Model):
 
     def award_payment(self):
         winning = self.calculate_winning_payment()
-        self.winner.winnings(winning)
+        self.winner.winnings += winning
         self.winner.save()
 
 
