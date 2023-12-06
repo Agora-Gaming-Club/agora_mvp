@@ -3,9 +3,10 @@
   "version": "1.0.0",
   "description": "This should be enough to get started for dev/testing",
   "scripts": {
-    "build": "vite build",
+     "build": "vite build && npm run tailwind-build",
     "vite-dev": "vite",
     "tailwind-dev": "tailwindcss -i ./static/css/main.css -o ./static/dist/css/app.css --watch",
+    "tailwind-build": "tailwindcss -i ./static/css/main.css -o ./static/dist/css/app.css --minify",
     "dev": "concurrently \"npm run tailwind-dev\" \"npm run vite-dev\" ",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
