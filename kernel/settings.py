@@ -147,10 +147,10 @@ IMAGE_ASSETS = BASE_DIR / "static" / "assets"
 DJANGO_VITE_DEV_MODE = False
 
 # we need this to get around cors issues
-DJANGO_VITE_DEV_SERVER_HOST = "127.0.0.1"
+DJANGO_VITE_DEV_SERVER_HOST = "https://dev.agoragaming.gg"
 
 # this is the default, but I'm leaving this here, so you know what to change if you want to run on a different port
-DJANGO_VITE_PORT = 3000
+# DJANGO_VITE_PORT = 3000
 
 # Name of our static files' folder (after called python manage.py collectstatic)
 STATIC_ROOT = BASE_DIR / "static"
