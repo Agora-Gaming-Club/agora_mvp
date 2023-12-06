@@ -37,6 +37,7 @@ def challenge(request):
         if form.is_valid():
             platform = data["platform"]
             game = data["game"]
+            # TODO REPLACE THIS NEXT LINE WITH A GET
             game_obj, _ = Game.objects.get_or_create(platform=platform, game=game)
             wager = Wager.objects.create(
                 challenger_id=request.user.id,
