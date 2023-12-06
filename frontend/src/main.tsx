@@ -9,7 +9,7 @@ const customTheme: CustomFlowbiteTheme = {
     },
   },
 };
-console.log(customTheme);
+alert('hellow');
 
 document.addEventListener('DOMContentLoaded', () => {
   createInertiaApp({
