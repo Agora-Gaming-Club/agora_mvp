@@ -104,7 +104,6 @@ class Wager(models.Model):
         max_length=30, choices=WAGER_STATUS, default=AWAITING_RESPONSE
     )
     in_progress_time = models.DateTimeField(null=True, blank=True)
-    winner = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     challenger_vote = models.CharField(max_length=10, null=True, blank=True)
@@ -112,6 +111,9 @@ class Wager(models.Model):
 
     challenger_paid = models.BooleanField(default=False)
     respondent_paid = models.BooleanField(default=False)
+
+    winner = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
+    winning_amt = models.DecimalField(default=0.00, max_digits=6, decimal_places=2)
     winner_paypal = models.CharField(max_length=100, blank=True, null=True)
     paypal_payment_id = models.CharField(max_length=40, null=True, blank=True)
     winner_paid = models.BooleanField(default=False)

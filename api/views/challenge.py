@@ -44,6 +44,8 @@ def challenge(request):
                 amount=data["amount"],
                 game=game_obj,
             )
+            wager.winning_amt = wager.calculate_winning_payment()
+            wager.save()
             return HttpResponseRedirect(f"challenge/{wager.unique_code}")
         else:
             return {"errors": form.errors.get_json_data()}
