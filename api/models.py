@@ -80,13 +80,20 @@ class Wager(models.Model):
         COMPLETED,
         EXPIRED,
     ]
+    TEN = 10
+    TWENTYFIVE = 25
+    FIFTY = 50
+    AMOUNT_CHOICES = [
+        (TEN, 10.00),
+        (TWENTYFIVE, 25.00),
+        (FIFTY, 50.00),
+    ]
 
     challenger_id = models.IntegerField()
     respondent_id = models.IntegerField(blank=True, null=True)
     # make amount a choice box
-    amount = models.DecimalField(max_digits=6, decimal_places=2)
+    amount = models.DecimalField(choices=AMOUNT_CHOICES, max_digits=6, decimal_places=2)
     game = models.ForeignKey("Game", on_delete=models.CASCADE, blank=True)
-    # terms = models.ForeignKey("Terms", on_delete=models.CASCADE, blank=True)
     notes = models.CharField(max_length=200, blank=True, null=True)
     unique_code = models.CharField(
         default=generate_unique_code, max_length=40, blank=True
@@ -175,9 +182,6 @@ class Wager(models.Model):
             self.in_progress_time = datetime.now(timezone.utc)
         self.save()
 
-    def award_payment(self):
-        pass
-
     def determine_winner(self):
         challenger_vote = None
         respondent_vote = None
@@ -203,7 +207,21 @@ class Wager(models.Model):
             self.winner = None
 
         self.save()
+        self.award_payment()
         return self.winner
+
+    def calculate_winning_payment(self):
+        if self.amount == 10.00:
+            return 18.00
+        elif self.amount == 25.00:
+            return 45.00
+        elif self.amount == 50.00:
+            return 90.00
+
+    def award_payment(self):
+        winning = self.calculate_winning_payment()
+        self.winner.winnings += winning
+        self.winner.save()
 
 
 class WagerDisputeProxy(Wager):

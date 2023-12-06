@@ -15,6 +15,7 @@ from api.forms import (
     AnteForm,
     ChallengeForm,
     ChallengeSearchForm,
+    PayPalForm,
     WinnerForm,
 )
 from api.models import Game, Payment, UserProfile, Wager
@@ -199,6 +200,20 @@ def challenge_winner(request, challenge_id):
         return {"challenge": challenge}
 
     return {"errors": form.errors.get_json_data()}
+
+
+def challenge_award(request, challenge_id):
+    data = json.loads(request.body)
+    challenge = get_object_or_404(Wager, unique_code=challenge_id)
+    form = PayPalForm(data)
+    if form.is_valid():
+        email = data.get("email")
+        challenge.winner_paypal = email
+        challenge.save()
+        return {"challenge": challenge}
+    else:
+        return {"errors": form.errors.get_json_data()}
+    return {}
 
 
 @inertia("Challenge/Index")
