@@ -1,15 +1,5 @@
 import { createRoot } from 'react-dom/client';
 import { createInertiaApp } from '@inertiajs/react';
-import { CustomFlowbiteTheme } from 'flowbite-react';
-
-const customTheme: CustomFlowbiteTheme = {
-  button: {
-    color: {
-      primary: 'bg-red-500 hover:bg-red-600',
-    },
-  },
-};
-alert('hello');
 
 document.addEventListener('DOMContentLoaded', () => {
   createInertiaApp({
