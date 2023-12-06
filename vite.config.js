@@ -24,7 +24,7 @@ module.exports = {
     alias: [{ find: '@', replacement: resolve(__dirname, './frontend/src') }],
   },
   build: {
-    outDir: resolve(__dirname, './static/dist/js'), // Outputs the build files in /static/dist/js
+    outDir: resolve(__dirname, './static/dist'), // Outputs the build files in /static/dist/js
     assetsDir: '',
     manifest: true,
     emptyOutDir: true,

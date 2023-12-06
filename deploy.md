@@ -62,5 +62,5 @@ sudo ln domainname_com.conf /etc/nginx/sites-enabled/ # activate newly create ng
 sudo service nginx restart # restart service
 ```
 
-
+sudo service supervisor restart
 Certbot
