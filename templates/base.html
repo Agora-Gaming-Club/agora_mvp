@@ -7,17 +7,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <!-- css -->
     <link rel="stylesheet" href="{% static 'css/app.css' %}"/>
-    <!-- vite hmr -->
-    {% vite_hmr_client %}
-    {% vite_asset 'src/main.tsx' %}
+
+    <!-- Vite assets -->
+    {% if debug %}
+        {% vite_hmr_client %}
+    {% else %}
+        {% vite_asset 'src/main.tsx' %}
+    {% endif %}
+
     <title inertia>Agora Gaming Club</title>
     <link rel="icon" href="{% static 'favicon.ico' %}"/>
-
 </head>
 <body>
 <!-- inertia -->
 {% block inertia %}{% endblock %}
-
 </body>
-
 </html>
