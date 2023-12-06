@@ -12,7 +12,7 @@ module.exports = {
   base: '/static/',
   server: {
     host: 'localhost',
-    port: 5173,
+    port: 5172,
     open: false,
     watch: {
       usePolling: true,
