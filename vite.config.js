@@ -11,14 +11,14 @@ module.exports = {
   root: resolve('./frontend'),
   base: '/static/',
   server: {
-    https: true,
-    // host: 'localhost',
-    // port: 5172,
-    // open: false,
-    // watch: {
-    //   usePolling: true,
-    //   disableGlobbing: false,
-    // },
+    // https: true,
+    host: 'localhost',
+    port: 3000,
+    open: false,
+    watch: {
+      usePolling: true,
+      disableGlobbing: false,
+    },
   },
   resolve: {
     extensions: ['.tsx', '.ts', '.js', '.json'],

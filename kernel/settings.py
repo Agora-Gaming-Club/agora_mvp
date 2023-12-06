@@ -150,7 +150,7 @@ DJANGO_VITE_DEV_MODE = False
 DJANGO_VITE_DEV_SERVER_HOST = "127.0.0.1"
 
 # this is the default, but I'm leaving this here, so you know what to change if you want to run on a different port
-DJANGO_VITE_PORT = 5172
+DJANGO_VITE_PORT = 3000
 
 # Name of our static files' folder (after called python manage.py collectstatic)
 STATIC_ROOT = BASE_DIR / "static"
