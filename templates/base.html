@@ -9,7 +9,12 @@
     <link rel="stylesheet" href="{% static 'css/app.css' %}"/>
 
     <!-- Vite assets -->
-     {% vite_asset 'src/main.tsx' %}
+    <script type="module" crossorigin="" src="/static/main-93e06a3a.js"></script>
+{#     {% if DJANGO_VITE_DEV_MODE %}#}
+{#        {% vite_hmr_client %}#}
+{#    {% else %}#}
+{#        {% vite_asset 'src/main.tsx' %}#}
+{#    {% endif %}#}
 
 
     <title inertia>Agora Gaming Club</title>
