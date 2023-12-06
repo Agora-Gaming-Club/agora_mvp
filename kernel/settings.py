@@ -25,7 +25,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = "django-insecure-*qr-#1n!5qq@gg1xk7y4i$!iz*r)=6ezk7zmcxr8$a$zjs3u(l"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ["127.0.0.1", "localhost", "18.226.170.241", "dev.agoragaming.gg", "dev.agoragaming.club"]
 
@@ -147,10 +147,10 @@ IMAGE_ASSETS = BASE_DIR / "static" / "assets"
 DJANGO_VITE_DEV_MODE = False
 
 # we need this to get around cors issues
-DJANGO_VITE_DEV_SERVER_HOST = "https://dev.agoragaming.gg"
+DJANGO_VITE_DEV_SERVER_HOST = "127.0.0.1"
 
 # this is the default, but I'm leaving this here, so you know what to change if you want to run on a different port
-# DJANGO_VITE_PORT = 3000
+DJANGO_VITE_PORT = 5173
 
 # Name of our static files' folder (after called python manage.py collectstatic)
 STATIC_ROOT = BASE_DIR / "static"
