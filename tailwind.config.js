@@ -4,7 +4,7 @@ import forms from '@tailwindcss/forms';
 module.exports = {
   content: [
     './templates/**/*.html',
-    './react-app/src/**/*.{js,jsx,ts,tsx}',
+    './frontend/src/**/*.{js,jsx,ts,tsx}',
     'node_modules/flowbite-react/**/*.{js,jsx,ts,tsx}',
   ],
   theme: {
