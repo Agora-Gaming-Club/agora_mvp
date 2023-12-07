@@ -1,19 +1,28 @@
 from django.contrib import admin
 from django.contrib.auth.models import User
+
 from api.models import (
     Game,
-    Payment,
-    UserProfile,
+    GameName,
+    Platform,
+    Term,
     Wager,
-    # WagerDisputeProxy,
-    # WagerPayoutProxy,
-    # GameName,
-    # Platform,
-    # Term,
+)
+from admin_app.models import (
+    WagerDisputeProxy,
+    WagerPayoutProxy,
 )
 
-
 # Register your models here.
+
+
+class GameAdmin(admin.ModelAdmin):
+    list_display = [
+        "game",
+        "platform",
+        "terms",
+        "discord_link",
+    ]
 
 
 class GameAdmin(admin.ModelAdmin):
@@ -150,12 +159,9 @@ class TermAdmin(admin.ModelAdmin):
     list_display = ["terms"]
 
 
-# admin.site.register(Game, GameAdmin)
-admin.site.register(Payment, PaymentAdmin)
-admin.site.register(UserProfile, UserProfileAdmin)
-admin.site.register(Wager, WagerAdmin)
-# admin.site.register(WagerDisputeProxy, WagerDisputeAdmin)
-# admin.site.register(WagerPayoutProxy, WagerPayoutAdmin)
-# admin.site.register(GameName, GameNameAdmin)
-# admin.site.register(Platform, PlatformAdmin)
-# admin.site.register(Term, TermAdmin)
+admin.site.register(Game, GameAdmin)
+admin.site.register(WagerDisputeProxy, WagerDisputeAdmin)
+admin.site.register(WagerPayoutProxy, WagerPayoutAdmin)
+admin.site.register(GameName, GameNameAdmin)
+admin.site.register(Platform, PlatformAdmin)
+admin.site.register(Term, TermAdmin)

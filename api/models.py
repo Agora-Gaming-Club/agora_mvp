@@ -226,18 +226,18 @@ class Wager(models.Model):
         self.winner.save()
 
 
-class WagerDisputeProxy(Wager):
-    class Meta:
-        proxy = True
-        verbose_name = "Wager Dispute"
-        verbose_name_plural = "Wager Disputes"
+# class WagerDisputeProxy(Wager):
+#     class Meta:
+#         proxy = True
+#         verbose_name = "Wager Dispute"
+#         verbose_name_plural = "Wager Disputes"
 
 
-class WagerPayoutProxy(Wager):
-    class Meta:
-        proxy = True
-        verbose_name = "Payout"
-        verbose_name_plural = "Payouts"
+# class WagerPayoutProxy(Wager):
+#     class Meta:
+#         proxy = True
+#         verbose_name = "Payout"
+#         verbose_name_plural = "Payouts"
 
 
 class Payment(models.Model):
@@ -277,9 +277,9 @@ class Game(models.Model):
         ("madden_24", "Madden 24"),
         ("nba_2k_24", "NBA 2K 24"),
     ]
-    platform = models.CharField(max_length=20, choices=PLATFORM)
-    game = models.CharField(max_length=20, choices=GAMES)
-    terms = models.CharField(max_length=200, blank=True, null=True)
+    platform = models.ForeignKey("Platform", on_delete=models.CASCADE)
+    game = models.ForeignKey("GameName", on_delete=models.CASCADE)
+    terms = models.ForeignKey("Term", on_delete=models.CASCADE)
     discord_link = models.URLField(null=False, blank=False)
 
     def __str__(self):
@@ -293,23 +293,47 @@ class Game(models.Model):
 
     @staticmethod
     def get_selections():
+        choices = {}
         games = Game.objects.all()
-
-        pass
+        for game in games:
+            game_name = game.game.name
+            platform = game.platform.name
+            terms = game.terms.terms
+            if game_name not in choices:
+                choices[game_name] = {"terms": [], "platforms": []}
+            if platform not in choices[game_name]["platforms"]:
+                choices[game_name]["platforms"].append(platform)
+            if terms not in choices[game_name]["terms"]:
+                choices[game_name]["terms"].append(
+                    {"term": terms, "discord_link": game.discord_link}
+                )
+        return choices
 
 
 class GameName(models.Model):
     name = models.CharField(max_length=200, blank=False, null=False)
 
+    def __str__(self):
+        return self.name
+
 
 class Platform(models.Model):
     name = models.CharField(max_length=200, blank=False, null=False)
 
+    def __str__(self):
+        return self.name
 
-class Terms(models.Model):
+
+class Term(models.Model):
     terms = models.CharField(max_length=200, blank=False, null=False)
 
+    def __str__(self):
+        return self.terms
 
+
+from rich import print
+
+print(Game.get_selections())
 ## You should select the game first, then the platform and the terms.
 
 # class Game(models.Model):
