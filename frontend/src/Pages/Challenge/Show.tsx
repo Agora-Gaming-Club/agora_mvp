@@ -22,6 +22,7 @@ type Props = {
 };
 
 const Show: FunctionComponent<Props> = ({ challenge, user }) => {
+  console.log(user);
   const [description] = useMemo(() => {
     let description = '';
 
@@ -60,32 +61,31 @@ const Show: FunctionComponent<Props> = ({ challenge, user }) => {
           <ChallengeDetail challenge={challenge} user={user} />
         ) : (
           <Card className="max-w-xl text-center mx-auto">
-            <ChallengeDescription challenge={challenge}>
-              <h3 className="text-white">
-                Signup or Register to Accept Challenge
-              </h3>
-              <div className="flex items-center space-x-4">
-                <Button
-                  className="w-full"
-                  color="blue"
-                  // @ts-ignore
-                  as="a"
-                  href={`/accounts/register?redirect=/challenge/${challenge.unique_code}`}
-                >
-                  Register
-                </Button>
-                <Button
-                  className="w-full"
-                  color="blue"
-                  // @ts-ignore
-                  as="a"
-                  href={`/accounts/login?redirect=/challenge/${challenge.unique_code}`}
-                  outline
-                >
-                  Login
-                </Button>
-              </div>
-            </ChallengeDescription>
+            <ChallengeDescription challenge={challenge} />
+            <h3 className="text-white">
+              Signup or Register to Accept Challenge
+            </h3>
+            <div className="flex items-center space-x-4">
+              <Button
+                className="w-full"
+                color="blue"
+                // @ts-ignore
+                as="a"
+                href={`/accounts/register?redirect=/challenge/${challenge.unique_code}`}
+              >
+                Register
+              </Button>
+              <Button
+                className="w-full"
+                color="blue"
+                // @ts-ignore
+                as="a"
+                href={`/accounts/login?redirect=/challenge/${challenge.unique_code}`}
+                outline
+              >
+                Login
+              </Button>
+            </div>
           </Card>
         )}
       </div>
