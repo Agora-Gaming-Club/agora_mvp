@@ -8,6 +8,7 @@ pip install -r requirements.txt
 
 # Run Migrations
 python manage.py makemigrations api
+python manage.py makemigrations admin_app
 python manage.py migrate
 
 # Npm
