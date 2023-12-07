@@ -9,7 +9,6 @@ type Props = {
   user: UserProfile;
 };
 const Edit: FunctionComponent<Props> = ({ user }) => {
-  console.log(user);
   return (
     <AuthenticatedLayout user={user} title="Profile Information">
       <div className="py-8 px-4 mt-5">

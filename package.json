@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "This should be enough to get started for dev/testing",
   "scripts": {
-     "build": "vite build && npm run tailwind-build",
+    "build": "vite build && npm run tailwind-build",
     "vite-dev": "vite",
     "tailwind-dev": "tailwindcss -i ./frontend/css/main.css -o ./static/dist/css/app.css --watch",
     "tailwind-build": "tailwindcss -i ./frontend/css/main.css -o ./static/dist/css/app.css --minify",
