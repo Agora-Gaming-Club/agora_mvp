@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 
-from api.models import Game, UserProfile, Wager
+from api.models import Game, UserProfile, Wager, GameName, Platform, Term
 
 
 def make_user(username, email, password, *args, **kwargs):
@@ -22,11 +22,20 @@ def make_user(username, email, password, *args, **kwargs):
     return user_profile
 
 
-def get_wager(user_a, user_b):
+def make_game():
+    gamename = GameName.objects.create(name="Rocket League")
+    platform = Platform.objects.create(name="Playstation 5")
+    terms = Term.objects.create(terms="1v1 Golden Snitch Mode")
     game = Game.objects.create(
-        platform="xbox",
-        game="rocket_league",
+        platform=platform,
+        game=gamename,
+        terms=terms,
     )
+    return game
+
+
+def get_wager(user_a, user_b):
+    game = make_game()
     wager = Wager.objects.create(
         challenger_id=user_a.id,
         respondent_id=user_b.id,

@@ -176,7 +176,7 @@ class TestAuth(InertiaTestCase):
 
     def test_forbidden_state(self):
         base_data = self.base_register_data()
-        base_data["state"] = "UT"
+        base_data["state"] = "AZ"
         response = self.client.post(
             "/accounts/register",
             base_data,

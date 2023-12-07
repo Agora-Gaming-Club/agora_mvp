@@ -1,25 +1,12 @@
 from django.contrib import admin
-from django.contrib.auth.models import User
 from api.models import (
-    Game,
     Payment,
     UserProfile,
     Wager,
-    WagerDisputeProxy,
-    WagerPayoutProxy,
 )
 
 
 # Register your models here.
-
-
-class GameAdmin(admin.ModelAdmin):
-    list_display = [
-        "game",
-        "platform",
-        "terms",
-        "discord_link",
-    ]
 
 
 class PaymentAdmin(admin.ModelAdmin):
@@ -70,74 +57,6 @@ class WagerAdmin(admin.ModelAdmin):
     list_filter = ["status"]
 
 
-class WagerDisputeAdmin(admin.ModelAdmin):
-    list_display = [
-        "amount",
-        "unique_code",
-        "challenger",
-        "challenger_voted",
-        "respondent",
-        "respondent_voted",
-        "status",
-    ]
-    readonly_fields = [
-        "challenger",
-        "challenger_voted",
-        "respondent",
-        "respondent_voted",
-    ]
-
-    @admin.display(description="Challenger")
-    def challenger(self, instance):
-        return User.objects.get(id=instance.challenger_id)
-
-    @admin.display(description="challenger vote")
-    def challenger_voted(self, instance):
-        return User.objects.get(id=instance.challenger_vote)
-
-    @admin.display(description="respondent")
-    def respondent(self, instance):
-        return User.objects.get(id=instance.respondent_id)
-
-    @admin.display(description="respondent vote")
-    def respondent_voted(self, instance):
-        return User.objects.get(id=instance.respondent_vote)
-
-    class Meta:
-        verbose_name = "Wager Dispute"
-        verbose_plural_name = "Wager Disputes"
-
-    def has_add_permission(self, request, obj=None):
-        return False
-
-    def get_queryset(self, request):
-        qs = super().get_queryset(request)
-        return qs.filter(status=Wager.DISPUTED)
-
-
-class WagerPayoutAdmin(admin.ModelAdmin):
-    list_display = [
-        "amount",
-        "unique_code",
-        "status",
-        "winner_paypal",
-        "paypal_payment_id",
-        "winner_paid",
-        "winner",
-    ]
-    list_filter = ["winner_paid"]
-
-    def has_add_permission(self, request, obj=None):
-        return False
-
-    def get_queryset(self, request):
-        qs = super().get_queryset(request)
-        return qs.filter(status=Wager.COMPLETED)
-
-
-admin.site.register(Game, GameAdmin)
 admin.site.register(Payment, PaymentAdmin)
 admin.site.register(UserProfile, UserProfileAdmin)
 admin.site.register(Wager, WagerAdmin)
-admin.site.register(WagerDisputeProxy, WagerDisputeAdmin)
-admin.site.register(WagerPayoutProxy, WagerPayoutAdmin)
