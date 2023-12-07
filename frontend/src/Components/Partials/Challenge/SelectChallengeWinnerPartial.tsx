@@ -44,14 +44,14 @@ const SelectChallengeWinnerPartial: FunctionComponent<Props> = ({
   const handleSubmit: FormEventHandler = async (event) => {
     event.preventDefault();
     console.log(data);
-    // post(`/challenge/${challenge.unique_code}`, {
-    //   onError: (err) => {
-    //     console.log(err);
-    //     // setFormErrors(transformErrors(err));
-    //   },
-    //   onSuccess: () => location.reload(),
-    //   only: ['errors', 'challenge'],
-    // });
+    post(`/challenge/${challenge.unique_code}`, {
+      onError: (err) => {
+        console.log(err);
+        // setFormErrors(transformErrors(err));
+      },
+      onSuccess: () => location.reload(),
+      only: ['errors', 'challenge'],
+    });
   };
 
   return (
