@@ -1,0 +1,21 @@
+#!/bin/bash
+
+# Pull Latest
+git pull
+
+# Install Python requirements
+pip install -r requirements.txt
+
+# Run Migrations
+python manage.py makemigrations api
+python manage.py migrate
+
+# Npm
+npm install
+npm run build
+
+# Stash Static Files
+python manage.py collectstatic
+
+# Restart Python Daemon Processes
+sudo service supervisor restart
