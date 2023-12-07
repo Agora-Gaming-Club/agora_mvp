@@ -14,6 +14,7 @@ class Email:
         self.subject = ""
 
     def send(self):
+        # TODO: Grab the templates from the DB if available, first.
         plaintext = get_template(f"emails/{self.email_type}.txt")
         html = get_template(f"emails/{self.email_type}.html")
         from_email = settings.EMAIL_DEFAULT_SENDER
