@@ -15,7 +15,8 @@ npm install
 npm run build
 
 # Stash Static Files
-python manage.py collectstatic
+python manage.py collectstatic --noinput
+
 
 # Restart Python Daemon Processes
 sudo service supervisor restart
