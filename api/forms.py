@@ -30,8 +30,9 @@ class ChallengeForm(forms.Form):
     respondent_username = forms.CharField(max_length=30, required=False)
     challenger_gamer_tag = forms.CharField(max_length=30, required=False)
     respondent_gamer_tag = forms.CharField(max_length=30, required=False)
-    game = forms.ChoiceField(choices=Game.GAMES)
-    platform = forms.ChoiceField(choices=Game.PLATFORM)
+    game = forms.CharField(max_length=100)
+    platform = forms.CharField(max_length=100)
+    terms = forms.CharField(max_length=200)
     notes = forms.CharField(max_length=200, required=False)
     amount = forms.DecimalField(max_digits=6, decimal_places=2)
 

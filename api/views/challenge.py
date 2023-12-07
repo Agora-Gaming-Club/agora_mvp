@@ -37,8 +37,10 @@ def challenge(request):
         if form.is_valid():
             platform = data["platform"]
             game = data["game"]
-            # TODO REPLACE THIS NEXT LINE WITH A GET
-            game_obj, _ = Game.objects.get_or_create(platform=platform, game=game)
+            terms = data["terms"]
+            game_obj = Game.objects.get(
+                game__name=game, terms__terms=terms, platform__name=platform
+            )
             wager = Wager.objects.create(
                 challenger_id=request.user.id,
                 challenger_gamer_tag=data["challenger_gamer_tag"],
@@ -54,6 +56,7 @@ def challenge(request):
         "user": user,
         "games": serialize_objs(Game.objects.all()),
         "platforms": Game.PLATFORM,
+        "choices": Game.get_selections(),
     }
 
 

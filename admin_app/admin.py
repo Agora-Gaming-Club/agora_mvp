@@ -2,84 +2,27 @@ from django.contrib import admin
 from django.contrib.auth.models import User
 
 from api.models import (
-    Game,
-    GameName,
-    Platform,
-    Term,
     Wager,
 )
 from admin_app.models import (
     WagerDisputeProxy,
     WagerPayoutProxy,
+    GameProxy,
+    GameNameProxy,
+    PlatformProxy,
+    TermProxy,
 )
 
 # Register your models here.
 
 
-class GameAdmin(admin.ModelAdmin):
+class GameProxyAdmin(admin.ModelAdmin):
     list_display = [
         "game",
         "platform",
         "terms",
         "discord_link",
     ]
-
-
-class GameAdmin(admin.ModelAdmin):
-    list_display = [
-        "game",
-        "platform",
-        "terms",
-        "discord_link",
-    ]
-
-
-class PaymentAdmin(admin.ModelAdmin):
-    list_display = [
-        "user",
-        "wager",
-        "authorize_net_payment_id",
-        "authorize_net_payment_status",
-        "created_at",
-        "updated_at",
-    ]
-
-
-class UserProfileAdmin(admin.ModelAdmin):
-    list_display = [
-        "user",
-        "username",
-        "first_name",
-        "last_name",
-        "email",
-        "state",
-        "birthday",
-        "winnings",
-        "phone_number",
-        "acct_verified",
-        "created_at",
-        "updated_at",
-    ]
-
-
-class WagerAdmin(admin.ModelAdmin):
-    list_display = [
-        "challenger_id",
-        "respondent_id",
-        "amount",
-        "unique_code",
-        "status",
-        "challenger_paid",
-        "respondent_paid",
-        "challenger_gamer_tag",
-        "respondent_gamer_tag",
-        "challenger_vote",
-        "respondent_vote",
-        "winner",
-        "created_at",
-        "updated_at",
-    ]
-    list_filter = ["status"]
 
 
 class WagerDisputeAdmin(admin.ModelAdmin):
@@ -147,21 +90,21 @@ class WagerPayoutAdmin(admin.ModelAdmin):
         return qs.filter(status=Wager.COMPLETED)
 
 
-class GameNameAdmin(admin.ModelAdmin):
+class GameNameProxydmin(admin.ModelAdmin):
     list_display = ["name"]
 
 
-class PlatformAdmin(admin.ModelAdmin):
+class PlatformProxyAdmin(admin.ModelAdmin):
     list_display = ["name"]
 
 
-class TermAdmin(admin.ModelAdmin):
+class TermProxyAdmin(admin.ModelAdmin):
     list_display = ["terms"]
 
 
-admin.site.register(Game, GameAdmin)
+admin.site.register(GameProxy, GameProxyAdmin)
 admin.site.register(WagerDisputeProxy, WagerDisputeAdmin)
 admin.site.register(WagerPayoutProxy, WagerPayoutAdmin)
-admin.site.register(GameName, GameNameAdmin)
-admin.site.register(Platform, PlatformAdmin)
-admin.site.register(Term, TermAdmin)
+admin.site.register(GameNameProxy, GameNameProxydmin)
+admin.site.register(PlatformProxy, PlatformProxyAdmin)
+admin.site.register(TermProxy, TermProxyAdmin)

@@ -1,6 +1,5 @@
 from datetime import datetime, timedelta, timezone
-import random
-import string
+from decimal import Decimal
 import uuid
 
 from django.db import models
@@ -113,7 +112,9 @@ class Wager(models.Model):
     respondent_paid = models.BooleanField(default=False)
 
     winner = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
-    winning_amt = models.DecimalField(default=0.00, max_digits=6, decimal_places=2)
+    winning_amt = models.DecimalField(
+        default=0.00, max_digits=6, decimal_places=2, null=True, blank=True
+    )
     winner_paypal = models.CharField(max_length=100, blank=True, null=True)
     paypal_payment_id = models.CharField(max_length=40, null=True, blank=True)
     winner_paid = models.BooleanField(default=False)
@@ -197,13 +198,13 @@ class Wager(models.Model):
 
         # 1: Both people select the same person.
         if challenger_vote == respondent_vote:
-            self.winner = challenger_vote
+            self.winner = challenger_vote.user
         # 2: Only one votes.
         elif challenger_vote and not respondent_vote:
-            self.winner = challenger_vote
+            self.winner = challenger_vote.user
         # 3: Only one votes.
         elif not challenger_vote and respondent_vote:
-            self.winner = respondent_vote
+            self.winner = respondent_vote.user
         # 4: No one votes.
         elif not respondent_vote and not challenger_vote:
             self.winner = None
@@ -222,22 +223,9 @@ class Wager(models.Model):
 
     def award_payment(self):
         winning = self.calculate_winning_payment()
-        self.winner.winnings += winning
-        self.winner.save()
-
-
-# class WagerDisputeProxy(Wager):
-#     class Meta:
-#         proxy = True
-#         verbose_name = "Wager Dispute"
-#         verbose_name_plural = "Wager Disputes"
-
-
-# class WagerPayoutProxy(Wager):
-#     class Meta:
-#         proxy = True
-#         verbose_name = "Payout"
-#         verbose_name_plural = "Payouts"
+        winner = UserProfile.objects.get(user=self.winner)
+        winner.winnings += Decimal(winning)
+        winner.save()
 
 
 class Payment(models.Model):
@@ -283,7 +271,7 @@ class Game(models.Model):
     discord_link = models.URLField(null=False, blank=False)
 
     def __str__(self):
-        return f"<{self.game} for {self.platform}>"
+        return f"<{self.game} for {self.platform}: {self.terms}>"
 
     def __repr__(self):
         return self.__str__()
@@ -329,40 +317,3 @@ class Term(models.Model):
 
     def __str__(self):
         return self.terms
-
-
-from rich import print
-
-print(Game.get_selections())
-## You should select the game first, then the platform and the terms.
-
-# class Game(models.Model):
-#     name = models.CharField(max_length=200, blank=False, null=False)
-#     platform = models.ForeignKey("Platform", on_delete=models.CASCADE)
-#     discord_link = models.CharField(max_length=200, blank=False, null=False)
-
-#     def __str__(self):
-#         return f"<{self.game} for {self.platform}>"
-
-#     def __repr__(self):
-#         return self.__str__()
-
-
-# class Platform(models.Model):
-#     name = models.CharField(max_length=200, blank=False, null=False)
-
-
-# class Terms(models.Model):
-#     title = models.CharField(max_length=40, blank=False, null=False)
-#     terms = models.CharField(max_length=200, blank=False, null=False)
-#     game = models.ForeignKey("Game", on_delete=models.CASCADE)
-
-#     @property
-#     def slug(self):
-#         return slugify(self.title)
-
-#     @staticmethod
-#     def term_choices():
-#         x = [(term.id, term.title) for term in Terms.objects.all()]
-#         print(x)
-#         return x

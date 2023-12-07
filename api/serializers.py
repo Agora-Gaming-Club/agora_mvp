@@ -1,5 +1,5 @@
 from django.core import serializers
-
+from django.template.defaultfilters import slugify
 from api.models import (
     Game,
     Payment,
@@ -33,10 +33,10 @@ def get_user(id):
 
 def serialize_game(game):
     return {
-        "game": game.get_game_display(),
-        "platform": game.get_platform_display(),
-        "terms": game.terms,
-        "slug": game.game,
+        "game": game.game.name,
+        "platform": game.platform.name,
+        "terms": game.terms.terms,
+        "slug": slugify(game.game.name),
     }
 
 
