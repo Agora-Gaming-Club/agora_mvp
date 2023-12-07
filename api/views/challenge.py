@@ -65,6 +65,9 @@ def challenge(request):
 def challenge_status(request, challenge_id):
     # QUESTION: Figure out if anyone can go here or if only authenticated ppl
     challenge = get_object_or_404(Wager, unique_code=challenge_id)
+    current_user = None
+    if not request.user.is_authenticated:
+        return {"challenge": serialize(challenge)}
     current_user = UserProfile.objects.filter(user=request.user)
     if current_user:
         current_user = current_user.first()

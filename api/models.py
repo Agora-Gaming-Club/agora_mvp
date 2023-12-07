@@ -24,7 +24,7 @@ class UserProfile(models.Model):
     last_name = models.CharField(max_length=40)
     email = models.EmailField()
     state = models.CharField(max_length=2)
-    phone_number = models.CharField(max_length=11, blank=False, null=False)
+    phone_number = models.CharField(max_length=11, blank=False, null=False, unique=True)
     birthday = models.DateField(null=False, blank=False)
     winnings = models.DecimalField(
         max_digits=10, decimal_places=2, default=00.00, null=True

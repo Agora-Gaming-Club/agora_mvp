@@ -54,6 +54,8 @@ def log_in(request):
             user = authenticate(username=username, password=password)
             if user:
                 login(request, user)
+                if request.POST.get("redirect"):
+                    return HttpResponseRedirect(request.POST["redirect"])
                 return HttpResponseRedirect(reverse("dashboard"))
             else:
                 form.add_error("username", "Email/Password incorrect")
@@ -105,6 +107,8 @@ def register(request):
             login(request, user)
             email = WelcomeEmail({"profile": profile}, target=profile.email)
             email.send()
+            if request.POST.get("redirect"):
+                return HttpResponseRedirect(request.POST["redirect"])
             return HttpResponseRedirect(reverse("dashboard"))
         return {"errors": form.errors.get_json_data()}
     return {}
