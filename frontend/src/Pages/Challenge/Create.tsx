@@ -17,13 +17,26 @@ import { Game, UserProfile } from '@/schema';
 import { InformationCircleIcon } from '@heroicons/react/24/outline';
 
 type Props = {
-  platforms: any;
-  games: Game[];
   user: UserProfile;
+  choices: GameChoice[];
 };
 
-const Create: FunctionComponent<Props> = ({ platforms, games, user }) => {
-  console.log(games);
+type GameTerms = {
+  term: string;
+  discord_link: string;
+};
+
+type GameInfo = {
+  terms: GameTerms[];
+  platforms: string[];
+};
+
+type GameChoice = {
+  [key: string]: GameInfo;
+};
+
+const Create: FunctionComponent<Props> = ({ user, choices }) => {
+  const gameNames = Object.keys(choices);
   const [formErrors, setFormErrors] = useState<TransformedErrors | null>(null);
   const { data, setData, post, processing } = useForm({
     amount: '',
@@ -31,10 +44,33 @@ const Create: FunctionComponent<Props> = ({ platforms, games, user }) => {
     game: '',
     challenger_gamer_tag: '',
     csrfmiddelwaretoken: Cookies.get('XSRF-TOKEN'),
+    terms: '',
   });
+  const [selectedGameName, setSelectedGameName] = useState<
+    string | undefined
+  >();
+
+  const [selectedGameInfo] = useMemo(() => {
+    let choice;
+
+    if (selectedGameName) {
+      // @ts-ignore
+      choice = choices[selectedGameName] as GameInfo;
+    }
+
+    return [choice];
+  }, [selectedGameName]);
 
   const submit: FormEventHandler = (e) => {
     e.preventDefault();
+
+    if (selectedGameName) {
+      data.game = selectedGameName;
+    }
+
+    if (selectedGameInfo && selectedGameInfo.terms.length > 0) {
+      data.terms = selectedGameInfo.terms[0].term;
+    }
 
     post('/challenge', {
       onSuccess: (data) => {
@@ -77,23 +113,22 @@ const Create: FunctionComponent<Props> = ({ platforms, games, user }) => {
               ))}
             </Select>
           </div>
+
           <div className="col-span-1">
             <div className="mb-2 block">
               <Label htmlFor="game" value="Game" />
             </div>
             <Select
               id="game"
-              value={data.game}
-              onChange={(e) => setData('game', e.target.value)}
+              value={selectedGameName}
+              onChange={(e) => setSelectedGameName(e.target.value)}
               required
             >
-              <option disabled value="" selected>
-                Select a Game
+              <option disabled value={undefined} selected>
+                Select Game Title
               </option>
-              {games.map((game) => (
-                <option key={game.game} value={game.slug}>
-                  {game.game}
-                </option>
+              {gameNames.map((gameName) => (
+                <option key={gameName}>{gameName}</option>
               ))}
             </Select>
           </div>
@@ -110,31 +145,43 @@ const Create: FunctionComponent<Props> = ({ platforms, games, user }) => {
               required
             />
           </div>
-          <div className="col-span-1">
-            <div className="mb-2 block">
-              <Label htmlFor="platform" value="Platform" />
-            </div>
-            <Select
-              id="platform"
-              required
-              value={data.platform}
-              onChange={(e) => setData('platform', e.target.value)}
-            >
-              <option disabled value="" selected>
-                Select a Platform
-              </option>
-              {platforms.map((platform: any) => (
-                <option key={platform[0]} value={platform[0]}>
-                  {platform[1]}
+          {selectedGameInfo && (
+            <div className="col-span-1">
+              <div className="mb-2 block">
+                <Label htmlFor="platform" value="Platform" />
+              </div>
+              <Select
+                id="platform"
+                required
+                value={data.platform}
+                onChange={(e) => setData('platform', e.target.value)}
+              >
+                <option disabled value="" selected>
+                  Select a Platform
                 </option>
-              ))}
-            </Select>
-          </div>
+                {selectedGameInfo.platforms.map((platform) => (
+                  <option key={platform} value={platform}>
+                    {platform}
+                  </option>
+                ))}
+              </Select>
+            </div>
+          )}
 
-          {data.game && games.length > 1 ? (
+          {selectedGameInfo ? (
             <Alert color="info">
-              <span className="font-medium">Game Terms!</span>
-              {games.find((g) => g.slug == data.game)?.terms}
+              <span className="font-medium">Game Terms! </span>
+              {selectedGameInfo.terms.length > 0 && (
+                <span>
+                  {selectedGameInfo.terms[0].term} <br />{' '}
+                  <a
+                    className="underline"
+                    href={selectedGameInfo.terms[0].discord_link}
+                  >
+                    {selectedGameInfo.terms[0].discord_link}
+                  </a>
+                </span>
+              )}
             </Alert>
           ) : null}
 
