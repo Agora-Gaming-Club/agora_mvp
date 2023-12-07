@@ -17,12 +17,22 @@ const ChallengeDescription: FunctionComponent<PropsWithChildren<Props>> = ({
       <dl className="space-y">
         <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
           <dt className="text-sm font-medium leading-6 text-white">
-            Challenger
+            Challenger GamerTag
           </dt>
           <dd className="mt-1 leading-6 text-gray-400 sm:col-span-2 sm:mt-0">
             @{challenge.challenger_gamer_tag}
           </dd>
         </div>
+        {challenge.respondent_gamer_tag && (
+          <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+            <dt className="text-sm font-medium leading-6 text-white">
+              Respondent GamerTag
+            </dt>
+            <dd className="mt-1 leading-6 text-gray-400 sm:col-span-2 sm:mt-0">
+              @{challenge.respondent_gamer_tag}
+            </dd>
+          </div>
+        )}
         <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
           <dt className="text-sm font-medium leading-6 text-white">Game</dt>
           <dd className="mt-1 leading-6 text-gray-400 sm:col-span-2 sm:mt-0">
