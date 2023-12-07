@@ -8,9 +8,10 @@ module.exports = {
       include: '**/*.disabled',
     }),
   ],
-  root: resolve('./react-app'),
+  root: resolve('./frontend'),
   base: '/static/',
   server: {
+    // https: true,
     host: 'localhost',
     port: 3000,
     open: false,
@@ -21,17 +22,17 @@ module.exports = {
   },
   resolve: {
     extensions: ['.tsx', '.ts', '.js', '.json'],
-    alias: [{ find: '@', replacement: resolve(__dirname, './react-app/src') }],
+    alias: [{ find: '@', replacement: resolve(__dirname, './frontend/src') }],
   },
   build: {
-    outDir: resolve('./react-app/dist'),
+    outDir: resolve(__dirname, './static/dist'), // Outputs the build files in /static/dist/js
     assetsDir: '',
     manifest: true,
     emptyOutDir: true,
     target: 'es2015',
     rollupOptions: {
       input: {
-        main: resolve('./react-app/src/main.tsx'), // <- renamed from main.tsx
+        main: resolve('./frontend/src/main.tsx'), // <- renamed from main.tsx
       },
       output: {
         chunkFileNames: undefined,
