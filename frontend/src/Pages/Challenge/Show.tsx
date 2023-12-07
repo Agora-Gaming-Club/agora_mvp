@@ -14,7 +14,8 @@ import { AcceptHosted } from 'react-acceptjs';
 // @ts-ignore
 import SelectChallengeWinnerPartial from '@/Components/Partials/Challenge/SelectChallengeWinnerPartial';
 import ChallengeDescription from '@/Components/ChallengeDescription';
-import { Button, Card } from 'flowbite-react';
+import { Alert, Button, Card } from 'flowbite-react';
+import { InformationCircleIcon } from '@heroicons/react/24/outline';
 
 type Props = {
   challenge: Wager;
@@ -114,6 +115,8 @@ const ChallengeDetail: FunctionComponent<{
     isAccepted && challenge.challenger_paid && isChallenger;
   const acceptedAndRespondentPaid = () =>
     isAccepted && challenge.respondent_paid && isRespondent;
+  const challengerVotedForWinner = () => challenge.challenger_vote;
+  const respondentVotedForWinner = () => challenge.respondent_vote;
 
   switch (challenge.status) {
     case WagerStatus.AWAITING_RESPONSE:
@@ -132,13 +135,49 @@ const ChallengeDetail: FunctionComponent<{
       }
       if (acceptedAndChallengerPaid() || acceptedAndRespondentPaid()) {
         return (
-          <div>
-            <h1 className="text-white">waiting on other person to pay</h1>
-          </div>
+          <Card className="max-w-xl text-center mx-auto">
+            {/*@ts-ignore*/}
+            <Alert color="warning" icon={InformationCircleIcon}>
+              We are now waiting for the other player's payment.
+            </Alert>
+            <ChallengeDescription challenge={challenge} />
+          </Card>
         );
       }
       break;
     case WagerStatus.IN_PROGRESS:
+      if (
+        challenge.challenger_id == user.user &&
+        challengerVotedForWinner() &&
+        !respondentVotedForWinner()
+      ) {
+        return (
+          <Card className="max-w-xl text-center mx-auto">
+            {/*@ts-ignore*/}
+            <Alert color="warning" icon={InformationCircleIcon}>
+              We are now waiting for the respondent's vote.
+            </Alert>
+            <ChallengeDescription challenge={challenge} />
+          </Card>
+        );
+      }
+
+      if (
+        challenge.respondent_id == user.user &&
+        !challengerVotedForWinner() &&
+        respondentVotedForWinner()
+      ) {
+        return (
+          <Card className="max-w-xl text-center mx-auto">
+            {/*@ts-ignore*/}
+            <Alert color="warning" icon={InformationCircleIcon}>
+              We are now waiting for the challenger's vote.
+            </Alert>
+            <ChallengeDescription challenge={challenge} />
+          </Card>
+        );
+      }
+
       return <SelectChallengeWinnerPartial challenge={challenge} user={user} />;
     case WagerStatus.DISPUTED:
       return <h1>show disputed</h1>;
