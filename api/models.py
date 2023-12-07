@@ -166,9 +166,9 @@ class Wager(models.Model):
                 return True
         return False
 
-    def accept(self, respondent, gamer_tag):
+    def accept(self, respondent, respondent_gamer_tag):
         self.respondent_id = respondent.user.id
-        self.gamer_tag = gamer_tag
+        self.respondent_gamer_tag = respondent_gamer_tag
         self.status = self.ACCEPTED
         self.save()
 
