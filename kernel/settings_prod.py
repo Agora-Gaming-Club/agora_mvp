@@ -24,3 +24,5 @@ DATABASES = {
         "PORT": os.environ.get("DB_PORT"),
     }
 }
+
+DJANGO_VITE_DEV_MODE = False
