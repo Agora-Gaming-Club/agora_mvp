@@ -26,25 +26,26 @@ const AcceptChallengePartial: FunctionComponent<{
         console.log(err);
         setFormErrors(transformErrors(err));
       },
+      onSuccess: () => location.reload(),
       only: ['errors', 'challenge'],
     });
   };
 
   return (
-    <Card className="max-w-xl text-center mx-auto">
+    <Card className="max-w-xl text-center mx-auto p-1 sm:p-5">
       <div className="mt-6">
         <dl className="space-y">
           <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
             <dt className="text-sm font-medium leading-6 text-white">
               Challenger
             </dt>
-            <dd className="mt-1 text-sm leading-6 text-gray-400 sm:col-span-2 sm:mt-0">
+            <dd className="mt-1 leading-6 text-gray-400 sm:col-span-2 sm:mt-0">
               @{challenge.challenger_gamer_tag}
             </dd>
           </div>
           <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
             <dt className="text-sm font-medium leading-6 text-white">Game</dt>
-            <dd className="mt-1 text-sm leading-6 text-gray-400 sm:col-span-2 sm:mt-0">
+            <dd className="mt-1 leading-6 text-gray-400 sm:col-span-2 sm:mt-0">
               {challenge.game.game}
             </dd>
           </div>
@@ -61,7 +62,7 @@ const AcceptChallengePartial: FunctionComponent<{
               Game Mode
             </dt>
             <dd className="mt-1 text-sm leading-6 text-gray-400 sm:col-span-2 sm:mt-0">
-              {challenge.notes}
+              {challenge.game.terms}
             </dd>
           </div>
 

@@ -5,6 +5,7 @@ import { Dropdown, Navbar } from 'flowbite-react';
 import { Head, Link, useForm } from '@inertiajs/react';
 import Logo from '@/Components/Logo';
 import { HomeIcon, TrophyIcon } from '@heroicons/react/24/outline';
+import { UserProfile } from '@/schema';
 
 type Props = {
   user: UserProfile;
@@ -102,7 +103,7 @@ const AuthenticatedLayout: FunctionComponent<PropsWithChildren<Props>> = ({
             </Navbar.Link>
             <Navbar.Link
               className="flex items-center text-sm"
-              href="/challenges/"
+              href="/challenges"
               active={location.pathname === '/challenges/'}
             >
               <TrophyIcon className="h-5 w-5 mr-1" />

@@ -11,6 +11,7 @@ import RequireChallengePaymentPartial from '@/Components/Partials/Challenge/Requ
 import ShareChallengePartial from '@/Components/Partials/Challenge/ShareChallengePartial';
 import { HostedForm } from 'react-acceptjs';
 import { AcceptHosted } from 'react-acceptjs';
+import SelectChallengeWinnerPartial from '@/Components/Partials/Challenge/SelectChallengeWinnerPartial';
 
 type Props = {
   challenge: Wager;
@@ -64,8 +65,6 @@ const ChallengeDetail: FunctionComponent<{
   challenge: Wager;
   user: UserProfile;
 }> = ({ challenge, user }) => {
-  console.log(challenge);
-
   const isChallenger = user.user === challenge.challenger_id;
   const isRespondent = user.user === challenge.respondent_id;
   const isAwaitingResponse = challenge.status === WagerStatus.AWAITING_RESPONSE;
@@ -108,7 +107,7 @@ const ChallengeDetail: FunctionComponent<{
       }
       break;
     case WagerStatus.IN_PROGRESS:
-      return <h1>select by username, value id</h1>;
+      return <SelectChallengeWinnerPartial challenge={challenge} user={user} />;
     case WagerStatus.DISPUTED:
       return <h1>show disputed</h1>;
     case WagerStatus.COMPLETED:

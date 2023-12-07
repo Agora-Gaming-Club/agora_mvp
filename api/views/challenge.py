@@ -33,6 +33,7 @@ def challenge(request):
     user = UserProfile.objects.get(user=request.user)
     if request.method == "POST":
         data = json.loads(request.body)
+        print(data)
         form = ChallengeForm(data, initial={"challenger_username": request.user})
         if form.is_valid():
             platform = data["platform"]
@@ -51,6 +52,7 @@ def challenge(request):
             wager.save()
             return HttpResponseRedirect(f"challenge/{wager.unique_code}")
         else:
+            print(form.errors.get_json_data())
             return {"errors": form.errors.get_json_data()}
     return {
         "user": user,
