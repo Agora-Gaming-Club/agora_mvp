@@ -97,25 +97,3 @@ def serialize_wager(wager):
     if wager.respondent_vote:
         serialized["respondent_vote"] = get_user(wager.respondent_vote)
     return serialized
-
-
-# game = Game.objects.all().first()
-# payment = Payment.objects.all().first()
-# user_profile = UserProfile.objects.all().first()
-# wager = Wager.objects.all().first()
-
-
-# game = serialize_game(game)
-# payment = serialize_payment(payment)
-# user_profile = serialize_user_profile(user_profile)
-# wager = serialize_wager(wager)
-
-
-# print("game")
-# print(game)
-# print("payment")
-# print(payment)
-# print("user_profile")
-# print(user_profile)
-# print("wager")
-# print(wager)
