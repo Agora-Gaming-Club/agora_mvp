@@ -11,9 +11,20 @@ const Login: FunctionComponent = () => {
     username: '',
     password: '',
     csrfmiddelwaretoken: Cookies.get('XSRF-TOKEN'),
+    redirect: '',
   });
   const submit: FormEventHandler = (e) => {
     e.preventDefault();
+
+    let url = '/accounts/login';
+    const urlParams = new URLSearchParams(window.location.search);
+
+    if (urlParams.get('redirect')) {
+      data.redirect = urlParams.get('redirect') as string;
+      url = `${url}/redirect=${urlParams.get('redirect')}`;
+    }
+
+    // console.log(url);
 
     post('/accounts/login', {
       onSuccess: (data) => {

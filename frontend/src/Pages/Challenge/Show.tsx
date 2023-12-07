@@ -3,7 +3,7 @@ import { FunctionComponent, useMemo, useState } from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { useCopyToClipboard } from '@/Hooks/useCopyToClipboard';
 import { UserProfile, Wager, WagerStatus } from '@/schema';
-import { usePage } from '@inertiajs/react';
+import { Link, usePage } from '@inertiajs/react';
 import AcceptChallengePartial from '@/Components/Partials/Challenge/AcceptChallengePartial';
 // @ts-ignore
 import RequireChallengePaymentPartial from '@/Components/Partials/Challenge/RequireChallengePaymentPartial';
@@ -11,22 +11,23 @@ import RequireChallengePaymentPartial from '@/Components/Partials/Challenge/Requ
 import ShareChallengePartial from '@/Components/Partials/Challenge/ShareChallengePartial';
 import { HostedForm } from 'react-acceptjs';
 import { AcceptHosted } from 'react-acceptjs';
+// @ts-ignore
 import SelectChallengeWinnerPartial from '@/Components/Partials/Challenge/SelectChallengeWinnerPartial';
+import ChallengeDescription from '@/Components/ChallengeDescription';
+import { Button, Card } from 'flowbite-react';
 
 type Props = {
   challenge: Wager;
-  user: UserProfile;
-};
-// review with tristian:
-// - add paypal migration (winner_paypal_id)
-
-const ShareChallengeCard = () => {
-  return <></>;
+  user?: UserProfile;
 };
 
 const Show: FunctionComponent<Props> = ({ challenge, user }) => {
   const [description] = useMemo(() => {
     let description = '';
+
+    if (!user) {
+      return [''];
+    }
 
     if (
       challenge.status === WagerStatus.AWAITING_RESPONSE &&
@@ -55,7 +56,38 @@ const Show: FunctionComponent<Props> = ({ challenge, user }) => {
       description={description}
     >
       <div className="container mx-auto py-5 px-4">
-        <ChallengeDetail challenge={challenge} user={user} />
+        {user ? (
+          <ChallengeDetail challenge={challenge} user={user} />
+        ) : (
+          <Card className="max-w-xl text-center mx-auto">
+            <ChallengeDescription challenge={challenge}>
+              <h3 className="text-white">
+                Signup or Register to Accept Challenge
+              </h3>
+              <div className="flex items-center space-x-4">
+                <Button
+                  className="w-full"
+                  color="blue"
+                  // @ts-ignore
+                  as="a"
+                  href={`/accounts/register?redirect=/challenge/${challenge.unique_code}`}
+                >
+                  Register
+                </Button>
+                <Button
+                  className="w-full"
+                  color="blue"
+                  // @ts-ignore
+                  as="a"
+                  href={`/accounts/login?redirect=/challenge/${challenge.unique_code}`}
+                  outline
+                >
+                  Login
+                </Button>
+              </div>
+            </ChallengeDescription>
+          </Card>
+        )}
       </div>
     </AuthenticatedLayout>
   );

@@ -8,7 +8,7 @@ import { HomeIcon, TrophyIcon } from '@heroicons/react/24/outline';
 import { UserProfile } from '@/schema';
 
 type Props = {
-  user: UserProfile;
+  user?: UserProfile;
   title?: string;
   description?: string;
 };
@@ -58,39 +58,41 @@ const AuthenticatedLayout: FunctionComponent<PropsWithChildren<Props>> = ({
             </Navbar.Link>
           </div>
         </Navbar.Brand>
-        <div className="flex md:order-2">
-          <Dropdown
-            arrowIcon={false}
-            inline
-            label={
-              <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-gray-500">
-                <span className="text-xs font-medium leading-none text-white uppercase">
-                  {user.first_name.substring(0, 1)}
-                  {user.last_name.substring(0, 1)}
+        {user && (
+          <div className="flex md:order-2">
+            <Dropdown
+              arrowIcon={false}
+              inline
+              label={
+                <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-gray-500">
+                  <span className="text-xs font-medium leading-none text-white uppercase">
+                    {user.first_name.substring(0, 1)}
+                    {user.last_name.substring(0, 1)}
+                  </span>
                 </span>
-              </span>
-            }
-          >
-            <Dropdown.Header>
-              <span className="block text-sm">
-                {user.first_name} {user.last_name}
-              </span>
-              <span className="block truncate text-sm font-medium">
-                {user.email}
-              </span>
-            </Dropdown.Header>
-            {/*@ts-ignore*/}
-            <Dropdown.Item href="/accounts/profile/edit" as={Link}>
-              View Profile
-            </Dropdown.Item>
-            {/*@ts-ignore*/}
-            <Dropdown.Item href="/accounts/password_change" as={Link}>
-              Update Password
-            </Dropdown.Item>
-            <Dropdown.Divider />
-            <Dropdown.Item onClick={handleLogout}>Sign out</Dropdown.Item>
-          </Dropdown>
-        </div>
+              }
+            >
+              <Dropdown.Header>
+                <span className="block text-sm">
+                  {user.first_name} {user.last_name}
+                </span>
+                <span className="block truncate text-sm font-medium">
+                  {user.email}
+                </span>
+              </Dropdown.Header>
+              {/*@ts-ignore*/}
+              <Dropdown.Item href="/accounts/profile/edit" as={Link}>
+                View Profile
+              </Dropdown.Item>
+              {/*@ts-ignore*/}
+              <Dropdown.Item href="/accounts/password_change" as={Link}>
+                Update Password
+              </Dropdown.Item>
+              <Dropdown.Divider />
+              <Dropdown.Item onClick={handleLogout}>Sign out</Dropdown.Item>
+            </Dropdown>
+          </div>
+        )}
         <Navbar.Collapse className="">
           <div className="block md:hidden">
             <Navbar.Link
@@ -104,7 +106,7 @@ const AuthenticatedLayout: FunctionComponent<PropsWithChildren<Props>> = ({
             <Navbar.Link
               className="flex items-center text-sm"
               href="/challenges"
-              active={location.pathname === '/challenges/'}
+              active={location.pathname === '/challenges'}
             >
               <TrophyIcon className="h-5 w-5 mr-1" />
               Challenges

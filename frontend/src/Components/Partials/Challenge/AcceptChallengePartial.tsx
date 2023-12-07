@@ -7,6 +7,7 @@ import { Button, Card, Label, TextInput } from 'flowbite-react';
 import { BanknotesIcon } from '@heroicons/react/24/solid';
 import { currencyFormatter } from '@/Utils/money';
 import { UserProfile, Wager } from '@/schema';
+import ChallengeDescription from '@/Components/ChallengeDescription';
 
 const AcceptChallengePartial: FunctionComponent<{
   challenge: Wager;
@@ -33,50 +34,7 @@ const AcceptChallengePartial: FunctionComponent<{
 
   return (
     <Card className="max-w-xl text-center mx-auto p-1 sm:p-5">
-      <div className="mt-6">
-        <dl className="space-y">
-          <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-            <dt className="text-sm font-medium leading-6 text-white">
-              Challenger
-            </dt>
-            <dd className="mt-1 leading-6 text-gray-400 sm:col-span-2 sm:mt-0">
-              @{challenge.challenger_gamer_tag}
-            </dd>
-          </div>
-          <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-            <dt className="text-sm font-medium leading-6 text-white">Game</dt>
-            <dd className="mt-1 leading-6 text-gray-400 sm:col-span-2 sm:mt-0">
-              {challenge.game.game}
-            </dd>
-          </div>
-          <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-            <dt className="text-sm font-medium leading-6 text-white">
-              Platform
-            </dt>
-            <dd className="mt-1 text-sm leading-6 text-gray-400 sm:col-span-2 sm:mt-0">
-              {challenge.game.platform}
-            </dd>
-          </div>
-          <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-            <dt className="text-sm font-medium leading-6 text-white">
-              Game Mode
-            </dt>
-            <dd className="mt-1 text-sm leading-6 text-gray-400 sm:col-span-2 sm:mt-0">
-              {challenge.game.terms}
-            </dd>
-          </div>
-
-          <div className="bg-dark rounded-full p-2 text-lg text-white flex items-center justify-center">
-            <span className="bg-green-400 rounded-full p-1 flex items-center justify-center mr-2">
-              <BanknotesIcon className="h-5 w-5" />
-            </span>
-            <h1>
-              Pay {currencyFormatter.format(Number(challenge.amount))}, Win{' '}
-              {currencyFormatter.format(Number(challenge.amount * 1.8))}
-            </h1>
-          </div>
-        </dl>
-      </div>
+      <ChallengeDescription challenge={challenge} />
 
       <form onSubmit={submit} className="mt-6 space-y-6">
         <div>

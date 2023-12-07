@@ -41,6 +41,8 @@ def log_in(request):
 
     if request.method == "POST":
         data = json.loads(request.body)
+        redirect = data.pop('redirect', None)
+
         form = LoginForm(data)
         if form.is_valid():
             username = ""
@@ -54,8 +56,8 @@ def log_in(request):
             user = authenticate(username=username, password=password)
             if user:
                 login(request, user)
-                if request.POST.get("redirect"):
-                    return HttpResponseRedirect(request.POST["redirect"])
+                if redirect:
+                    return HttpResponseRedirect(redirect)
                 return HttpResponseRedirect(reverse("dashboard"))
             else:
                 form.add_error("username", "Email/Password incorrect")
@@ -84,6 +86,7 @@ def register(request):
 
     if request.method == "POST":
         data = json.loads(request.body)
+        redirect = data.pop('redirect', None)
         form = RegisterForm(data)
         if form.is_valid():
             user = User.objects.create_user(
@@ -107,8 +110,8 @@ def register(request):
             login(request, user)
             email = WelcomeEmail({"profile": profile}, target=profile.email)
             email.send()
-            if request.POST.get("redirect"):
-                return HttpResponseRedirect(request.POST["redirect"])
+            if redirect:
+                return HttpResponseRedirect(redirect)
             return HttpResponseRedirect(reverse("dashboard"))
         return {"errors": form.errors.get_json_data()}
     return {}
