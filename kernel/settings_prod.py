@@ -26,3 +26,4 @@ DATABASES = {
 }
 
 DJANGO_VITE_DEV_MODE = False
+STATIC_URL = "https://dev.agoragaming.gg/static/"
