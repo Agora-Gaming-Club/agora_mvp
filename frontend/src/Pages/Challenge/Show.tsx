@@ -194,16 +194,19 @@ const ChallengeDetail: FunctionComponent<{
     case WagerStatus.DISPUTED:
       return (
         <Card className="max-w-xl text-center mx-auto">
-          <Alert color="failure" className="text-xl font-semibold">
-            Oops! Looks like you answered different answers.
+          <Alert color="failure" className="text-lg font-semibold">
+            Oops! Looks like you both answered different answers.
           </Alert>
 
           <p className="text-gray-400 text-center text-sm tracking-tight">
             Looks like you both had different answers for the outcome. We’ve
             forwarded the details of this challenge to the Agora team who will
-            be following up with you via email to resolve the dispute. <br /> In
-            the meantime - please capture any screenshots, photos, or evidence
-            needed to prove the outcome of the challenge.
+            be following up with you via email to resolve the dispute.
+          </p>
+
+          <p className="text-gray-400 text-center text-sm tracking-tight mt-1">
+            In the meantime - please capture any screenshots, photos, or
+            evidence needed to prove the outcome of the challenge.
           </p>
         </Card>
       );
