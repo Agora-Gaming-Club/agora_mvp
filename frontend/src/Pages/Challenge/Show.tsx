@@ -12,7 +12,9 @@ import SelectChallengeWinnerPartial from '@/Components/Partials/Challenge/Select
 import ChallengeDescription from '@/Components/ChallengeDescription';
 import { Alert, Button, Card } from 'flowbite-react';
 import { InformationCircleIcon } from '@heroicons/react/24/outline';
+// @ts-ignore
 import PaypalChallengePartial from '@/Components/Partials/Challenge/PaypalChallengePartial';
+// @ts-ignore
 import WonChallengePartial from '@/Components/Partials/Challenge/WonChallengePartial';
 import LostChallengePartial from '@/Components/Partials/Challenge/LostChallengePartial';
 
