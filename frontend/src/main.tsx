@@ -1,6 +1,7 @@
 import { createRoot } from 'react-dom/client';
 import { createInertiaApp } from '@inertiajs/react';
 
+alert('hello?');
 document.addEventListener('DOMContentLoaded', () => {
   createInertiaApp({
     resolve: (name) => {
