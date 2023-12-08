@@ -18,7 +18,7 @@ const ShareChallengePartial: FunctionComponent<Props> = ({
   const [copied, setCopied] = useState(false);
   const [copiedValue, copy] = useCopyToClipboard();
   const handleCopy = async () => {
-    await copy(location.host + '/challenge/' + challenge.unique_code);
+    await copy(`https://${location.host}/challenge/${challenge.unique_code}`);
   };
   return (
     <Card className="max-w-xl text-center mx-auto">

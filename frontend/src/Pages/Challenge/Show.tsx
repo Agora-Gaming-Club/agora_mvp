@@ -17,6 +17,7 @@ import PaypalChallengePartial from '@/Components/Partials/Challenge/PaypalChalle
 // @ts-ignore
 import WonChallengePartial from '@/Components/Partials/Challenge/WonChallengePartial';
 import LostChallengePartial from '@/Components/Partials/Challenge/LostChallengePartial';
+import { Link } from '@inertiajs/react';
 
 type Props = {
   challenge: Wager;
@@ -28,7 +29,7 @@ const Show: FunctionComponent<Props> = ({ challenge, user }) => {
     let description = '';
 
     if (!user) {
-      return [''];
+      return [description];
     }
 
     if (
@@ -36,6 +37,7 @@ const Show: FunctionComponent<Props> = ({ challenge, user }) => {
       user.user === challenge.challenger_id
     ) {
       description = 'Send the code below to challenge your opponent.';
+      return [description];
     }
 
     if (
@@ -43,10 +45,12 @@ const Show: FunctionComponent<Props> = ({ challenge, user }) => {
       challenge.respondent_id === null
     ) {
       description = 'Accept this challenge';
+      return [description];
     }
 
     if (challenge.status === WagerStatus.ACCEPTED) {
       description = 'Make a Payment';
+      return [description];
     }
 
     return [description];
@@ -188,7 +192,21 @@ const ChallengeDetail: FunctionComponent<{
 
       return <SelectChallengeWinnerPartial challenge={challenge} user={user} />;
     case WagerStatus.DISPUTED:
-      return <h1>show disputed</h1>;
+      return (
+        <Card className="max-w-xl text-center mx-auto">
+          <Alert color="failure" className="text-xl font-semibold">
+            Oops! Looks like you answered different answers.
+          </Alert>
+
+          <p className="text-gray-400 text-center text-sm tracking-tight">
+            Looks like you both had different answers for the outcome. We’ve
+            forwarded the details of this challenge to the Agora team who will
+            be following up with you via email to resolve the dispute. <br /> In
+            the meantime - please capture any screenshots, photos, or evidence
+            needed to prove the outcome of the challenge.
+          </p>
+        </Card>
+      );
     case WagerStatus.COMPLETED:
       if (challenge.winner_id !== user.user) {
         return <LostChallengePartial challenge={challenge} user={user} />;
