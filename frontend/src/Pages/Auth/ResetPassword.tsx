@@ -54,6 +54,7 @@ const ResetPassword: FunctionComponent<Props> = ({ token }) => {
             value={data.password}
             className="mt-1 block w-full"
             autoComplete="new-password"
+            placeholder="Enter New Password"
             color={formErrors?.errors?.email ? 'failure' : 'gray'}
             helperText={<span>{formErrors?.errors?.email ?? ''}</span>}
             onChange={(e) => setData('password', e.target.value)}
@@ -69,6 +70,7 @@ const ResetPassword: FunctionComponent<Props> = ({ token }) => {
             value={data.password_confirm}
             className="mt-1 block w-full"
             autoComplete="new-password"
+            placeholder="Enter Password Confirmation"
             color={formErrors?.errors?.email ? 'failure' : 'gray'}
             helperText={<span>{formErrors?.errors?.email ?? ''}</span>}
             onChange={(e) => setData('password_confirm', e.target.value)}
@@ -77,7 +79,7 @@ const ResetPassword: FunctionComponent<Props> = ({ token }) => {
 
         <div className="flex items-center justify-end mt-4">
           <Button
-            type="button"
+            type="submit"
             color="blue"
             className="ms-4"
             disabled={processing}
