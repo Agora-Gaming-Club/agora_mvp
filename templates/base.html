@@ -9,16 +9,37 @@
     <link rel="stylesheet" href="{% static 'css/app.css' %}"/>
 
     <!-- Vite assets -->
-     {% if DJANGO_VITE_DEV_MODE %}
+    {% if DJANGO_VITE_DEV_MODE %}
         {% vite_hmr_client %}
     {% else %}
         {% vite_asset 'src/main.tsx' %}
     {% endif %}
     <title inertia>Agora Gaming</title>
     <link rel="icon" href="{% static 'favicon.ico' %}"/>
+    <!-- Google Tag Manager -->
+    <script>(function (w, d, s, l, i) {
+        w[l] = w[l] || [];
+        w[l].push({
+            'gtm.start':
+                new Date().getTime(), event: 'gtm.js'
+        });
+        var f = d.getElementsByTagName(s)[0],
+            j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : '';
+        j.async = true;
+        j.src =
+            'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
+        f.parentNode.insertBefore(j, f);
+    })(window, document, 'script', 'dataLayer', 'GTM-PHHDVBBP');</script>
+    <!-- End Google Tag Manager -->
 </head>
 <body>
 <!-- inertia -->
 {% block inertia %}{% endblock %}
+<!-- Google Tag Manager (noscript) -->
+<noscript>
+    <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PHHDVBBP"
+            height="0" width="0" style="display:none;visibility:hidden"></iframe>
+</noscript>
+<!-- End Google Tag Manager (noscript) -->
 </body>
 </html>
