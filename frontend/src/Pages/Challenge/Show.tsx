@@ -1,21 +1,20 @@
 import * as React from 'react';
-import { FunctionComponent, useMemo, useState } from 'react';
+import { FunctionComponent, useMemo } from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { useCopyToClipboard } from '@/Hooks/useCopyToClipboard';
 import { UserProfile, Wager, WagerStatus } from '@/schema';
-import { Link, usePage } from '@inertiajs/react';
 import AcceptChallengePartial from '@/Components/Partials/Challenge/AcceptChallengePartial';
 // @ts-ignore
 import RequireChallengePaymentPartial from '@/Components/Partials/Challenge/RequireChallengePaymentPartial';
 // @ts-ignore
 import ShareChallengePartial from '@/Components/Partials/Challenge/ShareChallengePartial';
-import { HostedForm } from 'react-acceptjs';
-import { AcceptHosted } from 'react-acceptjs';
 // @ts-ignore
 import SelectChallengeWinnerPartial from '@/Components/Partials/Challenge/SelectChallengeWinnerPartial';
 import ChallengeDescription from '@/Components/ChallengeDescription';
 import { Alert, Button, Card } from 'flowbite-react';
 import { InformationCircleIcon } from '@heroicons/react/24/outline';
+import PaypalChallengePartial from '@/Components/Partials/Challenge/PaypalChallengePartial';
+import WonChallengePartial from '@/Components/Partials/Challenge/WonChallengePartial';
+import LostChallengePartial from '@/Components/Partials/Challenge/LostChallengePartial';
 
 type Props = {
   challenge: Wager;
@@ -23,7 +22,6 @@ type Props = {
 };
 
 const Show: FunctionComponent<Props> = ({ challenge, user }) => {
-  console.log(user);
   const [description] = useMemo(() => {
     let description = '';
 
@@ -153,8 +151,12 @@ const ChallengeDetail: FunctionComponent<{
       ) {
         return (
           <Card className="max-w-xl text-center mx-auto">
-            {/*@ts-ignore*/}
-            <Alert color="warning" icon={InformationCircleIcon}>
+            <Alert
+              className="text-xl font-semibold"
+              color="warning"
+              // @ts-ignore
+              icon={InformationCircleIcon}
+            >
               We are now waiting for the respondent's vote.
             </Alert>
             <ChallengeDescription challenge={challenge} />
@@ -169,8 +171,12 @@ const ChallengeDetail: FunctionComponent<{
       ) {
         return (
           <Card className="max-w-xl text-center mx-auto">
-            {/*@ts-ignore*/}
-            <Alert color="warning" icon={InformationCircleIcon}>
+            <Alert
+              className="text-xl font-semibold"
+              color="warning"
+              // @ts-ignore
+              icon={InformationCircleIcon}
+            >
               We are now waiting for the challenger's vote.
             </Alert>
             <ChallengeDescription challenge={challenge} />
@@ -182,7 +188,15 @@ const ChallengeDetail: FunctionComponent<{
     case WagerStatus.DISPUTED:
       return <h1>show disputed</h1>;
     case WagerStatus.COMPLETED:
-      return <h1>completed</h1>;
+      if (challenge.winner_id !== user.user) {
+        return <LostChallengePartial challenge={challenge} user={user} />;
+      }
+
+      if (challenge.winner_id == user.user && !challenge.winner_paypal) {
+        return <PaypalChallengePartial challenge={challenge} user={user} />;
+      }
+
+      return <WonChallengePartial challenge={challenge} user={user} />;
     default:
       return <></>;
   }

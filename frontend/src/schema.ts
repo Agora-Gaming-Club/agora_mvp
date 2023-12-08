@@ -27,6 +27,10 @@ export type Wager = {
   respondent?: UserProfile;
   challenger_paid: boolean;
   respondent_paid: boolean;
+  winner_paid: boolean;
+  winner_paypal: string;
+  winner?: UserProfile;
+  winner_id?: number | null;
 };
 
 export type UserProfile = {

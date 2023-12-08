@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { FunctionComponent } from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Button, Card } from 'flowbite-react';
@@ -5,7 +6,6 @@ import CountUp from 'react-countup';
 import ChallengeCard from '@/Components/ChallengeCard';
 import { Pagination, UserProfile, Wager } from '@/schema';
 import { Link } from '@inertiajs/react';
-import * as React from 'react';
 
 type Props = {
   user: UserProfile;
@@ -36,7 +36,11 @@ const Dashboard: FunctionComponent<Props> = ({ user, active, old }) => {
           <h3 className="text-gray-500 text-lg">Active</h3>
           <ul className="space-y-1 w-full">
             {active.result.map((wager) => (
-              <ChallengeCard key={wager.unique_code} wager={wager} />
+              <ChallengeCard
+                key={wager.unique_code}
+                challenge={wager}
+                user={user}
+              />
             ))}
           </ul>
         </div>
@@ -47,7 +51,11 @@ const Dashboard: FunctionComponent<Props> = ({ user, active, old }) => {
           <h3 className="text-gray-500 text-lg">Old</h3>
           <ul className="space-y-1 w-full">
             {old.result.map((wager) => (
-              <ChallengeCard key={wager.unique_code} wager={wager} />
+              <ChallengeCard
+                key={wager.unique_code}
+                challenge={wager}
+                user={user}
+              />
             ))}
           </ul>
         </div>

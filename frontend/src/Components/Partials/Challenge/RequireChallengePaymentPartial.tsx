@@ -1,11 +1,6 @@
 import * as React from 'react';
-import {
-  FormEventHandler,
-  FunctionComponent,
-  SyntheticEvent,
-  useState,
-} from 'react';
-import { Button, Card, Modal, TextInput } from 'flowbite-react';
+import { FormEventHandler, FunctionComponent, useState } from 'react';
+import { Button, Card, Modal } from 'flowbite-react';
 import { BanknotesIcon } from '@heroicons/react/24/solid';
 import { currencyFormatter } from '@/Utils/money';
 import { UserProfile, Wager } from '@/schema';

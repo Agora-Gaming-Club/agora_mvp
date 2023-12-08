@@ -87,11 +87,14 @@ def serialize_wager(wager):
         # "respondent_vote": wager.respondent_vote,
         "challenger_paid": wager.challenger_paid,
         "respondent_paid": wager.respondent_paid,
+        "winner_paid": wager.winner_paid,
+        "winner_paypal": wager.winner_paypal
     }
     if wager.respondent_id:
         serialized["respondent"] = get_user(wager.respondent_id)
     if wager.winner:
-        serialized["winner"] = serialize_user_profile(wager.winner)
+        serialized["winner"] = get_user(wager.winner.id)
+        serialized["winner_id"] = wager.winner.id
     if wager.challenger_vote:
         serialized["challenger_vote"] = get_user(wager.challenger_vote)
     if wager.respondent_vote:

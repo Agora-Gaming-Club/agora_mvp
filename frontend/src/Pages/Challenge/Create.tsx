@@ -2,19 +2,11 @@ import * as React from 'react';
 import { FormEventHandler, FunctionComponent, useMemo, useState } from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { useForm } from '@inertiajs/react';
-import {
-  Alert,
-  Button,
-  Label,
-  Select,
-  Textarea,
-  TextInput,
-} from 'flowbite-react';
+import { Alert, Button, Label, Select, TextInput } from 'flowbite-react';
 import { amounts } from '@/Data/amounts';
 import { TransformedErrors, transformErrors } from '@/Utils/form';
 import Cookies from 'js-cookie';
-import { Game, UserProfile } from '@/schema';
-import { InformationCircleIcon } from '@heroicons/react/24/outline';
+import { UserProfile } from '@/schema';
 
 type Props = {
   user: UserProfile;
