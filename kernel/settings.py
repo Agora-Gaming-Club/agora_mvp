@@ -151,7 +151,7 @@ TAILWIND_CSS_ASSETS_PATH = BASE_DIR / "static" / "dist"
 IMAGE_ASSETS = BASE_DIR / "static" / "assets"
 
 # If we should use HMR or not.
-DJANGO_VITE_DEV_MODE = True
+DJANGO_VITE_DEV_MODE = False
 
 # we need this to get around cors issues
 DJANGO_VITE_DEV_SERVER_HOST = "127.0.0.1"
