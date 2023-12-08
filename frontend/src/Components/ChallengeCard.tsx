@@ -1,47 +1,54 @@
 import { FunctionComponent } from 'react';
 import { currencyFormatter } from '@/Utils/money';
 import { CursorArrowRaysIcon, ShareIcon } from '@heroicons/react/24/outline';
-import { Button } from 'flowbite-react';
+import { Badge, Button } from 'flowbite-react';
 import { Link } from '@inertiajs/react';
-import { Wager, WagerStatus } from '@/schema';
+import { UserProfile, Wager, WagerStatus } from '@/schema';
+import { BanknotesIcon } from '@heroicons/react/24/solid';
 
 type Props = {
-  wager: Wager;
+  challenge: Wager;
+  user: UserProfile;
 };
 
-const ChallengeCard: FunctionComponent<Props> = ({ wager }) => {
+const ChallengeCard: FunctionComponent<Props> = ({ challenge, user }) => {
   return (
     <li className="relative flex items-center space-x-4 bg-[#1F2A37] hover:bg-gray-700 px-5 py-4">
       <div className="min-w-0 flex-auto">
         <h2 className="min-w-0 font-semibold leading-6 text-white">
-          {wager.challenger_gamer_tag}
+          {challenge.challenger_gamer_tag}
         </h2>
         <h3 className="min-w-0 text-sm leading-6 text-gray-400">
-          {wager.game.game}
+          {challenge.game.game}
         </h3>
         <div className="mt-1 flex items-center gap-x-2.5 text-xs leading-5 text-gray-400">
-          <p className="truncate">{currencyFormatter.format(wager.amount)}</p>
+          <p className="truncate">
+            {currencyFormatter.format(challenge.amount)}
+          </p>
           <svg
             viewBox="0 0 2 2"
             className="h-0.5 w-0.5 flex-none fill-gray-300"
           >
             <circle cx={1} cy={1} r={1} />
           </svg>
-          <p className="whitespace-nowrap capitalize">{wager.status}</p>
+          <p className="whitespace-nowrap capitalize">{challenge.status}</p>
         </div>
       </div>
       <ChallengeButton
-        status={wager.status}
-        href={`/challenge/${wager.unique_code}`}
+        user={user}
+        challenge={challenge}
+        href={`/challenge/${challenge.unique_code}`}
       />
     </li>
   );
 };
 
 const ChallengeButton: FunctionComponent<{
-  status: WagerStatus;
+  challenge: Wager;
   href: string;
-}> = ({ status, href }) => {
+  user: UserProfile;
+}> = ({ challenge, href, user }) => {
+  const status = challenge.status;
   switch (status) {
     case WagerStatus.AWAITING_RESPONSE:
       return (
@@ -52,6 +59,8 @@ const ChallengeButton: FunctionComponent<{
         </Button>
       );
     case WagerStatus.IN_PROGRESS:
+      // check if already selected
+      // check if not selected
       return (
         // @ts-ignore
         <Button as={Link} href={href} size="xs" color="blue" pill>
@@ -60,6 +69,8 @@ const ChallengeButton: FunctionComponent<{
         </Button>
       );
     case WagerStatus.ACCEPTED:
+      // check if already paid
+      // check if not paid
       return (
         // @ts-ignore
         <Button as={Link} href={href} size="xs" color="blue" pill>
@@ -68,7 +79,28 @@ const ChallengeButton: FunctionComponent<{
         </Button>
       );
     case WagerStatus.DISPUTED:
-      return <button>Dispute Status</button>;
+      return (
+        // @ts-ignore
+        <Button as={Link} href={href} size="xs" color="blue" pill>
+          View Dispute Status
+        </Button>
+      );
+    case WagerStatus.COMPLETED:
+      if (challenge.winner_id == user.user && !challenge.winner_paypal) {
+        return (
+          // @ts-ignore
+          <Button as={Link} href={href} size="xs" color="blue" pill>
+            <BanknotesIcon className="h-4 w-4 mr-1" />
+            Get Paid
+          </Button>
+        );
+      }
+
+      if (challenge.winner_id == user.user && challenge.winner_paypal) {
+        return <Badge color="success">You Won</Badge>;
+      }
+
+      return <></>;
     default:
       return <></>;
   }

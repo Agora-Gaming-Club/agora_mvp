@@ -83,6 +83,8 @@ def challenge_status(request, challenge_id):
         if challenge.status == Wager.IN_PROGRESS:
             # select winner
             return challenge_winner(request, challenge_id)
+        if challenge.status == Wager.COMPLETED:
+            return challenge_award(request, challenge_id)
 
     props = {
         "challenge": serialize(challenge),
@@ -218,8 +220,8 @@ def challenge_award(request, challenge_id):
     challenge = get_object_or_404(Wager, unique_code=challenge_id)
     form = PayPalForm(data)
     if form.is_valid():
-        email = data.get("email")
-        challenge.winner_paypal = email
+        paypal_email = data.get("paypal_email")
+        challenge.winner_paypal = paypal_email
         challenge.save()
         return {"challenge": challenge}
     else:

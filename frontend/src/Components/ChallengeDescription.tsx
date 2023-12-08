@@ -1,9 +1,8 @@
+import * as React from 'react';
 import { FunctionComponent, PropsWithChildren } from 'react';
 import { Wager } from '@/schema';
 import { BanknotesIcon } from '@heroicons/react/24/solid';
 import { currencyFormatter } from '@/Utils/money';
-import * as React from 'react';
-import { Card } from 'flowbite-react';
 
 type Props = {
   challenge: Wager;
