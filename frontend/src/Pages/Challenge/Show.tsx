@@ -44,12 +44,17 @@ const Show: FunctionComponent<Props> = ({ challenge, user }) => {
       challenge.status === WagerStatus.AWAITING_RESPONSE &&
       challenge.respondent_id === null
     ) {
-      description = 'Accept this challenge';
+      description = 'Accept this challenge by adding your gamer tag.';
       return [description];
     }
 
     if (challenge.status === WagerStatus.ACCEPTED) {
-      description = 'Make a Payment';
+      description = 'Click the pay now button to proceed with this challenge.';
+      return [description];
+    }
+
+    if (challenge.status === WagerStatus.DISPUTED) {
+      description = 'This challenge has been disputed.';
       return [description];
     }
 

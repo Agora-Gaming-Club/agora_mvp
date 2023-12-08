@@ -178,7 +178,7 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
 # Set to True here to enable emails
-EMAIL_ENABLED = False
+EMAIL_ENABLED = True
 # Set to True inside tests to prevent emails from printing or sending
 EMAIL_TEST_MODE = False
 
