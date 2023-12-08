@@ -185,4 +185,6 @@ def password_reset(request, reset_password_id):
             logout(request)
             return {"message": "password changed"}
         return {"errors": form.errors.get_json_data()}
-    return {}
+    return {
+        "token": reset_password_id
+    }

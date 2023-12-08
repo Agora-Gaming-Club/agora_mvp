@@ -88,6 +88,15 @@ const Login: FunctionComponent = () => {
           </Link>{' '}
         </p>
       </div>
+
+      <div className="mt-2 text-center">
+        <Link
+          href="/accounts/forgot_password"
+          className="text-blue-500 underline"
+        >
+          Forgot password?
+        </Link>
+      </div>
     </GuestLayout>
   );
 };
