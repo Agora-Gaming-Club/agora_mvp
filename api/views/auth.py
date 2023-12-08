@@ -164,7 +164,7 @@ def forgot_password(request):
 
 
 @ensure_csrf_cookie
-@inertia("Auth/ForgotPassword")
+@inertia("Auth/ResetPassword")
 def password_reset(request, reset_password_id):
     if request.method == "POST":
         data = json.loads(request.body)
