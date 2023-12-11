@@ -24,39 +24,39 @@ Game.objects.create(
     game=rocket_league,
     platform=cross_platform,
     terms=face_off,
-    discord_link="https://www.example.com/rl_cross_platform_faceoff",
+    discord_link="https://discord.com/channels/1173680090371068006/1174514494819541042",
 )
 
 Game.objects.create(
     game=madden_24,
     platform=xbox,
     terms=five_min_quarters,
-    discord_link="https://www.example.com/madden_xbox_5min",
+    discord_link="https://discord.com/channels/1173680090371068006/1173680424845840585",
 )
 
 Game.objects.create(
     game=madden_24,
     platform=ps5,
     terms=five_min_quarters,
-    discord_link="https://www.example.com/madden_ps5_5min",
+    discord_link="https://discord.com/channels/1173680090371068006/1173680424845840585",
 )
 Game.objects.create(
     game=madden_24,
     platform=pc,
     terms=five_min_quarters,
-    discord_link="https://www.example.com/madden_pc_5min",
+    discord_link="https://discord.com/channels/1173680090371068006/1173680424845840585",
 )
 
 Game.objects.create(
     game=chess_dot_com,
     platform=pc,
     terms=three_min_blitz,
-    discord_link="https://www.example.com/chess_pc_3min",
+    discord_link="https://discord.com/channels/1173680090371068006/1174514563450929272",
 )
 
 Game.objects.create(
     game=chess_dot_com,
     platform=mobile,
     terms=three_min_blitz,
-    discord_link="https://www.example.com/chess_mobile_3min",
+    discord_link="https://discord.com/channels/1173680090371068006/1174514563450929272",
 )

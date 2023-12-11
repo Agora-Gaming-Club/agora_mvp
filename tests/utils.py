@@ -1,6 +1,11 @@
+import random
+import string
+
 from django.contrib.auth.models import User
 
 from api.models import Game, UserProfile, Wager, GameName, Platform, Term
+
+random.seed("seed")
 
 
 def make_user(username, email, password, *args, **kwargs):
@@ -18,8 +23,16 @@ def make_user(username, email, password, *args, **kwargs):
         last_name="McNameySon",
         state="AZ",
         birthday="2000-01-01",
+        phone_number=random_phonenumber(),
     )
     return user_profile
+
+
+def random_phonenumber():
+    phone_number = []
+    for i in range(10):
+        phone_number.append(random.choice(string.digits))
+    return "".join(phone_number)
 
 
 def make_game():

@@ -5,7 +5,8 @@ TODO: Verify that @ensure_csrf_cookie is required (not 100% sure)
 """
 from datetime import datetime, timezone
 import json
-import uuid
+
+from django.conf import settings
 
 from django.contrib.auth.models import User
 from django.contrib.auth import logout, login, authenticate
@@ -13,7 +14,6 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.views.decorators.csrf import ensure_csrf_cookie
 from inertia import inertia
-from inertia.share import share
 
 from api.emails import WelcomeEmail, PasswordResetEmail
 from api.models import UserProfile
@@ -41,7 +41,7 @@ def log_in(request):
 
     if request.method == "POST":
         data = json.loads(request.body)
-        redirect = data.pop('redirect', None)
+        redirect = data.pop("redirect", None)
 
         form = LoginForm(data)
         if form.is_valid():
@@ -86,7 +86,7 @@ def register(request):
 
     if request.method == "POST":
         data = json.loads(request.body)
-        redirect = data.pop('redirect', None)
+        redirect = data.pop("redirect", None)
         form = RegisterForm(data)
         if form.is_valid():
             user = User.objects.create_user(
@@ -155,7 +155,10 @@ def forgot_password(request):
                 username = profile.username
                 profile.reset_password()
                 email = PasswordResetEmail(
-                    {"code": profile.reset_password_id},
+                    {
+                        "code": profile.reset_password_id,
+                        "site_root": settings.SITE_ROOT,
+                    },
                     target=profile.email,
                 )
                 email.send()
