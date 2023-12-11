@@ -26,3 +26,5 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # }
 
 DJANGO_VITE_DEV_MODE = False
+EMAIL_ENABLED = True
+SITE_ROOT = "https://??.agoragaming.gg"

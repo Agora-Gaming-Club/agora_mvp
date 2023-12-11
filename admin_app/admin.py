@@ -70,6 +70,11 @@ class WagerDisputeAdmin(admin.ModelAdmin):
         return qs.filter(status=Wager.DISPUTED)
 
 
+@admin.action(description="Mark as Paid")
+def mark_paid(modeladmin, request, queryset):
+    queryset.update(winner_paid=True)
+
+
 class WagerPayoutAdmin(admin.ModelAdmin):
     list_display = [
         "amount",
@@ -79,8 +84,10 @@ class WagerPayoutAdmin(admin.ModelAdmin):
         "paypal_payment_id",
         "winner_paid",
         "winner",
+        "winning_amt",
     ]
     list_filter = ["winner_paid"]
+    actions = [mark_paid]
 
     def has_add_permission(self, request, obj=None):
         return False

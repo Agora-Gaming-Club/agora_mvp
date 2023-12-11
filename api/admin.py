@@ -39,10 +39,10 @@ class UserProfileAdmin(admin.ModelAdmin):
 
 class WagerAdmin(admin.ModelAdmin):
     list_display = [
+        "unique_code",
         "challenger_id",
         "respondent_id",
         "amount",
-        "unique_code",
         "status",
         "challenger_paid",
         "respondent_paid",

@@ -3,6 +3,7 @@ from decimal import Decimal
 import uuid
 
 from django.db import models
+from django import forms
 from django.contrib.auth.models import User
 from django.utils.text import slugify
 
@@ -79,19 +80,24 @@ class Wager(models.Model):
         COMPLETED,
         EXPIRED,
     ]
-    TEN = 10
-    TWENTYFIVE = 25
-    FIFTY = 50
+    TEN = Decimal("10.00")
+    TWENTYFIVE = Decimal("25.00")
+    FIFTY = Decimal("50.00")
     AMOUNT_CHOICES = [
-        (TEN, 10.00),
-        (TWENTYFIVE, 25.00),
-        (FIFTY, 50.00),
+        (TEN, "10.00"),
+        (TWENTYFIVE, "25.00"),
+        (FIFTY, "50.00"),
     ]
 
     challenger_id = models.IntegerField()
     respondent_id = models.IntegerField(blank=True, null=True)
     # make amount a choice box
-    amount = models.DecimalField(choices=AMOUNT_CHOICES, max_digits=6, decimal_places=2)
+    amount = models.DecimalField(
+        choices=AMOUNT_CHOICES,
+        max_digits=6,
+        decimal_places=2,
+        # widget=forms.Select(choices=AMOUNT_CHOICES),
+    )
     game = models.ForeignKey("Game", on_delete=models.CASCADE, blank=True)
     notes = models.CharField(max_length=200, blank=True, null=True)
     unique_code = models.CharField(

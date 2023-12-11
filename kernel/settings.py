@@ -35,6 +35,8 @@ ALLOWED_HOSTS = [
     "dev.agoragaming.club",
 ]
 
+SITE_ROOT = "https://dev.agoragaming.gg"
+
 # Application definition
 
 INSTALLED_APPS = [

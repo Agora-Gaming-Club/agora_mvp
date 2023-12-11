@@ -33,7 +33,6 @@ def challenge(request):
     user = UserProfile.objects.get(user=request.user)
     if request.method == "POST":
         data = json.loads(request.body)
-        print(data)
         form = ChallengeForm(data, initial={"challenger_username": request.user})
         if form.is_valid():
             platform = data["platform"]
