@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { FunctionComponent, useMemo } from 'react';
+import {FunctionComponent, useMemo} from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { UserProfile, Wager, WagerStatus } from '@/schema';
+import {UserProfile, Wager, WagerStatus} from '@/schema';
 import AcceptChallengePartial from '@/Components/Partials/Challenge/AcceptChallengePartial';
 // @ts-ignore
 import RequireChallengePaymentPartial from '@/Components/Partials/Challenge/RequireChallengePaymentPartial';
@@ -10,21 +10,21 @@ import ShareChallengePartial from '@/Components/Partials/Challenge/ShareChalleng
 // @ts-ignore
 import SelectChallengeWinnerPartial from '@/Components/Partials/Challenge/SelectChallengeWinnerPartial';
 import ChallengeDescription from '@/Components/ChallengeDescription';
-import { Alert, Button, Card } from 'flowbite-react';
-import { InformationCircleIcon } from '@heroicons/react/24/outline';
+import {Alert, Button, Card} from 'flowbite-react';
+import {InformationCircleIcon} from '@heroicons/react/24/outline';
 // @ts-ignore
 import PaypalChallengePartial from '@/Components/Partials/Challenge/PaypalChallengePartial';
 // @ts-ignore
 import WonChallengePartial from '@/Components/Partials/Challenge/WonChallengePartial';
 import LostChallengePartial from '@/Components/Partials/Challenge/LostChallengePartial';
-import { Link } from '@inertiajs/react';
+import {Link} from '@inertiajs/react';
 
 type Props = {
   challenge: Wager;
   user?: UserProfile;
 };
 
-const Show: FunctionComponent<Props> = ({ challenge, user }) => {
+const Show: FunctionComponent<Props> = ({challenge, user}) => {
   const [description] = useMemo(() => {
     let description = '';
 
@@ -68,10 +68,10 @@ const Show: FunctionComponent<Props> = ({ challenge, user }) => {
     >
       <div className="container mx-auto py-5 px-4">
         {user ? (
-          <ChallengeDetail challenge={challenge} user={user} />
+          <ChallengeDetail challenge={challenge} user={user}/>
         ) : (
           <Card className="max-w-xl text-center mx-auto">
-            <ChallengeDescription challenge={challenge} />
+            <ChallengeDescription challenge={challenge}/>
             <h3 className="text-white">
               Signup or Register to Accept Challenge
             </h3>
@@ -106,7 +106,7 @@ const Show: FunctionComponent<Props> = ({ challenge, user }) => {
 const ChallengeDetail: FunctionComponent<{
   challenge: Wager;
   user: UserProfile;
-}> = ({ challenge, user }) => {
+}> = ({challenge, user}) => {
   const isChallenger = user.user === challenge.challenger_id;
   const isRespondent = user.user === challenge.respondent_id;
   const isAwaitingResponse = challenge.status === WagerStatus.AWAITING_RESPONSE;
@@ -130,16 +130,16 @@ const ChallengeDetail: FunctionComponent<{
   switch (challenge.status) {
     case WagerStatus.AWAITING_RESPONSE:
       if (awaitingResponseAndChallenger()) {
-        return <ShareChallengePartial challenge={challenge} user={user} />;
+        return <ShareChallengePartial challenge={challenge} user={user}/>;
       }
       if (awaitingResponseAndNotChallenger()) {
-        return <AcceptChallengePartial challenge={challenge} user={user} />;
+        return <AcceptChallengePartial challenge={challenge} user={user}/>;
       }
       break;
     case WagerStatus.ACCEPTED:
       if (acceptedAndChallengerNotPaid() || acceptedAndRespondentNotPaid()) {
         return (
-          <RequireChallengePaymentPartial challenge={challenge} user={user} />
+          <RequireChallengePaymentPartial challenge={challenge} user={user}/>
         );
       }
       if (acceptedAndChallengerPaid() || acceptedAndRespondentPaid()) {
@@ -149,7 +149,7 @@ const ChallengeDetail: FunctionComponent<{
             <Alert color="warning" icon={InformationCircleIcon}>
               We are now waiting for the other player's payment.
             </Alert>
-            <ChallengeDescription challenge={challenge} />
+            <ChallengeDescription challenge={challenge}/>
           </Card>
         );
       }
@@ -170,7 +170,7 @@ const ChallengeDetail: FunctionComponent<{
             >
               We are now waiting for the respondent's vote.
             </Alert>
-            <ChallengeDescription challenge={challenge} />
+            <ChallengeDescription challenge={challenge}/>
           </Card>
         );
       }
@@ -190,12 +190,12 @@ const ChallengeDetail: FunctionComponent<{
             >
               We are now waiting for the challenger's vote.
             </Alert>
-            <ChallengeDescription challenge={challenge} />
+            <ChallengeDescription challenge={challenge}/>
           </Card>
         );
       }
 
-      return <SelectChallengeWinnerPartial challenge={challenge} user={user} />;
+      return <SelectChallengeWinnerPartial challenge={challenge} user={user}/>;
     case WagerStatus.DISPUTED:
       return (
         <Card className="max-w-xl text-center mx-auto">
@@ -217,14 +217,41 @@ const ChallengeDetail: FunctionComponent<{
       );
     case WagerStatus.COMPLETED:
       if (challenge.winner_id !== user.user) {
-        return <LostChallengePartial challenge={challenge} user={user} />;
+        return <LostChallengePartial challenge={challenge} user={user}/>;
       }
 
       if (challenge.winner_id == user.user && !challenge.winner_paypal) {
-        return <PaypalChallengePartial challenge={challenge} user={user} />;
+        return <PaypalChallengePartial challenge={challenge} user={user}/>;
       }
 
-      return <WonChallengePartial challenge={challenge} user={user} />;
+      return <WonChallengePartial challenge={challenge} user={user}/>;
+    case WagerStatus.EXPIRED:
+
+      return (
+        <Card className="max-w-xl text-center mx-auto">
+          <Alert color="failure" className="text-lg font-semibold">
+            Oops! Looks no one accepted your challenge.
+          </Alert>
+
+          <p className="text-gray-400 text-center text-sm tracking-tight">
+            Want to browse through existing active challenges? Head over to our{' '}
+            <a href="https://https://discord.com/channels/1173680090371068006" target="_blank" className="underline">
+              Agora Discord channel
+            </a>{' '}
+            to find a challenge that you can take on!
+          </p>
+          <div className="flex items-center space-x-4">
+            <Button
+              className="w-full"
+              color="blue"
+              as={Link as any}
+              href={`/challenge`}
+            >
+              Create New Challenge
+            </Button>
+          </div>
+        </Card>
+      )
     default:
       return <></>;
   }
