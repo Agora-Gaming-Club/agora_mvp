@@ -1,3 +1,4 @@
+"""Simple SMS client using twilio"""
 import os
 
 from django.conf import settings
