@@ -1,12 +1,12 @@
+"""
+Admin page for the main app's model.
+"""
 from django.contrib import admin
 from api.models import (
     Payment,
     UserProfile,
     Wager,
 )
-
-
-# Register your models here.
 
 
 class PaymentAdmin(admin.ModelAdmin):

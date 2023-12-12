@@ -1,3 +1,4 @@
+"""Util methods for api app."""
 import random
 import string
 from django.core.paginator import Paginator, EmptyPage
@@ -73,6 +74,7 @@ def form_errors(form):
 
 
 def good_email(email):
+    """Validate email without an exception."""
     try:
         validate_email(email)
         return True
@@ -81,6 +83,7 @@ def good_email(email):
 
 
 def paginate(queryset, page, amt):
+    """Simple pagination for a queryset."""
     paginator = Paginator(queryset, amt)
     result = paginator.get_page(page)
     try:
@@ -98,9 +101,9 @@ def paginate(queryset, page, amt):
 
 def generate_unique_code():
     """
-    Code should be 12 characters long
-    should be formatted like: 1234567890AB
-    will be used as url slug
+    Generate 12 character long code.
+
+    Can be used as url slug
     """
 
     def random_char():

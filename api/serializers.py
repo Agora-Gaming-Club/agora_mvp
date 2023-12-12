@@ -1,4 +1,3 @@
-from django.core import serializers
 from django.template.defaultfilters import slugify
 from api.models import (
     Game,
@@ -9,6 +8,12 @@ from api.models import (
 
 
 def serialize(obj):
+    """
+    Converts an object to a json.
+
+    obj: An example of an object, can be Game, Payment, UserProfile or Wager
+    returns: serialized JSON version of object
+    """
     if isinstance(obj, Game):
         return serialize_game(obj)
     if isinstance(obj, Payment):
@@ -21,17 +26,35 @@ def serialize(obj):
 
 
 def serialize_objs(objs):
+    """
+    Convert a list of objects to Json.
+
+    objs: list of objects
+    returns: list of serialized objects
+    """
     if "results" in objs:
         objs = objs["results"]
     return [serialize(obj) for obj in objs]
 
 
 def get_user(id):
+    """
+    Convert user ID to serialized UserProfile
+
+    id: User ID
+    returns: a Serialized UserProfile
+    """
     user = UserProfile.objects.get(user__id=id)
     return serialize_user_profile(user)
 
 
 def serialize_game(game):
+    """
+    Converts game object to serialized JSON
+
+    game: Game obj
+    returns: a Serialized game object
+    """
     return {
         "game": game.game.name,
         "platform": game.platform.name,
@@ -41,6 +64,12 @@ def serialize_game(game):
 
 
 def serialize_payment(payment):
+    """
+    Converts payment object to serialized JSON
+
+    payment: Payment obj
+    returns: a Serialized payment object
+    """
     return {
         "user": payment.user,
         "wager": payment.wager,
@@ -52,6 +81,12 @@ def serialize_payment(payment):
 
 
 def serialize_user_profile(user_profile):
+    """
+    Converts user_profile object to serialized JSON
+
+    user_profile: UserProfile obj
+    returns: a Serialized user_profile object
+    """
     return {
         "username": user_profile.username,
         "first_name": user_profile.first_name,
@@ -67,6 +102,12 @@ def serialize_user_profile(user_profile):
 
 
 def serialize_wager(wager):
+    """
+    Converts wager object to serialized JSON
+
+    wager: Wager obj
+    returns: a Serialized wager object
+    """
     serialized = {
         "challenger_id": wager.challenger_id,
         "challenger": get_user(wager.challenger_id),
@@ -88,7 +129,7 @@ def serialize_wager(wager):
         "challenger_paid": wager.challenger_paid,
         "respondent_paid": wager.respondent_paid,
         "winner_paid": wager.winner_paid,
-        "winner_paypal": wager.winner_paypal
+        "winner_paypal": wager.winner_paypal,
     }
     if wager.respondent_id:
         serialized["respondent"] = get_user(wager.respondent_id)

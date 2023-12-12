@@ -1,8 +1,4 @@
-"""
-Auth related endpooints
-
-TODO: Verify that @ensure_csrf_cookie is required (not 100% sure)
-"""
+"""Auth related endpooints"""
 from datetime import datetime, timezone
 import json
 
@@ -188,6 +184,4 @@ def password_reset(request, reset_password_id):
             logout(request)
             return {"message": "password changed"}
         return {"errors": form.errors.get_json_data()}
-    return {
-        "token": reset_password_id
-    }
+    return {"token": reset_password_id}

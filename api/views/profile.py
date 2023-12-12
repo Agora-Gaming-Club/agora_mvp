@@ -1,17 +1,14 @@
 # TODO EVERYTHING HERE SHOUD BE MOVED TO auth.py
 import json
 
-from django.contrib.auth.models import User
-from django.contrib.auth import logout, login
 from django.core import serializers
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render
-from django.urls import reverse
 from django.views.decorators.csrf import ensure_csrf_cookie
 from inertia import inertia
 
 from api.models import UserProfile
-from api.forms import ProfileForm, RegisterForm
+from api.forms import ProfileForm
 
 
 @inertia("Profile/Index")

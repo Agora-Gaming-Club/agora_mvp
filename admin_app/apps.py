@@ -1,3 +1,4 @@
+"""App declaration for the admin_app"""
 from django.apps import AppConfig
 
 
