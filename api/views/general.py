@@ -1,3 +1,4 @@
+"""General endpoints"""
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from inertia import inertia
@@ -19,6 +20,7 @@ def landing(request):
 def dashboard(request):
     """
     Gets all of a users challenges, paginated
+
     query_params:
     active_page: page of challenger query
     active_amt: amount per challenger page

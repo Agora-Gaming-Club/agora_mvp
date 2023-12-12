@@ -5,7 +5,6 @@ import json
 
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
-from django.urls import reverse
 from django.views.decorators.csrf import ensure_csrf_cookie
 from inertia import inertia, share
 
@@ -28,6 +27,12 @@ from payment.authorize_client import AuthorizeClient
 @ensure_csrf_cookie
 @inertia("Challenge/Create")
 def challenge(request):
+    """
+    Create a challenge.
+
+    Puts challenge into AWAITING_RESPONSE status.
+    Challenge will expire if noone accepts within time limit.
+    """
     if not request.user.is_authenticated:
         return {"message": "Requires Auth"}
     user = UserProfile.objects.get(user=request.user)
@@ -64,7 +69,7 @@ def challenge(request):
 @ensure_csrf_cookie
 @inertia("Challenge/Show")
 def challenge_status(request, challenge_id):
-    # QUESTION: Figure out if anyone can go here or if only authenticated ppl
+    """Gets info on an existing challenge."""
     challenge = get_object_or_404(Wager, unique_code=challenge_id)
     current_user = None
     if not request.user.is_authenticated:
@@ -96,6 +101,7 @@ def challenge_status(request, challenge_id):
 @ensure_csrf_cookie
 @inertia("Challenge/Search")
 def challenge_search(request):
+    """Looks up a challenge by its unique_code."""
     if request.method == "POST":
         data = json.loads(request.body)
         form = ChallengeSearchForm(data)
@@ -115,6 +121,7 @@ def challenge_search(request):
 
 
 def challenge_accept(request, challenge_id):
+    """Allows a respondent to accept a challenge."""
     data = json.loads(request.body)
     challenge = get_object_or_404(Wager, unique_code=challenge_id)
     form = AcceptForm(data)
@@ -132,10 +139,7 @@ def challenge_accept(request, challenge_id):
 
 
 def challenge_ante(request, challenge_id):
-    """
-    Should take payment, and return something to indicate if
-    it worked or not.
-    """
+    """Takes payments from users."""
     challenge = get_object_or_404(Wager, unique_code=challenge_id)
     challengers = [challenge.challenger_id, challenge.respondent_id]
 
@@ -174,7 +178,13 @@ def challenge_ante(request, challenge_id):
 
 
 def challenge_winner(request, challenge_id):
-    """Verify both people are supposed to be here"""
+    """
+    Users select who they believe won.
+
+    Can keep it in IN_PROGRESS if only one user voted.
+    Can move wager to DISPUTED if both vote and they differ.
+    Can move wager to COMPLETED if both vote and agree.
+    """
     data = json.loads(request.body)
     challenge = get_object_or_404(Wager, unique_code=challenge_id)
     form = WinnerForm(data, choices=challenge.get_winner_choices())
@@ -215,6 +225,7 @@ def challenge_winner(request, challenge_id):
 
 
 def challenge_award(request, challenge_id):
+    """Once a winner is chosen, they have to fill out Paypal info."""
     data = json.loads(request.body)
     challenge = get_object_or_404(Wager, unique_code=challenge_id)
     form = PayPalForm(data)

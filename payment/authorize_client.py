@@ -1,6 +1,8 @@
-import json
-from lxml import etree
-import os
+"""
+Authorize client for accepting payments from users
+
+https://developer.authorize.net/api/reference/index.html#payment-transactions
+"""
 
 from authorizenet import apicontractsv1
 from authorizenet.apicontrollers import createTransactionController
@@ -16,6 +18,7 @@ class AuthorizeClient:
         self.token = token
 
     def send_payment(self, data_value, amount, wager, user):
+        """Do a transaction type: Create an Accept Payment Transaction"""
         # Set up merchant authentication
         merchantAuth = apicontractsv1.merchantAuthenticationType()
         merchantAuth.name = settings.AUTHORIZE_LOGIN_ID

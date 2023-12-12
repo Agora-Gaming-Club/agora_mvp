@@ -1,3 +1,4 @@
+"""App definition for api portion."""
 from django.apps import AppConfig
 
 
