@@ -32,6 +32,8 @@ ALLOWED_HOSTS = [
     "localhost",
     "18.226.170.241",
     "dev.agoragaming.gg",
+    "agoragaming.gg",
+    "www.agoragaming.gg",
     "dev.agoragaming.club",
 ]
 
