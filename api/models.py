@@ -132,10 +132,13 @@ class Wager(models.Model):
 
     def get_winner_choices(self):
         """Returns a list of potential winners for use in a form choices"""
-        choice_a = self.challenger_id, User.objects.get(id=self.challenger_id)
-        choice_b = self.respondent_id, User.objects.get(id=self.respondent_id)
-        choices = choice_a, choice_b
-        return choices
+        if self.challenger_id and self.respondent_id:
+            choice_a = self.challenger_id, User.objects.get(id=self.challenger_id)
+            choice_b = self.respondent_id, User.objects.get(id=self.respondent_id)
+            choices = choice_a, choice_b
+            return choices
+        else:
+            return ()
 
     def get_competitors(self):
         """Returns dict of Users in challenge"""
@@ -220,6 +223,17 @@ class Wager(models.Model):
         winner = UserProfile.objects.get(user=self.winner)
         winner.winnings += Decimal(winning)
         winner.save()
+
+
+def get_winner_choices(wager):
+    """Returns a list of potential winners for use in a form choices"""
+    if wager.challenger_id and wager.respondent_id:
+        choice_a = wager.challenger_id, User.objects.get(id=wager.challenger_id)
+        choice_b = wager.respondent_id, User.objects.get(id=wager.respondent_id)
+        choices = choice_a, choice_b
+        return choices
+    else:
+        return ()
 
 
 class Payment(models.Model):

@@ -26,12 +26,13 @@ class GameProxyAdmin(admin.ModelAdmin):
 
 class WagerDisputeAdmin(admin.ModelAdmin):
     list_display = [
-        "amount",
         "unique_code",
+        "amount",
         "challenger",
         "challenger_voted",
         "respondent",
         "respondent_voted",
+        "winner",
         "status",
     ]
     readonly_fields = [
@@ -40,6 +41,7 @@ class WagerDisputeAdmin(admin.ModelAdmin):
         "respondent",
         "respondent_voted",
     ]
+    raw_id_fields = ("winner",)
 
     @admin.display(description="Challenger")
     def challenger(self, instance):
@@ -76,8 +78,8 @@ def mark_paid(modeladmin, request, queryset):
 
 class WagerPayoutAdmin(admin.ModelAdmin):
     list_display = [
-        "amount",
         "unique_code",
+        "amount",
         "status",
         "winner_paypal",
         "paypal_payment_id",
