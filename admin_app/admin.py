@@ -1,9 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.models import User
 
-from api.models import (
-    Wager,
-)
+from api.models import Wager, UserProfile
 from admin_app.models import (
     WagerDisputeProxy,
     WagerPayoutProxy,
@@ -12,6 +10,8 @@ from admin_app.models import (
     PlatformProxy,
     TermProxy,
 )
+from api.sms import PaidSMS
+
 
 # Register your models here.
 
@@ -70,8 +70,15 @@ class WagerDisputeAdmin(admin.ModelAdmin):
         return qs.filter(status=Wager.DISPUTED)
 
 
-@admin.action(description="Mark as Paid")
+@admin.action(description="Mark selected Wager as Paid")
 def mark_paid(modeladmin, request, queryset):
+    for challenge in queryset:
+        winner = UserProfile.objects.get(user=challenge.winner)
+        PaidSMS(
+            context={"challenge", challenge},
+            target=winner.phone_number,
+        ).send()
+
     queryset.update(winner_paid=True)
 
 

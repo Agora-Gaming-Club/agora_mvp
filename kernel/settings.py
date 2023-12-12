@@ -188,6 +188,12 @@ EMAIL_TEST_MODE = False
 AUTHORIZE_LOGIN_ID = os.getenv("AUTHORIZE_LOGIN_ID")
 AUTHORIZE_TRANSACTION_KEY = os.getenv("AUTHORIZE_TRANSACTION_KEY")
 
+# Twilio settings
+TWILIO_ACCOUNT_SID = os.getenv("TWILIO_ACCOUNT_SID")
+TWILIO_AUTH_TOKEN = os.getenv("TWILIO_AUTH_TOKEN")
+SMS_ENABLED = False
+TWILIO_DEFAULT_NUMBER = "+18886894992"
+
 
 CRONJOBS = [
     ("*/10 * * * *", "api.cron.challenge_creation_expired"),

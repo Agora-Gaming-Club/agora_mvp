@@ -1,0 +1,1 @@
+Your opponent has selected the outcome for challenge {{challenge.unique_code}}. You now have one hour to select the outcome. www.agoragaming.gg/dashboard

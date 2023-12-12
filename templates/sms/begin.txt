@@ -1,0 +1,1 @@
+Your challenge {{challenge.unique_code}} has begun! You now have 24 hours to play your matchup and select the outcome in the app. www.agoragaming.gg/dashboard

@@ -1,0 +1,1 @@
+Congratulations! Your payment for {{challenge.unique_code}} has been posted via Paypal. Come back and try your next one! www.agoragaming.gg/challenges

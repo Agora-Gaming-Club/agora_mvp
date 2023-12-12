@@ -134,6 +134,12 @@ class Wager(models.Model):
     def __repr__(self):
         return self.__str__()
 
+    def get_challenger(self):
+        return UserProfile.objects.get(user__id=self.challenger_id)
+
+    def get_respondent(self):
+        return UserProfile.objects.get(user__id=self.respondent_id)
+
     def get_winner_choices(self):
         choice_a = self.challenger_id, User.objects.get(id=self.challenger_id)
         choice_b = self.respondent_id, User.objects.get(id=self.respondent_id)
@@ -190,6 +196,7 @@ class Wager(models.Model):
             self.status = Wager.IN_PROGRESS
             self.in_progress_time = datetime.now(timezone.utc)
         self.save()
+        return self.challenger_paid and self.respondent_paid
 
     def determine_winner(self):
         challenger_vote = None
