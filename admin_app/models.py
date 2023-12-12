@@ -1,3 +1,4 @@
+"""Proxy models for use in this app's admin page."""
 from api.models import Wager, GameName, Platform, Term, Game
 
 

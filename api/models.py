@@ -1,23 +1,17 @@
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timezone
 from decimal import Decimal
 import uuid
 
 from django.db import models
 from django import forms
 from django.contrib.auth.models import User
-from django.utils.text import slugify
 
 from api.utils import generate_unique_code
 
 
 # Create your models here.
 class UserProfile(models.Model):
-    """
-    A profile that represents a user.
-
-    Note: username and email might not actually be required here
-    because they area already estored in the user field
-    """
+    """A profile that represents a user."""
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     username = models.CharField(max_length=30, blank=False)
@@ -53,6 +47,8 @@ class UserProfile(models.Model):
 
 
 class Wager(models.Model):
+    """Object representation of a Wager"""
+
     ACCEPTED = "accepted"  # respondent has accepted the challenge
     IN_PROGRESS = "in_progress"  # payment recieved
     AWAITING_RESPONSE = "awaiting_response"  # just created (default)
@@ -141,12 +137,14 @@ class Wager(models.Model):
         return UserProfile.objects.get(user__id=self.respondent_id)
 
     def get_winner_choices(self):
+        """Returns a list of potential winners for use in a form choices"""
         choice_a = self.challenger_id, User.objects.get(id=self.challenger_id)
         choice_b = self.respondent_id, User.objects.get(id=self.respondent_id)
         choices = choice_a, choice_b
         return choices
 
     def get_competitors(self):
+        """Returns dict of Users in challenge"""
         return {
             "challenger": User.objects.get(id=self.challenger_id),
             "respondent": User.objects.get(id=self.respondent_id),
@@ -163,28 +161,15 @@ class Wager(models.Model):
             str(self.challenger_vote) != str(self.respondent_vote)
         )
 
-    def is_expired(self):
-        """
-        Index can expire, make this a setting
-
-        Unsure if all challenges can expire at the same age, or if its per challenge
-        """
-        one_day = timedelta(days=1)
-        now = datetime.now()
-        if self.created_at + one_day > now:
-            if self.status == self.AWAITING_RESPONSE:
-                self.status = self.EXPIRED
-                self.save()
-                return True
-        return False
-
     def accept(self, respondent, respondent_gamer_tag):
+        """Allows a respondent to accepts a challenge"""
         self.respondent_id = respondent.user.id
         self.respondent_gamer_tag = respondent_gamer_tag
         self.status = self.ACCEPTED
         self.save()
 
     def all_payments_received(self):
+        """Checks if both users paid"""
         challenger = Payment.objects.filter(wager=self, user__id=self.challenger_id)
         respondent = Payment.objects.filter(wager=self, user__id=self.respondent_id)
         if challenger:
@@ -199,6 +184,7 @@ class Wager(models.Model):
         return self.challenger_paid and self.respondent_paid
 
     def determine_winner(self):
+        """Determines all winner conditions."""
         challenger_vote = None
         respondent_vote = None
         if self.winner:
@@ -227,6 +213,7 @@ class Wager(models.Model):
         return self.winner
 
     def calculate_winning_payment(self):
+        """Simple winning calculating"""
         if self.amount == 10.00:
             return 18.00
         elif self.amount == 25.00:
@@ -235,6 +222,7 @@ class Wager(models.Model):
             return 90.00
 
     def award_payment(self):
+        """Adds calculated payment to winner's profile"""
         winning = self.calculate_winning_payment()
         winner = UserProfile.objects.get(user=self.winner)
         winner.winnings += Decimal(winning)
@@ -242,6 +230,8 @@ class Wager(models.Model):
 
 
 class Payment(models.Model):
+    """A profile that represents a Payment."""
+
     GOOD = "go"
     BAD = "ba"
     OKAY = "ok"
@@ -294,6 +284,7 @@ class Game(models.Model):
 
     @staticmethod
     def get_selections():
+        """returns tree representation of games/platforms/terms"""
         choices = {}
         games = Game.objects.all()
         for game in games:

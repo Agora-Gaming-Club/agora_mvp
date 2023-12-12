@@ -1,5 +1,8 @@
 """
-Example local settings file.
+Local Settings file
+
+Copy this file to `kernel/settings_local.py and set Env variable
+"DJANGO_SETTINGS_MODULE" to "kernel.settings_local" to enable it.
 """
 from kernel.settings import *
 

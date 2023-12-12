@@ -1,12 +1,12 @@
+""" Forms associated with api app."""
 import datetime
+import re
 
 from django import forms
 from django.contrib.auth.models import User
-from django.core.exceptions import ValidationError
 from django.forms import ModelForm
-from django.shortcuts import get_object_or_404
 
-from api.models import UserProfile, Wager, Game
+from api.models import UserProfile
 from kernel.agora_settings import FORBIDDEN_STATES, LEGAL_GAMBLING_AGE
 
 
@@ -22,10 +22,6 @@ class AcceptForm(forms.Form):
 
 
 class ChallengeForm(forms.Form):
-    """
-    TODO: game/platform will eventually be one field, once Game is open text field for admins
-    """
-
     challenger_username = forms.CharField(max_length=30, disabled=True)
     respondent_username = forms.CharField(max_length=30, required=False)
     challenger_gamer_tag = forms.CharField(max_length=30, required=False)
@@ -48,7 +44,6 @@ class ChallengeForm(forms.Form):
         validation = [
             valid,
         ]
-        # validate dollar amount is ok?
         return all(validation)
 
 
@@ -215,13 +210,6 @@ class PayPalForm(forms.Form):
 
 
 def phone_number_validator(phone_number):
-    import re
-
     regex = "^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]\d{3}[\s.-]\d{4}$"
     p = re.compile(regex)
     return p.match(phone_number)
-
-
-# pn = "520-123-4567"
-# x = phone_number_validator(pn)
-# print(x)

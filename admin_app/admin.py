@@ -1,3 +1,4 @@
+"""Admin page declaration for the admin_app"""
 from django.contrib import admin
 from django.contrib.auth.models import User
 
@@ -12,8 +13,6 @@ from admin_app.models import (
 )
 from api.sms import PaidSMS
 
-
-# Register your models here.
 
 
 class GameProxyAdmin(admin.ModelAdmin):
