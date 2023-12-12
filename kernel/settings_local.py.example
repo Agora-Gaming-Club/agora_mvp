@@ -5,3 +5,6 @@ from kernel.settings import *
 
 
 ALLOWED_HOSTS = ["192.168.0.138", "localhost"]
+
+DJANGO_VITE_DEV_MODE = True
+EMAIL_ENABLED = False

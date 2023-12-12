@@ -55,12 +55,3 @@ class PaidSMS(SMS):
 class SelectedSMS(SMS):
     def __init__(self, context, target):
         super().__init__("selected", context, target)
-
-
-if __name__ == "__main__":
-    settings.SMS_ENABLED = True
-    sms_type = "accepted"
-    context = {"challenge": "ABCD1234WASD"}
-    target = "+15204371676"
-    sms = SMS(sms_type, context, target)
-    sms.send()

@@ -13,7 +13,6 @@ from api.emails import DisputeEmail
 from api.sms import (
     AcceptedSMS,
     BeginSMS,
-    # PaidSMS,
     SelectedSMS,
 )
 from api.forms import (
