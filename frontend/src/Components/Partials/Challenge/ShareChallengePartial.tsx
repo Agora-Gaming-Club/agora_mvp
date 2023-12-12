@@ -51,7 +51,7 @@ const ShareChallengePartial: FunctionComponent<Props> = ({
       )}
 
       <a
-        href="https://discord.com"
+        href="https://https://discord.com/channels/1173680090371068006"
         target="_blank"
         className="text-gray-300 underline inline-flex justify-center items-center"
       >

@@ -47,7 +47,7 @@ const Index: FunctionComponent<Props> = ({ user }) => {
         <div className="max-w-sm mx-auto mt-4 md:mt-12">
           <h3 className="text-gray-400 text-center text-sm tracking-tight">
             Want to browse through existing active challenges? Head over to our{' '}
-            <a href="https://discord.com" target="_blank" className="underline">
+            <a href="https://https://discord.com/channels/1173680090371068006" target="_blank" className="underline">
               Agora Discord channel
             </a>{' '}
             to find a challenge that you can take on!
