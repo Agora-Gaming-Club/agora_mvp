@@ -215,7 +215,7 @@ def challenge_winner(request, challenge_id):
         elif user_id == challenge.respondent_id:
             challenge.respondent_vote = data["winner"]
             challenge.save()
-            not_voter = challenge.get_respodent()
+            not_voter = challenge.get_respondent()
         else:
             return {"message": "You didnt participate"}
 
