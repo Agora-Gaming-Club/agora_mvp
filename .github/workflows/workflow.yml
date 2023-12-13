@@ -25,5 +25,6 @@ jobs:
               # Now we have got the access of EC2 and we will start the deploy .
               cd /home/ubuntu/dev.agoragaming.gg &&
               source .venv/bin/activate &&
+              npm install &&
               sh bin/deploy
               '
