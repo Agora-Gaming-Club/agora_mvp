@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     "django_crontab",
     "api.apps.ApiConfig",
     "admin_app.apps.AdminApiApiConfig",
+    "filestore.apps.FilestoreConfig",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
