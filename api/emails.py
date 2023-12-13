@@ -1,28 +1,9 @@
 from smtplib import SMTPSenderRefused
 
-from django.core.mail import EmailMultiAlternatives
-from django.template.loader import get_template
-from django.template import engines
-from django.template.backends.django import Template
 from django.conf import settings
+from django.core.mail import EmailMultiAlternatives
 
-from filestore.models import File
-
-
-def load_text(file_name):
-    print(f"FILENAME:  {file_name} ")
-    file = File.objects.filter(name=file_name)
-
-    if file:
-        print(file.first().contents)
-        text = Template(engines[0], file.first().contents)
-        print(type(text))
-        print("GOT FROM DATABAAAAAAAAAAAASE")
-    else:
-        text = get_template(file_name)
-        print("GOT FROM FILE")
-        print(type(text))
-    return text
+from api.utils import load_text
 
 
 class Email:
@@ -36,12 +17,10 @@ class Email:
     def send(self):
         # TODO: Grab the templates from the DB if available, first.
         plaintext_filename = f"emails/{self.email_type}.txt"
-        plaintext = load_text(plaintext_filename)
-        text_content = plaintext.render(self.context)
+        text_content = load_text(plaintext_filename, self.context)
 
         html_filename = f"emails/{self.email_type}.html"
-        html = load_text(html_filename)
-        html_content = html.render(self.context)
+        html_content = load_text(html_filename, self.context)
 
         message = EmailMultiAlternatives(
             self.subject,
