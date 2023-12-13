@@ -6,26 +6,13 @@ import { Alert, Button, Label, Select, TextInput } from 'flowbite-react';
 import { amounts } from '@/Data/amounts';
 import { TransformedErrors, transformErrors } from '@/Utils/form';
 import Cookies from 'js-cookie';
-import { UserProfile } from '@/schema';
+import {GameChoice, UserProfile} from '@/schema';
 
 type Props = {
   user: UserProfile;
   choices: GameChoice[];
 };
 
-type GameTerms = {
-  term: string;
-  discord_link: string;
-};
-
-type GameInfo = {
-  terms: GameTerms[];
-  platforms: string[];
-};
-
-type GameChoice = {
-  [key: string]: GameInfo;
-};
 
 const Create: FunctionComponent<Props> = ({ user, choices }) => {
   const gameNames = Object.keys(choices);
@@ -162,16 +149,10 @@ const Create: FunctionComponent<Props> = ({ user, choices }) => {
 
           {selectedGameInfo ? (
             <Alert color="info">
-              <span className="font-medium">Game Terms! </span>
+              <span className="font-medium">Game Terms: </span>
               {selectedGameInfo.terms.length > 0 && (
                 <span>
                   {selectedGameInfo.terms[0].term} <br />{' '}
-                  <a
-                    className="underline"
-                    href={selectedGameInfo.terms[0].discord_link}
-                  >
-                    {selectedGameInfo.terms[0].discord_link}
-                  </a>
                 </span>
               )}
             </Alert>

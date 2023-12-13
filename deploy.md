@@ -46,6 +46,11 @@ uwsgi_param  SERVER_NAME        $server_name;
 10. `sudo apt install python3.8-gdbm`
 11. `sudo apt install python3.8-tk`
 12. `sudo apt install python3.8-full`
+13. `sudo apt-get install python3-pip`
+14. `pip install virtualenv`
+15. `sudo apt-get install python-virtualenv`
+16. `python3 -m pip install virtualenv`
+17. `sudo apt-get install python3-mysqldb`
 
 ### Install Git Repo
 `git clone https://github.com/Agora-Gaming-Club/agora_mvp`
@@ -60,8 +65,8 @@ and follow steps in the README
 
 ``` 
 [program:gunicorn]
-directory=/home/ubuntu/dev.agoragaming.gg
-command=/home/ubuntu/dev.agoragaming.gg/.venv/bin/gunicorn --workers 3 --bind unix:/home/ubuntu/dev.agoragaming.gg/app.sock kernel.wsgi:application  
+directory=/home/ubuntu/agoragaming.gg
+command=/home/ubuntu/agoragaming.gg/.venv/bin/gunicorn --workers 3 --bind unix:/home/ubuntu/agoragaming.gg/app.sock kernel.wsgi:application  
 autostart=true
 autorestart=true
 stderr_logfile=/var/log/gunicorn/gunicorn.err.log
@@ -72,8 +77,11 @@ programs:gunicorn
 ```
 Then run
 ```
+sudo mkdir /var/log/gunicorn
+sudo touch /var/log/gunicorn/gunicorn.err.log
+sudo touch /var/log/gunicorn/gunicorn.out.log
 sudo supervisorctl reread
-sudo supervisorct update
+sudo supervisorctl update
 sudo supervisorctl status
 ```
 
@@ -90,13 +98,17 @@ Create a file called `domainname_com.conf` in `/etc/nginx/sites-available` direc
 server{
 
 	listen 80;
-	server_name 18.226.170.241;
+	server_name 3.139.60.203;
 
-	
+	# Static files
+    # Ensure this alias points to the directory where your Django static files are collected
+    location /static {
+            alias /home/ubuntu/agoragaming.gg/static/;
+    }
 	location / {
 
 		include proxy_params;
-		proxy_pass http://unix:/home/ubuntu/dev.agoragaming.gg/app.sock;
+		proxy_pass http://unix:/home/ubuntu/agoragaming.gg/app.sock;
 
 	}
 
@@ -110,6 +122,26 @@ sudo ln domainname_com.conf /etc/nginx/sites-enabled/ # activate newly create ng
 sudo service nginx restart # restart service
 ```
 
+`sudo ufw allow 800`
+
 sudo service supervisor restart
 ### Certbot SSL
 https://www.nginx.com/blog/using-free-ssltls-certificates-from-lets-encrypt-with-nginx/
+
+## Database
+Because we use RDS, we only need to install the mysql client
+`sudo apt-get install mysql-client`
+
+## Crontab
+Run `crontab -e`
+Run `python manage.py crontab add`
+
+then add: 
+``` 
+0 0 1 * * /usr/bin/certbot renew --quiet
+```
+
+
+```
+
+```

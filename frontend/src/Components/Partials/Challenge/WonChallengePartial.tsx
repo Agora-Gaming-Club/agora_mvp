@@ -10,8 +10,8 @@ type Props = {
 };
 const WonChallengePartial: FunctionComponent<Props> = ({ challenge }) => {
   return (
-    <Card className="max-w-xl text-center mx-auto">
-      <Alert color="success" className="text-xl font-semibold">
+    <Card className="max-w-xl text-center mx-auto text-center">
+      <Alert color="success" className="text-xl font-semibold text-center">
         You won this challenge! ({challenge.challenger_gamer_tag} vs{' '}
         {challenge.respondent_gamer_tag})
       </Alert>

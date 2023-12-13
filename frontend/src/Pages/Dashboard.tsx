@@ -48,7 +48,7 @@ const Dashboard: FunctionComponent<Props> = ({ user, active, old }) => {
 
       {old.result.length > 0 && (
         <div className="container mx-auto px-5 py-8">
-          <h3 className="text-gray-500 text-lg">Old</h3>
+          <h3 className="text-gray-500 text-lg">Historical</h3>
           <ul className="space-y-1 w-full">
             {old.result.map((wager) => (
               <ChallengeCard
@@ -62,9 +62,9 @@ const Dashboard: FunctionComponent<Props> = ({ user, active, old }) => {
       )}
 
       {old.result.length < 1 && active.result.length < 1 ? (
-        <Card className="max-w-md mx-auto">
+        <Card className="max-w-md mx-auto text-center">
           <h5 className="text-center text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-            Initiate
+            Create
           </h5>
           <p className="font-normal text-gray-700 dark:text-gray-400">
             Start here to create your own challenge. You’ll choose a game and
@@ -72,8 +72,8 @@ const Dashboard: FunctionComponent<Props> = ({ user, active, old }) => {
             an opponent.
           </p>
 
-          {/*@ts-ignore*/}
-          <Button as={Link} href="/challenge" color="blue">
+
+          <Button as={Link as any} href="/challenge" color="blue">
             Create Challenge
           </Button>
         </Card>

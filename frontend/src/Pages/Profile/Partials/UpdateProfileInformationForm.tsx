@@ -29,7 +29,7 @@ export default function UpdateProfileInformation({
         <h1 className="text-white text-lg font-medium"> Profile Information</h1>
         <p className="text-gray-500 text-sm">
           Contact the Agora admins at contact@agoragaming.gg to update the
-          details of your account.”
+          details of your account.
         </p>
       </header>
 

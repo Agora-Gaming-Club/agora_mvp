@@ -1,4 +1,4 @@
-# Agora Gaming Club MVP
+# Agora Gaming MVP
 
 ## Running Locally
 
@@ -17,9 +17,9 @@ source .venv/bin/activate
 pip install -r requirements.txt
 
 # Setup and Run server
-cp kernel/local_settings.py.example kernel/local_settings.py
-./manage.py makemigrations
-./manage.py migrate
+cp kernel/settings_local.py.example kernel/local_settings.py
+./manage.py makemigrations # python manage.py makemigrations
+./manage.py migrate # python manage.py migrate
 ./bin/launch
 
 # install cronjobs into crontab

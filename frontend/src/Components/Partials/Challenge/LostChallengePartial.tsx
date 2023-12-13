@@ -11,8 +11,9 @@ type Props = {
 const LostChallengePartial: FunctionComponent<Props> = ({ challenge }) => {
   return (
     <Card className="max-w-xl text-center mx-auto">
-      <Alert color="failure" className="text-xl font-semibold">
-        You lost this challenge, better luck next time!
+      <Alert color="failure" className="text-xl font-semibold text-center">
+        You lost this challenge! ({challenge.challenger_gamer_tag} vs{' '}
+        {challenge.respondent_gamer_tag})
       </Alert>
       {/*<ChallengeDescription challenge={challenge} />*/}
 
@@ -31,8 +32,7 @@ const LostChallengePartial: FunctionComponent<Props> = ({ challenge }) => {
         <Button
           className="w-full"
           color="blue"
-          // @ts-ignore
-          as={Link}
+          as={Link as any}
           href={`/challenge`}
         >
           Create New Challenge

@@ -19,7 +19,7 @@ const Welcome = (): React.ReactNode => {
               <span className="text-sm text-white">Welcome to</span>
 
               <h2 className="max-w-lg mb-6 font-sans text-3xl font-bold leading-none tracking-tight text-white sm:text-4xl md:mx-auto">
-                Agora Gaming Club
+                Agora Gaming
               </h2>
               <p className="text-gray-500 text-sm">
                 Back yourself. Challenge the best. Win money.
