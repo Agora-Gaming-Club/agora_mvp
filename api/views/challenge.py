@@ -179,14 +179,15 @@ def challenge_ante(request, challenge_id):
             )
             both_paid = challenge.all_payments_received()
             if both_paid:
-                BeginSMS(
-                    context={"challenge": challenge},
-                    target=challenge.get_challenger().phone_number,
-                ).send()
-                BeginSMS(
-                    context={"challenge": challenge},
-                    target=challenge.get_respondent().phone_number,
-                ).send()
+                phone_numbers = [
+                    challenge.get_challenger().phone_number,
+                    challenge.get_respondent().phone_number,
+                ]
+                for number in phone_numbers:
+                    BeginSMS(
+                        context={"challenge": challenge},
+                        target=number,
+                    ).send()
             return {
                 "status": payment.authorize_net_payment_status,
                 "challenge": challenge,
