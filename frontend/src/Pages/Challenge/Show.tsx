@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {FunctionComponent, useMemo} from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import {UserProfile, Wager, WagerStatus} from '@/schema';
+import {GameChoice, UserProfile, Wager, WagerStatus} from '@/schema';
 import AcceptChallengePartial from '@/Components/Partials/Challenge/AcceptChallengePartial';
 // @ts-ignore
 import RequireChallengePaymentPartial from '@/Components/Partials/Challenge/RequireChallengePaymentPartial';
@@ -22,6 +22,7 @@ import {Link} from '@inertiajs/react';
 type Props = {
   challenge: Wager;
   user?: UserProfile;
+  choices: GameChoice[];
 };
 
 const Show: FunctionComponent<Props> = ({challenge, user}) => {
@@ -146,7 +147,7 @@ const ChallengeDetail: FunctionComponent<{
         return (
           <Card className="max-w-xl text-center mx-auto">
             {/*@ts-ignore*/}
-            <Alert color="warning" icon={InformationCircleIcon}>
+            <Alert className='text-center' color="warning" icon={InformationCircleIcon}>
               We are now waiting for the other player's payment.
             </Alert>
             <ChallengeDescription challenge={challenge}/>
@@ -163,7 +164,7 @@ const ChallengeDetail: FunctionComponent<{
         return (
           <Card className="max-w-xl text-center mx-auto">
             <Alert
-              className="text-xl font-semibold"
+              className="text-xl font-semibold text-center"
               color="warning"
               // @ts-ignore
               icon={InformationCircleIcon}
@@ -183,7 +184,7 @@ const ChallengeDetail: FunctionComponent<{
         return (
           <Card className="max-w-xl text-center mx-auto">
             <Alert
-              className="text-xl font-semibold"
+              className="text-xl font-semibold text-center"
               color="warning"
               // @ts-ignore
               icon={InformationCircleIcon}
@@ -199,8 +200,8 @@ const ChallengeDetail: FunctionComponent<{
     case WagerStatus.DISPUTED:
       return (
         <Card className="max-w-xl text-center mx-auto">
-          <Alert color="failure" className="text-lg font-semibold">
-            Oops! Looks like you both answered different answers.
+          <Alert color="failure" className="text-lg font-semibold text-center">
+            Oops! Looks like you both reported different outcomes.
           </Alert>
 
           <p className="text-gray-400 text-center text-sm tracking-tight">
@@ -229,7 +230,7 @@ const ChallengeDetail: FunctionComponent<{
 
       return (
         <Card className="max-w-xl text-center mx-auto">
-          <Alert color="failure" className="text-lg font-semibold">
+          <Alert color="failure" className="text-lg font-semibold text-center">
             Oops! Looks no one accepted your challenge.
           </Alert>
 

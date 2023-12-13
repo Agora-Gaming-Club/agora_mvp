@@ -1,0 +1,29 @@
+name: Agora
+on: [push, pull_request]
+jobs:
+#  deploy-dev:
+#    runs-on: ubuntu-latest
+#    if: github.ref == 'refs/heads/develop'
+#    steps:
+#      - name: SSH into server
+#        run: # steps to ssh
+#      - name: SSH into serve
+#        run: # steps to call sh ~/dev.agoragaming.gg/bin/deploy
+  deploy-dev:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/develop'
+    steps:
+      - name: SSH into server
+        env:
+          PRIVATE_KEY: ${{ secrets.DEV_SSH_PRIVATE_KEY }}
+          HOSTNAME: ${{secrets.DEV_SSH_HOST}}
+          USER_NAME: ${{secrets.DEV_SSH_USER}}
+        run: |
+          echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
+          ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} '
+
+              # Now we have got the access of EC2 and we will start the deploy .
+              cd /home/ubuntu/dev.agoragming.gg &&
+              source .venv/bin/activate &&
+              sh bin/deploy
+              '

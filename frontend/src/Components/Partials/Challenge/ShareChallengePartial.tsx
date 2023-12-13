@@ -15,6 +15,7 @@ const ShareChallengePartial: FunctionComponent<Props> = ({
   challenge,
   user,
 }) => {
+  console.log(challenge)
   const [copied, setCopied] = useState(false);
   const [copiedValue, copy] = useCopyToClipboard();
   const handleCopy = async () => {

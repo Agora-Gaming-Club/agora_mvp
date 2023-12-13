@@ -34,7 +34,7 @@ const AuthenticatedLayout: FunctionComponent<PropsWithChildren<Props>> = ({
             <div className="flex items-center justify-center  w-6 h-6 rounded-full mr-1">
               <Logo />
             </div>
-            Agora Gaming Club
+            Agora Gaming
           </Link>
 
           <div className="hidden md:flex list-none ml-5">

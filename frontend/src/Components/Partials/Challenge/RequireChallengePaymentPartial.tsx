@@ -100,7 +100,7 @@ const RequireChallengePaymentPartial: FunctionComponent<Props> = ({
           <BanknotesIcon className="h-5 w-5" />
         </span>
         <h1>
-          Pay {currencyFormatter.format(Number(challenge.amount))}, Win{' '}
+          {currencyFormatter.format(Number(challenge.amount))} To Win{' '}
           {currencyFormatter.format(Number(challenge.amount * 1.8))}
         </h1>
       </div>

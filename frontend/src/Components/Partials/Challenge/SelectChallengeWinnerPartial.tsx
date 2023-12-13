@@ -71,7 +71,7 @@ const SelectChallengeWinnerPartial: FunctionComponent<Props> = ({
                 className={({ active }) =>
                   classNames(
                     active
-                      ? 'border-blue-600 ring-2 ring-blue-600'
+                      ? 'border-green-600 bg-green-500 ring-2 ring-green-600'
                       : 'border-gray-300',
                     'relative block cursor-pointer rounded-lg border bg-dark px-6 py-4 shadow-sm focus:outline-none sm:flex sm:justify-between'
                   )

@@ -62,3 +62,17 @@ export type Game = {
   terms: string;
   slug: string;
 };
+
+export type GameTerms = {
+  term: string;
+  discord_link: string;
+};
+
+export type GameInfo = {
+  terms: GameTerms[];
+  platforms: string[];
+};
+
+export type GameChoice = {
+  [key: string]: GameInfo;
+};
