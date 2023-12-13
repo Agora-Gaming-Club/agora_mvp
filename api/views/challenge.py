@@ -9,6 +9,11 @@ from django.views.decorators.csrf import ensure_csrf_cookie
 from inertia import inertia, share
 
 from api.emails import DisputeEmail
+from api.sms import (
+    AcceptedSMS,
+    BeginSMS,
+    SelectedSMS,
+)
 from api.forms import (
     AcceptForm,
     AnteForm,
@@ -134,6 +139,10 @@ def challenge_accept(request, challenge_id):
         respondent_gamer_tag = data["respondent_gamer_tag"]
         challenge.accept(respondent, respondent_gamer_tag)
         props = {"challenge": challenge}
+        AcceptedSMS(
+            context={"challenge": challenge},
+            target=challenger.phone_number,
+        ).send()
         return props
     return {"errors": form.errors.get_json_data()}
 
@@ -168,7 +177,17 @@ def challenge_ante(request, challenge_id):
                 authorize_net_payment_status=status,
                 description=payment_status["description"],
             )
-            challenge.all_payments_received()
+            both_paid = challenge.all_payments_received()
+            if both_paid:
+                phone_numbers = [
+                    challenge.get_challenger().phone_number,
+                    challenge.get_respondent().phone_number,
+                ]
+                for number in phone_numbers:
+                    BeginSMS(
+                        context={"challenge": challenge},
+                        target=number,
+                    ).send()
             return {
                 "status": payment.authorize_net_payment_status,
                 "challenge": challenge,
@@ -193,11 +212,19 @@ def challenge_winner(request, challenge_id):
         if user_id == challenge.challenger_id:
             challenge.challenger_vote = data["winner"]
             challenge.save()
+            not_voter = challenge.get_respondent()
         elif user_id == challenge.respondent_id:
             challenge.respondent_vote = data["winner"]
             challenge.save()
+            not_voter = challenge.get_respondent()
         else:
             return {"message": "You didnt participate"}
+
+        if not challenge.both_voted():
+            SelectedSMS(
+                context={"challenge": challenge},
+                target=not_voter.phone_number,
+            ).send()
 
         if challenge.both_voted():
             if challenge.disputed():

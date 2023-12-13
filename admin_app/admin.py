@@ -2,9 +2,7 @@
 from django.contrib import admin
 from django.contrib.auth.models import User
 
-from api.models import (
-    Wager,
-)
+from api.models import Wager, UserProfile
 from admin_app.models import (
     WagerDisputeProxy,
     WagerPayoutProxy,
@@ -13,6 +11,7 @@ from admin_app.models import (
     PlatformProxy,
     TermProxy,
 )
+from api.sms import PaidSMS
 
 
 class GameProxyAdmin(admin.ModelAdmin):
@@ -82,13 +81,11 @@ class WagerDisputeAdmin(admin.ModelAdmin):
 def mark_paid(modeladmin, request, queryset):
     queryset = queryset.filter(winner_paid=False).exclude(paypal_payment_id=None)
     for wager in queryset:
-        """
         winner = UserProfile.objects.get(user=challenge.winner)
         PaidSMS(
             context={"challenge", challenge},
             target=winner.phone_number,
         ).send()
-        """
         print(wager)
     queryset.update(winner_paid=True)
 

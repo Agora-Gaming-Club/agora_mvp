@@ -1,0 +1,1 @@
+Good news! An opponent has accepted your challenge {{challenge.unique_code}}. Come make your payment to get started! www.agoragaming.gg/dashboard
