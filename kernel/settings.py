@@ -30,8 +30,9 @@ DEBUG = True
 ALLOWED_HOSTS = [
     "127.0.0.1",
     "localhost",
-    "18.226.170.241",
     "dev.agoragaming.gg",
+    "agoragaming.gg",
+    "www.agoragaming.gg",
     "dev.agoragaming.club",
 ]
 

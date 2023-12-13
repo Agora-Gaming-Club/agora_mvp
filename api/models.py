@@ -125,7 +125,7 @@ class Wager(models.Model):
         respondent = "NOT ACCEPTED"
         if self.respondent_id:
             respondent = self.respondent_id
-        return f"<{self.challenger_id} vs {respondent} at {self.game}: {self.status}>"
+        return f"<{self.unique_code}: {self.challenger_id} vs {respondent} at {self.game}: {self.status}>"
 
     def __repr__(self):
         return self.__str__()
