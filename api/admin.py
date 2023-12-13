@@ -55,6 +55,7 @@ class WagerAdmin(admin.ModelAdmin):
         "updated_at",
     ]
     list_filter = ["status"]
+    readonly_fields = ["winner_paid"]
 
 
 admin.site.register(Payment, PaymentAdmin)

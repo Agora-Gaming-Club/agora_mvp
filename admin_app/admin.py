@@ -42,6 +42,13 @@ class WagerDisputeAdmin(admin.ModelAdmin):
         "respondent_voted",
     ]
     raw_id_fields = ("winner",)
+    readonly_fields = ["winner_paid"]
+
+    def get_actions(self, request):
+        actions = super().get_actions(request)
+        if "delete_selected" in actions:
+            del actions["delete_selected"]
+        return actions
 
     @admin.display(description="Challenger")
     def challenger(self, instance):
@@ -71,8 +78,18 @@ class WagerDisputeAdmin(admin.ModelAdmin):
         return qs.filter(status=Wager.DISPUTED)
 
 
-@admin.action(description="Mark as Paid")
+@admin.action(description="Mark Wagers as Paid")
 def mark_paid(modeladmin, request, queryset):
+    queryset = queryset.filter(winner_paid=False).exclude(paypal_payment_id=None)
+    for wager in queryset:
+        """
+        winner = UserProfile.objects.get(user=challenge.winner)
+        PaidSMS(
+            context={"challenge", challenge},
+            target=winner.phone_number,
+        ).send()
+        """
+        print(wager)
     queryset.update(winner_paid=True)
 
 
@@ -88,7 +105,14 @@ class WagerPayoutAdmin(admin.ModelAdmin):
         "winning_amt",
     ]
     list_filter = ["winner_paid"]
+    readonly_fields = ["winner_paid"]
     actions = [mark_paid]
+
+    def get_actions(self, request):
+        actions = super().get_actions(request)
+        if "delete_selected" in actions:
+            del actions["delete_selected"]
+        return actions
 
     def has_add_permission(self, request, obj=None):
         return False
