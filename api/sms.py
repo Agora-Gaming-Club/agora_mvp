@@ -23,11 +23,15 @@ class SMS:
         text_content = text.render(self.context)
 
         if settings.SMS_ENABLED:
-            message = self.client.messages.create(
-                to=self.target,
-                from_=from_number,
-                body=text_content,
-            )
+            try:
+                message = self.client.messages.create(
+                    to=self.target,
+                    from_=from_number,
+                    body=text_content,
+                )
+            except Exception as e:
+                print("SMS Failed. Please check if number verified.", e)
+                return False
             print(message.sid)
             return True
         else:
