@@ -17,7 +17,7 @@ jobs:
         env:
           PRIVATE_KEY: ${{ secrets.DEV_SSH_PRIVATE_KEY }}
           HOSTNAME: ${{secrets.DEV_SSH_HOST}}
-          USER_NAME: ${{secrets.DEV_SSH_USER}}
+          USER_NAME: 'ubuntu'
         run: |
           echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
           ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} '
@@ -25,6 +25,5 @@ jobs:
               # Now we have got the access of EC2 and we will start the deploy .
               cd /home/ubuntu/dev.agoragaming.gg &&
               source .venv/bin/activate &&
-              whereis node &&
               sh bin/deploy
               '
