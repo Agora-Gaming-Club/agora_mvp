@@ -1,9 +1,11 @@
 """Proxy models for use in this app's admin page."""
 from django.db.models.signals import post_save, post_init
+from django.contrib.auth.models import User
 from django.dispatch import receiver
-from django.contrib import messages
+
 
 from api.models import Wager, GameName, Platform, Term, Game
+from api.emails import DisputeResolvedEmail
 
 
 class GameProxy(Game):
@@ -51,8 +53,17 @@ def send_email(sender, instance, created, **kwargs):
     previous_status = instance.previous_status
     if previous_status == Wager.DISPUTED and instance.status == Wager.COMPLETED:
         if instance.winner:
-            print(f"sending email to {instance.winner}")
-    print(instance.previous_status, instance.status)
+            context = {
+                "challenge": instance,
+                "user_1": User.objects.get(id=instance.challenger_id),
+                "user_2": User.objects.get(id=instance.respondent_id),
+                "winner": instance.winner,
+            }
+            email = DisputeResolvedEmail(
+                context=context,
+                target=instance.winner.email,
+            )
+            email.send()
 
 
 class WagerPayoutProxy(Wager):
