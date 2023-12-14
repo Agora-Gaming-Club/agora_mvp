@@ -119,6 +119,11 @@ class RegisterForm(forms.Form):
         email_exists = User.objects.filter(email=self.data["email"])
         if email_exists:
             self.add_error("email", "email unavailable")
+        phone_number_exists = UserProfile.objects.filter(
+            phone_number=self.data["phone_number"]
+        )
+        if phone_number_exists:
+            self.add_error("phone_number", "phone number unavailable")
 
         of_age = True
         legal_age = datetime.timedelta(days=365.2425 * LEGAL_GAMBLING_AGE)
