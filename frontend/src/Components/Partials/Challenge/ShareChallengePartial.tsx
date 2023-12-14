@@ -9,6 +9,7 @@ import { useCopyToClipboard } from '@/Hooks/useCopyToClipboard';
 type Props = {
   challenge: Wager;
   user: UserProfile;
+  discordLink?: string
 };
 
 const ShareChallengePartial: FunctionComponent<Props> = ({
@@ -52,7 +53,7 @@ const ShareChallengePartial: FunctionComponent<Props> = ({
       )}
 
       <a
-        href="https://https://discord.com/channels/1173680090371068006"
+        href={challenge.game.discord_link}
         target="_blank"
         className="text-gray-300 underline inline-flex justify-center items-center"
       >
