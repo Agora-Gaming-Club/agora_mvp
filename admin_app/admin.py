@@ -83,7 +83,7 @@ def mark_paid(modeladmin, request, queryset):
     for wager in queryset:
         winner = UserProfile.objects.get(user=wager.winner)
         PaidSMS(
-            context={"challenge", wager},
+            context={"challenge": wager},
             target=winner.phone_number,
         ).send()
         print(wager)
