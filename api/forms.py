@@ -106,19 +106,14 @@ class RegisterForm(forms.Form):
         if user_name_exists:
             self.add_error("username", "username unavailable")
 
-        # # Add this back in and get it working properly
-        # phone_number_exists = User.objects.filter(
-        #     phone_number=self.data["phone_number"]
-        # )
-        # if phone_number_exists:
-        #     self.add_error("phone_number", "username unavailable")
-
         passwords_match = self.data["password"] == self.data["password_confirm"]
         if not passwords_match:
             self.add_error("password", "passwords dont match")
+
         email_exists = User.objects.filter(email=self.data["email"])
         if email_exists:
             self.add_error("email", "email unavailable")
+
         phone_number_exists = UserProfile.objects.filter(
             phone_number=self.data["phone_number"]
         )
@@ -135,6 +130,7 @@ class RegisterForm(forms.Form):
             self.add_error("birthday", "too young")
             of_age = False
         accepted_format = "2023-11-14"  # can be messed with later
+
         forbidden_state = self.data["state"].upper() in FORBIDDEN_STATES
         if forbidden_state:
             self.add_error("state", f"{self.data['state']} is unavailable")
@@ -142,7 +138,7 @@ class RegisterForm(forms.Form):
         validation = [
             valid,
             not user_name_exists,
-            # not phone_number_exists,
+            not phone_number_exists,
             passwords_match,
             not email_exists,
             of_age,
