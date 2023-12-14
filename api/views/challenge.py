@@ -1,6 +1,7 @@
 """
 Challenge related endpoints
 """
+from datetime import datetime, timezone
 import json
 import os
 
@@ -264,6 +265,7 @@ def challenge_award(request, challenge_id):
     if form.is_valid():
         paypal_email = data.get("paypal_email")
         challenge.winner_paypal = paypal_email
+        challenge.paypal_time_start = datetime.now(timezone.utc)
         challenge.save()
         return {"challenge": challenge}
     else:

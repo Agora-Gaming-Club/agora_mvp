@@ -1,5 +1,19 @@
+Dear {{user.username}},
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna
-aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis
-aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint
-occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+Welcome to Agora Gaming! We're thrilled to have you join our community of gamers.
+
+At Agora Gaming, we're all about taking your gaming experience to the next level. Our platform provides you with thrilling matchups in the game titles you love and lets you back your talents with real stakes, adding an exhilarating enhancement to your gaming experience.
+
+To get started, simply log in to your Agora Gaming account and either create a matchup or enter a challenge code. Head to our Discord Server to find other players looking for a showdown. Should you have any questions or need assistance, our support team is at your service.
+
+We're here to make your gaming journey exciting, rewarding, and memorable. Unleash your gaming potential and create unforgettable moments together!
+
+Welcome to the Agora Gaming family!
+
+Game on!
+
+Sincerely,
+
+The Agora Gaming Team
+
+P.S. Stay tuned for upcoming releases and special events – there's always something thrilling happening at Agora Gaming!
