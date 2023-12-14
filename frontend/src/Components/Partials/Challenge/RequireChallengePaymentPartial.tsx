@@ -84,6 +84,7 @@ const RequireChallengePaymentPartial: FunctionComponent<Props> = ({
         only: ['errors', 'challenge'],
       });
     } catch (e: any) {
+      console.log(e)
       setErrorMessage(e.messages.message[0].text);
     }
   };
