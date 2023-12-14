@@ -81,9 +81,9 @@ class WagerDisputeAdmin(admin.ModelAdmin):
 def mark_paid(modeladmin, request, queryset):
     queryset = queryset.filter(winner_paid=False).exclude(paypal_payment_id=None)
     for wager in queryset:
-        winner = UserProfile.objects.get(user=challenge.winner)
+        winner = UserProfile.objects.get(user=wager.winner)
         PaidSMS(
-            context={"challenge", challenge},
+            context={"challenge", wager},
             target=winner.phone_number,
         ).send()
         print(wager)

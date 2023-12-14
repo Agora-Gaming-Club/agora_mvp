@@ -101,7 +101,7 @@ def challenge_status(request, challenge_id):
         "challenge": serialize(challenge),
         "user": current_user,
         "authorize_public_key": settings.AUTHORIZE_PUBLIC_KEY,
-        "authorize_login_id": settings.AUTHORIZE_LOGIN_ID
+        "authorize_login_id": settings.AUTHORIZE_LOGIN_ID,
     }
 
     return props
@@ -171,6 +171,7 @@ def challenge_ante(request, challenge_id):
             wager=challenge,
             user=request.user,
         )
+        print("Payment Status: ", payment_status)
         status = Payment.BAD
         if payment_status.get("responseCode"):
             status = Payment.GOOD
