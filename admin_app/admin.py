@@ -101,7 +101,6 @@ def mark_paid(modeladmin, request, queryset):
             context={"challenge", challenge},
             target=winner.phone_number,
         ).send()
-        print(challenge)
     queryset.update(winner_paid=True)
 
 
