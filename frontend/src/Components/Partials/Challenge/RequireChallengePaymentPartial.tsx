@@ -31,7 +31,6 @@ const RequireChallengePaymentPartial: FunctionComponent<Props> = ({
   user,
   authData
 }) => {
-  console.log(authData)
   const [openModal, setOpenModal] = useState(false);
   const { dispatchData, loading, error } = useAcceptJs({ authData });
   const [creditCard, setCreditCard] = useState({

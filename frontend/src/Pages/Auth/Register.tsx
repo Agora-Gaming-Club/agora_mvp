@@ -138,7 +138,7 @@ const Register: FunctionComponent = () => {
             id="states"
             required
             color={formErrors?.errors?.state ? 'failure' : 'gray'}
-            helperText={<span>{formErrors?.errors?.state ?? ''}</span>}
+            helperText={<span>{formErrors?.errors?.state ? 'Per local laws - residents of this state are not allowed to register' : ''}</span>}
           >
             <option value="" disabled>
               Select your state
