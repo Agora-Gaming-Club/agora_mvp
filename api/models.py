@@ -119,6 +119,7 @@ class Wager(models.Model):
     )
     winner_paypal = models.CharField(max_length=100, blank=True, null=True)
     paypal_payment_id = models.CharField(max_length=40, null=True, blank=True)
+    paypal_time_start = models.DateTimeField(null=True, blank=True)
     winner_paid = models.BooleanField(default=False)
 
     def __str__(self):

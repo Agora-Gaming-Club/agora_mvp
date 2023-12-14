@@ -312,3 +312,27 @@ class TestWager(InertiaTestCase):
         wager = Wager.objects.get(unique_code=wager.unique_code)
         self.assertNotEqual(wager.challenger_vote, wager.respondent_vote)
         self.assertEqual(wager.status, Wager.DISPUTED)
+
+    def test_submitting_paypal(self):
+        wager = get_wager(self.user_a, self.user_b)
+        wager.challenger_vote = 1
+        wager.respondent_vote = 1
+        wager.challenger_paid = True
+        wager.respondent_paid = True
+
+        wager.status = Wager.COMPLETED
+        wager.save()
+        unique_code = wager.unique_code
+        self.assertIsNone(wager.paypal_time_start)
+        self.client.login(username="user_a", password="password")
+        paypal_email = "OMG_ITS_MY_PAYPAL@email.com"
+        response = self.client.post(
+            f"/challenge/{unique_code}",
+            {
+                "paypal_email": paypal_email,
+            },
+            content_type="application/json",
+        )
+        wager = Wager.objects.get(unique_code=unique_code)
+        self.assertEqual(paypal_email, self.props()["challenge"].get("winner_paypal"))
+        self.assertIsNotNone(wager.paypal_time_start)
