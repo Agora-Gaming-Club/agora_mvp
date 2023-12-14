@@ -1,0 +1,5 @@
+The dispute for challenge {{wager.unique_code}} between {{user_1}} and {{user_2}} has been marked as resolved. 
+
+The winner has been determined to be <b>{{winner}}</b>. Please proceed into the app to provide your Paypal ID to receive your winnings. www.agoragaming.gg/challenges/{{challenge.unique_code}} 
+
+If you have any concerns or questions, please reply to this email. Come back and create your next challenge at www.agoragaming.gg/challenges.
