@@ -55,6 +55,23 @@ const Show: FunctionComponent<Props> = ({challenge, user}) => {
     }
 
     if (challenge.status === WagerStatus.IN_PROGRESS) {
+      if (
+        challenge.respondent_id == user.user &&
+        challenge.challenger_vote &&
+        !challenge.respondent_vote
+      ) {
+        description = 'We are now waiting for the other players vote.'
+        return [description];
+      }
+
+      if (
+        challenge.respondent_id == user.user &&
+        !challenge.challenger_vote &&
+        challenge.respondent_vote
+      ) {
+        description = 'We are now waiting for the other players vote.'
+        return [description];
+      }
       description = 'Your payment has been received, and your challenge is now active! You and your opponent have 24 hours to play the game on your designated platform, using the gamertag provided below. <br/>' +
         '<br/>' +
         'Once you have completed the game, come back here to select the outcome and collect your prize!';
@@ -183,7 +200,7 @@ const ChallengeDetail: FunctionComponent<{
               // @ts-ignore
               icon={InformationCircleIcon}
             >
-              We are now waiting for the respondent's vote.
+              We are now waiting for the respondent's vote. They have one hour to respond.
             </Alert>
             <ChallengeDescription challenge={challenge}/>
           </Card>
@@ -203,7 +220,7 @@ const ChallengeDetail: FunctionComponent<{
               // @ts-ignore
               icon={InformationCircleIcon}
             >
-              We are now waiting for the challenger's vote.
+              We are now waiting for the challenger's vote. They have one hour to respond.
             </Alert>
             <ChallengeDescription challenge={challenge}/>
           </Card>
