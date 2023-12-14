@@ -61,6 +61,7 @@ export type Game = {
   platform: string;
   terms: string;
   slug: string;
+  discord_link: string;
 };
 
 export type GameTerms = {

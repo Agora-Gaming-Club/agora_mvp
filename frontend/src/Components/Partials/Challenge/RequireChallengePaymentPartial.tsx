@@ -9,11 +9,6 @@ import { PaymentInputsWrapper, usePaymentInputs } from 'react-payment-inputs';
 import images from 'react-payment-inputs/images';
 import { useForm } from '@inertiajs/react';
 
-const authData = {
-  apiLoginID: '5UQt6rAa8T',
-  clientKey: '4tNj6v78h5c8xtNxKYCG25r79VE5Qa9963n7HTvqDFTxzNf47eVce4k26u9Htjcp',
-};
-
 type BasicCardInfo = {
   cardNumber: string;
   cardCode: string;
@@ -24,11 +19,17 @@ type BasicCardInfo = {
 type Props = {
   challenge: Wager;
   user: UserProfile;
+  authData: {
+    apiLoginID: string
+    clientKey: string
+  }
 };
+
 
 const RequireChallengePaymentPartial: FunctionComponent<Props> = ({
   challenge,
   user,
+  authData
 }) => {
   const [openModal, setOpenModal] = useState(false);
   const { dispatchData, loading, error } = useAcceptJs({ authData });
@@ -121,7 +122,6 @@ const RequireChallengePaymentPartial: FunctionComponent<Props> = ({
               <PaymentInputsWrapper {...wrapperProps}>
                 <svg
                   {...getCardImageProps({
-                    // @ts-ignore
                     images,
                   })}
                 />

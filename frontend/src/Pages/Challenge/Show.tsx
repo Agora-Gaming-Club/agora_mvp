@@ -17,7 +17,7 @@ import PaypalChallengePartial from '@/Components/Partials/Challenge/PaypalChalle
 // @ts-ignore
 import WonChallengePartial from '@/Components/Partials/Challenge/WonChallengePartial';
 import LostChallengePartial from '@/Components/Partials/Challenge/LostChallengePartial';
-import {Link} from '@inertiajs/react';
+import {Link, usePage} from '@inertiajs/react';
 
 type Props = {
   challenge: Wager;
@@ -51,6 +51,11 @@ const Show: FunctionComponent<Props> = ({challenge, user}) => {
 
     if (challenge.status === WagerStatus.ACCEPTED) {
       description = 'Click the pay now button to proceed with this challenge.';
+      return [description];
+    }
+
+    if (challenge.status === WagerStatus.IN_PROGRESS) {
+       description = 'Play the game and select an outcome after the challenge has been completed.';
       return [description];
     }
 
@@ -139,8 +144,13 @@ const ChallengeDetail: FunctionComponent<{
       break;
     case WagerStatus.ACCEPTED:
       if (acceptedAndChallengerNotPaid() || acceptedAndRespondentNotPaid()) {
+        const {authorize_login_id, authorize_public_key}: any = usePage().props
+        const authorizeAuthData = {
+          apiLoginID: authorize_login_id,
+          clientKey: authorize_public_key
+        }
         return (
-          <RequireChallengePaymentPartial challenge={challenge} user={user}/>
+          <RequireChallengePaymentPartial challenge={challenge} user={user} authData={authorizeAuthData}/>
         );
       }
       if (acceptedAndChallengerPaid() || acceptedAndRespondentPaid()) {
@@ -207,7 +217,7 @@ const ChallengeDetail: FunctionComponent<{
           <p className="text-gray-400 text-center text-sm tracking-tight">
             Looks like you both had different answers for the outcome. We’ve
             forwarded the details of this challenge to the Agora team who will
-            be following up with you via email to resolve the dispute.
+            be following up with you via email to resolve the dispute. Note, the email will come from disputes@agoragaming.gg.
           </p>
 
           <p className="text-gray-400 text-center text-sm tracking-tight mt-1">

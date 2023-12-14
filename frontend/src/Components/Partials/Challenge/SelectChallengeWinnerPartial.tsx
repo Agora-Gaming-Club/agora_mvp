@@ -22,7 +22,6 @@ const SelectChallengeWinnerPartial: FunctionComponent<Props> = ({
   challenge,
   user,
 }) => {
-  const [selected, setSelected] = useState();
   const options: Option[] = [
     {
       id: challenge.challenger_id,
@@ -85,7 +84,7 @@ const SelectChallengeWinnerPartial: FunctionComponent<Props> = ({
                     >
                       {option.gamer_tag}
                     </RadioGroup.Label>
-                    <RadioGroup.Description as="span" className="text-gray-500">
+                    <RadioGroup.Description as="span" className="text-gray-300">
                       <span className="block sm:inline text-xs">
                         @{option.username}
                       </span>
@@ -93,7 +92,7 @@ const SelectChallengeWinnerPartial: FunctionComponent<Props> = ({
                     <span
                       className={classNames(
                         active ? 'border' : 'border-2',
-                        checked ? 'border-blue-600' : 'border-transparent',
+                        checked ? 'border-green-600' : 'border-transparent',
                         'pointer-events-none absolute -inset-px rounded-lg'
                       )}
                       aria-hidden="true"
