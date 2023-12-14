@@ -220,7 +220,7 @@ const ChallengeDetail: FunctionComponent<{
             Looks like you both had different answers for the outcome. We’ve
             forwarded the details of this challenge to the Agora team who will
             be following up with you via email to resolve the dispute. Note, the email will come from
-            disputes@agoragaming.gg.
+            contact@agoragaming.gg.
           </p>
 
           <p className="text-gray-400 text-center text-sm tracking-tight mt-1">
