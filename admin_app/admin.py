@@ -114,6 +114,7 @@ class WagerPayoutAdmin(admin.ModelAdmin):
         "winner_paid",
         "winner",
         "winning_amt",
+        "paypal_time_start",
     ]
     list_filter = ["winner_paid"]
     readonly_fields = ["winner_paid"]
