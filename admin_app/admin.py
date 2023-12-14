@@ -98,7 +98,7 @@ def mark_paid(modeladmin, request, queryset):
     for challenge in queryset:
         winner = UserProfile.objects.get(user=challenge.winner)
         PaidSMS(
-            context={"challenge", challenge},
+            context={"challenge": challenge},
             target=winner.phone_number,
         ).send()
     queryset.update(winner_paid=True)
