@@ -23,7 +23,7 @@ const Index: FunctionComponent<Props> = ({ user }) => {
               with an opponent.
             </p>
 
-            <Button as={Link as any} href="/challenge" color="blue">
+            <Button id="createNewChallenge" as={Link as any} href="/challenge" color="blue">
               Create Challenge
             </Button>
           </Card>
@@ -36,7 +36,7 @@ const Index: FunctionComponent<Props> = ({ user }) => {
               their challenge and get started playing here.
             </p>
 
-            <Button as={Link as any} href="/challenge/search" color="blue">
+            <Button id="acceptNewChallenge" as={Link as any} href="/challenge/search" color="blue">
               Accept Challenge
             </Button>
           </Card>

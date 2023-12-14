@@ -21,11 +21,11 @@ const ResetPassword: FunctionComponent<Props> = ({ token }) => {
     csrfmiddelwaretoken: Cookies.get('XSRF-TOKEN'),
   });
 
-  useEffect(() => {
-    return () => {
-      reset('password', 'password_confirm');
-    };
-  }, []);
+  // useEffect(() => {
+  //   return () => {
+  //     reset('password', 'password_confirm');
+  //   };
+  // }, []);
 
   const submit: FormEventHandler = (e) => {
     e.preventDefault();
@@ -35,8 +35,11 @@ const ResetPassword: FunctionComponent<Props> = ({ token }) => {
         console.log(err);
         setFormErrors(transformErrors(err));
       },
-      onSuccess: () => {},
-      only: ['errors'],
+      onSuccess: () => {
+        console.log('success')
+         window.location.href = '/accounts/login'
+      },
+      only: ['errors', 'message'],
     });
   };
   return (
@@ -55,8 +58,8 @@ const ResetPassword: FunctionComponent<Props> = ({ token }) => {
             className="mt-1 block w-full"
             autoComplete="new-password"
             placeholder="Enter New Password"
-            color={formErrors?.errors?.email ? 'failure' : 'gray'}
-            helperText={<span>{formErrors?.errors?.email ?? ''}</span>}
+            color={formErrors?.errors?.password ? 'failure' : 'gray'}
+            helperText={<span>{formErrors?.errors?.password ?? ''}</span>}
             onChange={(e) => setData('password', e.target.value)}
           />
         </div>
@@ -71,14 +74,15 @@ const ResetPassword: FunctionComponent<Props> = ({ token }) => {
             className="mt-1 block w-full"
             autoComplete="new-password"
             placeholder="Enter Password Confirmation"
-            color={formErrors?.errors?.email ? 'failure' : 'gray'}
-            helperText={<span>{formErrors?.errors?.email ?? ''}</span>}
+            color={formErrors?.errors?.password_confirm ? 'failure' : 'gray'}
+            helperText={<span>{formErrors?.errors?.password_confirm ?? ''}</span>}
             onChange={(e) => setData('password_confirm', e.target.value)}
           />
         </div>
 
         <div className="flex items-center justify-end mt-4">
           <Button
+            id="resetPassword"
             type="submit"
             color="blue"
             className="ms-4"

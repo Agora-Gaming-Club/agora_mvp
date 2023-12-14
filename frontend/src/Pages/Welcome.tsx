@@ -27,12 +27,13 @@ const Welcome = (): React.ReactNode => {
             </div>
             <div className="block sm:flex items-center justify-between sm:gap-x-8">
               <Link className="w-full" href="/accounts/login">
-                <Button color="blue" className="w-full">
+                <Button id='landingLoginButton' color="blue" className="w-full">
                   Login
                 </Button>
               </Link>
               <Link className="w-full" href="/accounts/register">
                 <Button
+                  id='landingRegisterButton'
                   color="blue"
                   outline={true}
                   className="w-full mt-4 sm:mt-0"

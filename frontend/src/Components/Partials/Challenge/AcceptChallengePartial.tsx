@@ -57,7 +57,7 @@ const AcceptChallengePartial: FunctionComponent<Props> = ({
         </div>
 
         <div>
-          <Button className="w-full" type="submit" color="blue">
+          <Button id="acceptChallenge" className="w-full" type="submit" color="blue">
             Accept Challenge
           </Button>
         </div>

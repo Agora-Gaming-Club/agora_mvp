@@ -98,10 +98,9 @@ def mark_paid(modeladmin, request, queryset):
     for challenge in queryset:
         winner = UserProfile.objects.get(user=challenge.winner)
         PaidSMS(
-            context={"challenge", challenge},
+            context={"challenge": challenge},
             target=winner.phone_number,
         ).send()
-        print(challenge)
     queryset.update(winner_paid=True)
 
 
@@ -115,6 +114,7 @@ class WagerPayoutAdmin(admin.ModelAdmin):
         "winner_paid",
         "winner",
         "winning_amt",
+        "paypal_time_start",
     ]
     list_filter = ["winner_paid"]
     readonly_fields = ["winner_paid"]

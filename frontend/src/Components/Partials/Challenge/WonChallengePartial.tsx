@@ -35,6 +35,7 @@ const WonChallengePartial: FunctionComponent<Props> = ({ challenge }) => {
       </p>
       <div className="flex items-center space-x-4">
         <Button
+          id="createNewChallengeFromWinner"
           className="w-full"
           color="blue"
           as={Link as any}

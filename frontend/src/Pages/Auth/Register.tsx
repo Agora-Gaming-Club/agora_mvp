@@ -138,7 +138,7 @@ const Register: FunctionComponent = () => {
             id="states"
             required
             color={formErrors?.errors?.state ? 'failure' : 'gray'}
-            helperText={<span>{formErrors?.errors?.state ?? ''}</span>}
+            helperText={<span>{formErrors?.errors?.state ? 'Per local laws - residents of this state are not allowed to register' : ''}</span>}
           >
             <option value="" disabled>
               Select your state
@@ -202,6 +202,7 @@ const Register: FunctionComponent = () => {
         </div>
 
         <Button
+          id="submitRegistration"
           color="blue"
           className="w-full"
           isProcessing={processing}
@@ -239,7 +240,7 @@ const Register: FunctionComponent = () => {
           </Modal.Body>
           <Modal.Footer>
             <Button
-              id="submit"
+              id="acceptTerms"
               color="blue"
               type="submit"
               isProcessing={processing}
@@ -248,6 +249,7 @@ const Register: FunctionComponent = () => {
               I accept
             </Button>
             <Button
+               id="declineTerms"
               type="button"
               color="gray"
               onClick={() => setOpenTermsModal(false)}

@@ -12,8 +12,7 @@ const LostChallengePartial: FunctionComponent<Props> = ({ challenge }) => {
   return (
     <Card className="max-w-xl text-center mx-auto">
       <Alert color="failure" className="text-xl font-semibold text-center">
-        You lost this challenge! ({challenge.challenger_gamer_tag} vs{' '}
-        {challenge.respondent_gamer_tag})
+        You lost this challenge ({challenge.challenger_gamer_tag} vs{' '}{challenge.respondent_gamer_tag})
       </Alert>
       {/*<ChallengeDescription challenge={challenge} />*/}
 
@@ -30,6 +29,7 @@ const LostChallengePartial: FunctionComponent<Props> = ({ challenge }) => {
       </p>
       <div className="flex items-center space-x-4">
         <Button
+          id="createNewChallengeFromLosing"
           className="w-full"
           color="blue"
           as={Link as any}
