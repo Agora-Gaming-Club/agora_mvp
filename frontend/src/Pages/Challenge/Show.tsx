@@ -85,6 +85,7 @@ const Show: FunctionComponent<Props> = ({challenge, user}) => {
             </h3>
             <div className="flex items-center space-x-4">
               <Button
+                id="registerFromChallengeCard"
                 className="w-full"
                 color="blue"
                 // @ts-ignore
@@ -94,6 +95,7 @@ const Show: FunctionComponent<Props> = ({challenge, user}) => {
                 Register
               </Button>
               <Button
+                id="loginFromChallengeCard"
                 className="w-full"
                 color="blue"
                 // @ts-ignore
@@ -256,6 +258,7 @@ const ChallengeDetail: FunctionComponent<{
           </p>
           <div className="flex items-center space-x-4">
             <Button
+              id="createChallengeFromExpired"
               className="w-full"
               color="blue"
               as={Link as any}

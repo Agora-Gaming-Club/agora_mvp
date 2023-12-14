@@ -202,6 +202,7 @@ const Register: FunctionComponent = () => {
         </div>
 
         <Button
+          id="submitRegistration"
           color="blue"
           className="w-full"
           isProcessing={processing}
@@ -239,7 +240,7 @@ const Register: FunctionComponent = () => {
           </Modal.Body>
           <Modal.Footer>
             <Button
-              id="submit"
+              id="acceptTerms"
               color="blue"
               type="submit"
               isProcessing={processing}
@@ -248,6 +249,7 @@ const Register: FunctionComponent = () => {
               I accept
             </Button>
             <Button
+               id="declineTerms"
               type="button"
               color="gray"
               onClick={() => setOpenTermsModal(false)}

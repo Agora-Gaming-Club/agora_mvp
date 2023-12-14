@@ -58,7 +58,7 @@ const PaypalChallengePartial: FunctionComponent<Props> = ({challenge}) => {
         </div>
 
         <div>
-          <Button className="w-full" type="submit" color="blue">
+          <Button id="submitPaypal" className="w-full" type="submit" color="blue">
             Submit
           </Button>
         </div>

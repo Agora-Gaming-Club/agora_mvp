@@ -52,7 +52,7 @@ const ChallengeButton: FunctionComponent<{
   switch (status) {
     case WagerStatus.AWAITING_RESPONSE:
       return (
-        <Button size="xs" as={Link as any} href={href} color="blue" pill>
+        <Button id="shareCode" size="xs" as={Link as any} href={href} color="blue" pill>
           <ShareIcon className="h-4 w-4 mr-1" />
           Share Code
         </Button>
@@ -61,7 +61,7 @@ const ChallengeButton: FunctionComponent<{
       // check if already selected
       // check if not selected
       return (
-        <Button as={Link as any} href={href} size="xs" color="blue" pill>
+        <Button id="selectOutcome" as={Link as any} href={href} size="xs" color="blue" pill>
           <CursorArrowRaysIcon className="h-4 w-4 mr-1" />
           Select Outcome
         </Button>
@@ -70,21 +70,21 @@ const ChallengeButton: FunctionComponent<{
       // check if already paid
       // check if not paid
       return (
-        <Button as={Link as any} href={href} size="xs" color="blue" pill>
+        <Button id="makePayment" as={Link as any} href={href} size="xs" color="blue" pill>
           <CursorArrowRaysIcon className="h-4 w-4 mr-1" />
           Make Payment
         </Button>
       );
     case WagerStatus.DISPUTED:
       return (
-        <Button as={Link as any} href={href} size="xs" color="blue" pill>
+        <Button id="viewDispute" as={Link as any} href={href} size="xs" color="blue" pill>
           View Dispute Status
         </Button>
       );
     case WagerStatus.COMPLETED:
       if (challenge.winner_id == user.user && !challenge.winner_paypal) {
         return (
-          <Button as={Link as any} href={href} size="xs" color="blue" pill>
+          <Button id="getPaid" as={Link as any} href={href} size="xs" color="blue" pill>
             <BanknotesIcon className="h-4 w-4 mr-1" />
             Get Paid
           </Button>

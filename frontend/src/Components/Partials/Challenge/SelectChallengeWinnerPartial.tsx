@@ -106,6 +106,7 @@ const SelectChallengeWinnerPartial: FunctionComponent<Props> = ({
 
         <div>
           <Button
+            id="selectWinner"
             className="w-full"
             type="submit"
             color="blue"

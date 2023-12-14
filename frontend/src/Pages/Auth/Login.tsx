@@ -71,6 +71,7 @@ const Login: FunctionComponent = () => {
         </div>
 
         <Button
+          id="submitLogin"
           color="blue"
           className="w-full"
           isProcessing={processing}

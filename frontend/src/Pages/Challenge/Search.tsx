@@ -60,6 +60,7 @@ const Search: FunctionComponent<Props> = ({ user }) => {
             </div>
 
             <Button
+              id="searchDiscoverableChallenge"
               type="submit"
               disabled={processing}
               isProcessing={processing}

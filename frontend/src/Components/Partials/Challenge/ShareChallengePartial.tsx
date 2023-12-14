@@ -41,7 +41,7 @@ const ShareChallengePartial: FunctionComponent<Props> = ({
           <h3 className="text-gray-500 uppercase">
             {formatUniqueCode(challenge.unique_code)}
           </h3>
-          <button onClick={handleCopy}>
+          <button id="copyUniqueCode" onClick={handleCopy}>
             <ClipboardIcon className="text-blue-500 h-6 w-6" />
           </button>
         </div>

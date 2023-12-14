@@ -108,6 +108,7 @@ const RequireChallengePaymentPartial: FunctionComponent<Props> = ({
       </div>
 
       <Button
+        id="payNow"
         className="w-full mt-5"
         color="blue"
         onClick={() => setOpenModal(true)}
@@ -161,6 +162,7 @@ const RequireChallengePaymentPartial: FunctionComponent<Props> = ({
           </Modal.Body>
           <Modal.Footer>
             <Button
+              id="submitPayment"
               color="blue"
               type="submit"
               isProcessing={loading}
@@ -169,6 +171,7 @@ const RequireChallengePaymentPartial: FunctionComponent<Props> = ({
               Pay {currencyFormatter.format(challenge.amount)}
             </Button>
             <Button
+              id="cancelPayment"
               color="failure"
               onClick={() => setOpenModal(false)}
               type="button"

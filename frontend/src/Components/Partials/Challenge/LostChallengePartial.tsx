@@ -29,6 +29,7 @@ const LostChallengePartial: FunctionComponent<Props> = ({ challenge }) => {
       </p>
       <div className="flex items-center space-x-4">
         <Button
+          id="createNewChallengeFromLosing"
           className="w-full"
           color="blue"
           as={Link as any}

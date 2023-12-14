@@ -82,6 +82,7 @@ const ResetPassword: FunctionComponent<Props> = ({ token }) => {
 
         <div className="flex items-center justify-end mt-4">
           <Button
+            id="resetPassword"
             type="submit"
             color="blue"
             className="ms-4"

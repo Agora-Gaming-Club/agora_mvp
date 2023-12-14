@@ -158,7 +158,7 @@ const Create: FunctionComponent<Props> = ({ user, choices }) => {
             </Alert>
           ) : null}
 
-          <Button color="blue" type="submit">
+          <Button id="submitCreateChallenge" color="blue" type="submit">
             Create
           </Button>
         </form>
