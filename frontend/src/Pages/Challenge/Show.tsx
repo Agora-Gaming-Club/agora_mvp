@@ -55,7 +55,9 @@ const Show: FunctionComponent<Props> = ({challenge, user}) => {
     }
 
     if (challenge.status === WagerStatus.IN_PROGRESS) {
-       description = 'Play the game and select an outcome after the challenge has been completed.';
+      description = 'Your payment has been received, and your challenge is now active! You and your opponent have 24 hours to play the game on your designated platform, using the gamertag provided below. <br/>' +
+        '<br/>' +
+        'Once you have completed the game, come back here to select the outcome and collect your prize!';
       return [description];
     }
 
@@ -217,7 +219,8 @@ const ChallengeDetail: FunctionComponent<{
           <p className="text-gray-400 text-center text-sm tracking-tight">
             Looks like you both had different answers for the outcome. We’ve
             forwarded the details of this challenge to the Agora team who will
-            be following up with you via email to resolve the dispute. Note, the email will come from disputes@agoragaming.gg.
+            be following up with you via email to resolve the dispute. Note, the email will come from
+            disputes@agoragaming.gg.
           </p>
 
           <p className="text-gray-400 text-center text-sm tracking-tight mt-1">
