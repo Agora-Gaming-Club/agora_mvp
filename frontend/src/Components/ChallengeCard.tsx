@@ -38,7 +38,7 @@ const ChallengeCard: FunctionComponent<Props> = ({ challenge, user }) => {
           >
             <circle cx={1} cy={1} r={1} />
           </svg>
-          <p className="whitespace-nowrap capitalize">{challenge.unique_code}</p>
+          <p className="whitespace-nowrap capitalize">Code: {challenge.unique_code}</p>
         </div>
       </div>
       <ChallengeButton
