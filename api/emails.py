@@ -32,7 +32,6 @@ class Email:
         if settings.EMAIL_ENABLED:
             try:
                 message.send()
-                print("LOL")
                 return True
             except SMTPSenderRefused as sr:
                 print("Please check `echo $SENDGRID_API_KEY", sr)

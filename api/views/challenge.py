@@ -241,8 +241,8 @@ def challenge_winner(request, challenge_id):
                 email = Email(
                     "dispute",
                     context=email_context,
-                    sent_from="contact@agoragaming.gg",
-                    target="contact@agoragaming.gg",
+                    sent_from=settings.EMAIL_CONTACT_SENDER,
+                    target=settings.EMAIL_CONTACT_SENDER,
                     bcc=[
                         email_context["challenger"].email,
                         email_context["respondent"].email,
