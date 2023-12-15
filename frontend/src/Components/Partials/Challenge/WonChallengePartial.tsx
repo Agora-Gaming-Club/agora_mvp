@@ -28,7 +28,7 @@ const WonChallengePartial: FunctionComponent<Props> = ({ challenge }) => {
 
       <p className="text-gray-400 text-center text-sm tracking-tight">
         Want to browse through existing active challenges? Head over to our{' '}
-        <a href="https://https://discord.com/channels/1173680090371068006" target="_blank" className="underline">
+        <a href="https://discord.com/channels/1173680090371068006" target="_blank" className="underline">
           Agora Discord channel
         </a>{' '}
         to find a challenge that you can take on!
