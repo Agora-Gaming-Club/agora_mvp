@@ -10,7 +10,7 @@ from django.urls import reverse
 from django.views.decorators.csrf import ensure_csrf_cookie
 from inertia import inertia
 
-from api.emails import Email, WelcomeEmail, PasswordResetEmail
+from api.emails import Email
 from api.models import UserProfile
 from api.forms import (
     RegisterForm,
