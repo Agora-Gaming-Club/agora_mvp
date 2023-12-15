@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     "django_crontab",
     "api.apps.ApiConfig",
     "admin_app.apps.AdminApiApiConfig",
+    "filestore.apps.FilestoreConfig",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -174,6 +175,7 @@ STATICFILES_DIRS = [DJANGO_VITE_ASSETS_PATH, TAILWIND_CSS_ASSETS_PATH, IMAGE_ASS
 SENDGRID_API_KEY = os.getenv("SENDGRID_API_KEY")
 
 EMAIL_DEFAULT_SENDER = "noreply@agoragaming.gg"
+EMAIL_CONTACT_SENDER = "contact@agoragaming.gg"
 EMAIL_HOST = "smtp.sendgrid.net"
 EMAIL_HOST_USER = "apikey"
 EMAIL_HOST_PASSWORD = SENDGRID_API_KEY

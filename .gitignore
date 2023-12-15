@@ -173,6 +173,7 @@ kernel/settings_local.py
 # I am adding /api/migrations in here for now to preserve migration sanity until actually deploying
 api/migrations
 admin_app/migrations
+filestore/migrations
 
 #secrets
 secrets.json

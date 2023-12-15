@@ -2,7 +2,11 @@
 import random
 import string
 from django.core.paginator import Paginator, EmptyPage
+from django.template.loader import get_template
 from django.core.validators import validate_email
+from django.template import Template, Context
+
+from filestore.models import File
 
 STATES = {
     "ALABAMA": "AL",
@@ -112,3 +116,20 @@ def generate_unique_code():
     pieces = [random_char() for x in range(12)]
     code = "".join(pieces)
     return code
+
+
+def load_text(file_name, context):
+    """
+    Loads up either a file or DB object by name, like a template.
+
+    Replaces contents with context
+    """
+    file = File.objects.filter(name=file_name)
+    if file:
+        text = Template(file.first().contents)
+        print(f"{file_name} from DB")
+        return text.render(Context(context))
+    else:
+        text = get_template(file_name)
+        print(f"{file_name} from File")
+        return text.render(context)

@@ -64,6 +64,7 @@ class WagerAdmin(admin.ModelAdmin):
         "challenger_vote",
         "respondent_vote",
         "winner",
+        "winner_paid",
         "created_at",
         "updated_at",
     ]

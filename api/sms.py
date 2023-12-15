@@ -2,9 +2,10 @@
 import os
 
 from django.conf import settings
-from django.template.loader import get_template
 
 from twilio.rest import Client
+
+from api.utils import load_text
 
 
 class SMS:
@@ -18,15 +19,14 @@ class SMS:
         )
 
     def send(self):
-        text = get_template(f"sms/{self.sms_type}.txt")
-        from_number = settings.TWILIO_DEFAULT_NUMBER
-        text_content = text.render(self.context)
+        file_name = f"sms/{self.sms_type}.txt"
+        text_content = load_text(file_name, self.context)
 
         if settings.SMS_ENABLED:
             try:
                 message = self.client.messages.create(
                     to=self.target,
-                    from_=from_number,
+                    from_=settings.TWILIO_DEFAULT_NUMBER,
                     body=text_content,
                 )
             except Exception as e:
@@ -37,7 +37,7 @@ class SMS:
         else:
             print("FAKE SMS SENT:")
             print(f"TO: {self.target}")
-            print(f"FROM: {from_number}")
+            print(f"FROM: {settings.TWILIO_DEFAULT_NUMBER}")
             print(f"BODY: {text_content}")
             return True
 

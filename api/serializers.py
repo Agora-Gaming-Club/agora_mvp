@@ -60,7 +60,7 @@ def serialize_game(game):
         "platform": game.platform.name,
         "terms": game.terms.terms,
         "slug": slugify(game.game.name),
-        "discord_link": game.discord_link
+        "discord_link": game.discord_link,
     }
 
 

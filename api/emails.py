@@ -1,30 +1,32 @@
 from smtplib import SMTPSenderRefused
 
-from django.core.mail import EmailMultiAlternatives
-from django.template.loader import get_template
 from django.conf import settings
+from django.core.mail import EmailMultiAlternatives
+
+from api.utils import load_text
 
 
 class Email:
-    def __init__(self, email_type, context, from_=None, target=None, bcc=None):
+    def __init__(self, email_type, context, sent_from=None, target=None, bcc=None):
         self.email_type = email_type
         self.context = context
-        self.from_ = from_ or settings.EMAIL_DEFAULT_SENDER
+        self.sent_from = sent_from or settings.EMAIL_DEFAULT_SENDER
         self.target = target
         self.bcc = bcc
         self.subject = ""
 
     def send(self):
         # TODO: Grab the templates from the DB if available, first.
-        plaintext = get_template(f"emails/{self.email_type}.txt")
-        html = get_template(f"emails/{self.email_type}.html")
+        plaintext_filename = f"emails/{self.email_type}.txt"
+        text_content = load_text(plaintext_filename, self.context)
 
-        text_content = plaintext.render(self.context)
-        html_content = html.render(self.context)
+        html_filename = f"emails/{self.email_type}.html"
+        html_content = load_text(html_filename, self.context)
+
         message = EmailMultiAlternatives(
             self.subject,
             text_content,
-            self.from_,
+            self.sent_from,
             [self.target],
             bcc=self.bcc,
         )
@@ -42,7 +44,7 @@ class Email:
             print("FAKE EMAIL SENT:")
             print(f"TO: {self.target}")
             print(f"BCC: {self.bcc}")
-            print(f"FROM: {self.from_}")
+            print(f"FROM: {self.sent_from}")
             print(f"SUBJECT: {self.subject}")
             print(f"HTMLBODY: {html_content}")
             print(f"TEXTBODY: {text_content}")
@@ -64,19 +66,12 @@ class PasswordResetEmail(Email):
 class DisputeEmail(Email):
     def __init__(self, context, target=None, bcc=None):
         super().__init__("dispute", context, target, bcc)
-        self.from_ = "contact@agoragaming.gg"
+        self.sent_from = "contact@agoragaming.gg"
         self.subject = "Challenge Dispute"
 
 
 class DisputeResolvedEmail(Email):
     def __init__(self, context, target):
         super().__init__("dispute_resolved", context, target)
-        self.from_ = "contact@agoragaming.gg"
+        self.sent_from = "contact@agoragaming.gg"
         self.subject = "Dispute Resolved"
-
-
-"""
-from api.emails import WelcomeEmail
-x = WelcomeEmail({"test": "test"}, 'tristan.royal@nerdery.com')
-x.send()
-"""
