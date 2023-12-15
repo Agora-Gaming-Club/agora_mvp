@@ -1,11 +1,12 @@
 """Proxy models for use in this app's admin page."""
-from django.db.models.signals import post_save, post_init
+from django.conf import settings
 from django.contrib.auth.models import User
+from django.db.models.signals import post_save, post_init
 from django.dispatch import receiver
 
 
 from api.models import Wager, GameName, Platform, Term, Game
-from api.emails import DisputeResolvedEmail
+from api.emails import Email
 
 
 class GameProxy(Game):
@@ -59,11 +60,12 @@ def send_email(sender, instance, created, **kwargs):
                 "user_2": User.objects.get(id=instance.respondent_id),
                 "winner": instance.winner,
             }
-            email = DisputeResolvedEmail(
+            email = Email(
+                "dispute_resolved",
+                sent_from=settings.EMAIL_CONTACT_SENDER,
                 context=context,
                 target=instance.winner.email,
-            )
-            email.send()
+            ).send()
 
 
 class WagerPayoutProxy(Wager):
