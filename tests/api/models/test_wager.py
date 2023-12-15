@@ -4,7 +4,7 @@ from django.conf import settings
 from inertia.test import InertiaTestCase
 
 from api.models import Game, Wager, Payment, UserProfile
-from tests.utils import make_user, get_wager, make_game
+from tests.utils import make_user, get_wager, make_game, make_file
 
 settings.EMAIL_TEST_MODE = True
 
@@ -15,6 +15,7 @@ class TestWager(InertiaTestCase):
         self.user_a = make_user("user_a", "user_a@email.com", "password")
         self.user_b = make_user("user_b", "user_b@email.com", "password")
         make_game()
+        make_file()
 
     def test_wager_status(self):
         wager = get_wager(self.user_a, self.user_b)

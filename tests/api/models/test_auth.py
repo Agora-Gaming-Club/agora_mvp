@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 
 from api.models import UserProfile
-from tests.utils import make_user
+from tests.utils import make_user, make_file
 
 settings.EMAIL_TEST_MODE = True
 
@@ -13,6 +13,7 @@ settings.EMAIL_TEST_MODE = True
 class TestAuth(InertiaTestCase):
     def setUp(self):
         super().setUp()
+        make_file()
         self.user = User.objects.create_user(
             username="UserName",
             email="totallyreal@email.com",

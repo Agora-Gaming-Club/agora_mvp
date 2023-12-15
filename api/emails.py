@@ -1,8 +1,9 @@
 from smtplib import SMTPSenderRefused
 
-from django.core.mail import EmailMultiAlternatives
-from django.template.loader import get_template
 from django.conf import settings
+from django.core.mail import EmailMultiAlternatives
+
+from api.utils import load_text
 
 
 class Email:
@@ -16,11 +17,12 @@ class Email:
 
     def send(self):
         # TODO: Grab the templates from the DB if available, first.
-        plaintext = get_template(f"emails/{self.email_type}.txt")
-        html = get_template(f"emails/{self.email_type}.html")
+        plaintext_filename = f"emails/{self.email_type}.txt"
+        text_content = load_text(plaintext_filename, self.context)
 
-        text_content = plaintext.render(self.context)
-        html_content = html.render(self.context)
+        html_filename = f"emails/{self.email_type}.html"
+        html_content = load_text(html_filename, self.context)
+
         message = EmailMultiAlternatives(
             self.subject,
             text_content,
