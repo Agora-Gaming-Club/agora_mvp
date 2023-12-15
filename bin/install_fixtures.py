@@ -1,5 +1,6 @@
 # run with `./manage.py shell < bin/install_fixtures.py`
 from api.models import Game, GameName, Platform, Term
+from filestore.models import File
 
 # game names
 rocket_league, _ = GameName.objects.get_or_create(name="Rocket League")
@@ -20,7 +21,7 @@ five_min_quarters, _ = Term.objects.get_or_create(
 )
 three_min_blitz, _ = Term.objects.get_or_create(terms="3 minute Blitz")
 
-
+# The actual game objects.
 Game.objects.get_or_create(
     game=rocket_league,
     platform=cross_platform,
@@ -61,3 +62,27 @@ Game.objects.get_or_create(
     terms=three_min_blitz,
     discord_link="https://discord.com/channels/1173680090371068006/1174514563450929272",
 )
+
+import glob
+
+email_dir = "templates/emails/*"
+sms_dir = "templates/sms/*"
+
+
+def add_files(dir):
+    emails = glob.glob(dir)
+    email_names = [x.replace("templates/", "") for x in emails]
+    print(emails)
+    for i, email in enumerate(emails):
+        name = email_names[i]
+        with open(email) as file:
+            contents = file.read()
+            File.objects.get_or_create(
+                name=name,
+                description="",
+                contents=contents,
+            )
+
+
+add_files(email_dir)
+add_files(sms_dir)

@@ -124,10 +124,13 @@ def load_text(file_name, context):
 
     Replaces contents with context
     """
+    print(file_name)
     file = File.objects.filter(name=file_name)
     if file:
         text = Template(file.first().contents)
+        print(f"{file_name} from DB")
         return text.render(Context(context))
     else:
         text = get_template(file_name)
+        print(f"{file_name} from File")
         return text.render(context)

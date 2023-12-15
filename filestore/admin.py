@@ -8,8 +8,12 @@ class FileAdmin(admin.ModelAdmin):
     list_display = [
         "name",
         "description",
-        "contents",
+        # "contents",
+        "content",
     ]
+
+    def content(self, obj):
+        return obj.contents[:100] + "..."
 
 
 admin.site.register(File, FileAdmin)
