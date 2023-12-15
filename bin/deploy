@@ -3,23 +3,30 @@
 #source .venv/bin/activate
 
 # Pull Latest
+echo "Pull Latest Git Changes"
 git pull
 
 # Install Python requirements
+echo "Install Python requirements"
 pip install -r requirements.txt
 
 # Run Migrations
+echo "Run Migrations"
 python manage.py makemigrations api
 python manage.py makemigrations admin_app
 python manage.py migrate
 
 # Npm
+echo "Install Node Dependencies"
 npm install
+echo "Build Vite Assets"
 npm run build
 
 # Stash Static Files
+echo "Stash Static Files"
 python manage.py collectstatic --noinput
 
 
 # Restart Python Daemon Processes
+echo "Restart Python Daemon Processes"
 sudo service supervisor restart

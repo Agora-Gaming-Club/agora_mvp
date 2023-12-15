@@ -1,14 +1,16 @@
 """
 Challenge related endpoints
 """
+from datetime import datetime, timezone
 import json
+import os
 
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.views.decorators.csrf import ensure_csrf_cookie
 from inertia import inertia, share
 
-from api.emails import DisputeEmail
+from api.emails import Email
 from api.sms import (
     AcceptedSMS,
     BeginSMS,
@@ -25,6 +27,7 @@ from api.forms import (
 from api.models import Game, Payment, UserProfile, Wager
 from api.serializers import serialize, serialize_objs
 from api.utils import paginate
+from kernel import settings
 
 from payment.authorize_client import AuthorizeClient
 
@@ -98,6 +101,8 @@ def challenge_status(request, challenge_id):
     props = {
         "challenge": serialize(challenge),
         "user": current_user,
+        "authorize_public_key": settings.AUTHORIZE_PUBLIC_KEY,
+        "authorize_login_id": settings.AUTHORIZE_LOGIN_ID,
     }
 
     return props
@@ -167,6 +172,7 @@ def challenge_ante(request, challenge_id):
             wager=challenge,
             user=request.user,
         )
+        print("Payment Status: ", payment_status)
         status = Payment.BAD
         if payment_status.get("responseCode"):
             status = Payment.GOOD
@@ -232,9 +238,11 @@ def challenge_winner(request, challenge_id):
                 email_context = challenge.get_competitors()
                 email_context["challenge"] = challenge
                 email_context["game"] = challenge.game
-                email = DisputeEmail(
-                    email_context,
-                    target="product@agoragaming.gg",
+                email = Email(
+                    "dispute",
+                    context=email_context,
+                    sent_from=settings.EMAIL_CONTACT_SENDER,
+                    target=settings.EMAIL_CONTACT_SENDER,
                     bcc=[
                         email_context["challenger"].email,
                         email_context["respondent"].email,
@@ -259,6 +267,7 @@ def challenge_award(request, challenge_id):
     if form.is_valid():
         paypal_email = data.get("paypal_email")
         challenge.winner_paypal = paypal_email
+        challenge.paypal_time_start = datetime.now(timezone.utc)
         challenge.save()
         return {"challenge": challenge}
     else:

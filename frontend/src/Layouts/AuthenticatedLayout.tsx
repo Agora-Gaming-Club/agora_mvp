@@ -34,7 +34,7 @@ const AuthenticatedLayout: FunctionComponent<PropsWithChildren<Props>> = ({
             <div className="flex items-center justify-center  w-6 h-6 rounded-full mr-1">
               <Logo />
             </div>
-            Agora Gaming Club
+            Agora Gaming
           </Link>
 
           <div className="hidden md:flex list-none ml-5">
@@ -80,12 +80,10 @@ const AuthenticatedLayout: FunctionComponent<PropsWithChildren<Props>> = ({
                   {user.email}
                 </span>
               </Dropdown.Header>
-              {/*@ts-ignore*/}
-              <Dropdown.Item href="/accounts/profile/edit" as={Link}>
+              <Dropdown.Item href="/accounts/profile/edit" as={Link as any}>
                 View Profile
               </Dropdown.Item>
-              {/*@ts-ignore*/}
-              <Dropdown.Item href="/accounts/password_change" as={Link}>
+              <Dropdown.Item href="/accounts/password_change" as={Link as any}>
                 Update Password
               </Dropdown.Item>
               <Dropdown.Divider />
@@ -118,13 +116,11 @@ const AuthenticatedLayout: FunctionComponent<PropsWithChildren<Props>> = ({
         <div className="flex flex-col w-full pb-8">
           <div className="bg-agora-red h-48 flex items-center justify-center ">
             {(title || description) && (
-              <div>
+              <div className='max-w-5xl mx-auto'>
                 <h1 className="py-4 text-white text-center text-3xl font-bold">
                   {title}
                 </h1>
-                <h2 className="text-white text-center font-medium">
-                  {description}
-                </h2>
+                <h2 className="text-gray-300 text-center text-sm font-medium" dangerouslySetInnerHTML={{__html: description as string}}/>
               </div>
             )}
           </div>

@@ -19,7 +19,7 @@ const Welcome = (): React.ReactNode => {
               <span className="text-sm text-white">Welcome to</span>
 
               <h2 className="max-w-lg mb-6 font-sans text-3xl font-bold leading-none tracking-tight text-white sm:text-4xl md:mx-auto">
-                Agora Gaming Club
+                Agora Gaming
               </h2>
               <p className="text-gray-500 text-sm">
                 Back yourself. Challenge the best. Win money.
@@ -27,12 +27,13 @@ const Welcome = (): React.ReactNode => {
             </div>
             <div className="block sm:flex items-center justify-between sm:gap-x-8">
               <Link className="w-full" href="/accounts/login">
-                <Button color="blue" className="w-full">
+                <Button id='landingLoginButton' color="blue" className="w-full">
                   Login
                 </Button>
               </Link>
               <Link className="w-full" href="/accounts/register">
                 <Button
+                  id='landingRegisterButton'
                   color="blue"
                   outline={true}
                   className="w-full mt-4 sm:mt-0"

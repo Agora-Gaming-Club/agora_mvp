@@ -47,7 +47,7 @@ export default function DeleteUserForm({
         <h1 className="text-white">Delete Account</h1>
         <h3 className="text-gray-500">
           Contact the Agora admins at contact@agoragaming.gg to update the
-          details of your account.”
+          details of your account.
         </h3>
       </header>
 

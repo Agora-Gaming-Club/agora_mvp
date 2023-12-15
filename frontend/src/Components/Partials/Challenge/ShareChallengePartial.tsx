@@ -9,12 +9,14 @@ import { useCopyToClipboard } from '@/Hooks/useCopyToClipboard';
 type Props = {
   challenge: Wager;
   user: UserProfile;
+  discordLink?: string
 };
 
 const ShareChallengePartial: FunctionComponent<Props> = ({
   challenge,
   user,
 }) => {
+  console.log(challenge)
   const [copied, setCopied] = useState(false);
   const [copiedValue, copy] = useCopyToClipboard();
   const handleCopy = async () => {
@@ -39,7 +41,7 @@ const ShareChallengePartial: FunctionComponent<Props> = ({
           <h3 className="text-gray-500 uppercase">
             {formatUniqueCode(challenge.unique_code)}
           </h3>
-          <button onClick={handleCopy}>
+          <button id="copyUniqueCode" onClick={handleCopy}>
             <ClipboardIcon className="text-blue-500 h-6 w-6" />
           </button>
         </div>
@@ -51,7 +53,7 @@ const ShareChallengePartial: FunctionComponent<Props> = ({
       )}
 
       <a
-        href="https://https://discord.com/channels/1173680090371068006"
+        href={challenge.game.discord_link}
         target="_blank"
         className="text-gray-300 underline inline-flex justify-center items-center"
       >

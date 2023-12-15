@@ -27,5 +27,5 @@ DATABASES = {
 
 DJANGO_VITE_DEV_MODE = False
 EMAIL_ENABLED = True
-SITE_ROOT = "https://??.agoragaming.gg"
+SITE_ROOT = "https://agoragaming.gg"
 DEBUG = False

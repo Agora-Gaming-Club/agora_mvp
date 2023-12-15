@@ -6,6 +6,7 @@ import Cookies from 'js-cookie';
 import { TransformedErrors, transformErrors } from '@/Utils/form';
 import { formatPhoneNumberWhileTyping, stripPhoneNumber } from '@/Utils/phone';
 import { states } from '@/Data/states';
+import Terms from "@/Components/Terms";
 
 const Register: FunctionComponent = () => {
   const [openTermsModal, setOpenTermsModal] = useState(false);
@@ -138,7 +139,7 @@ const Register: FunctionComponent = () => {
             id="states"
             required
             color={formErrors?.errors?.state ? 'failure' : 'gray'}
-            helperText={<span>{formErrors?.errors?.state ?? ''}</span>}
+            helperText={<span>{formErrors?.errors?.state ? 'Per local laws - residents of this state are not allowed to register' : ''}</span>}
           >
             <option value="" disabled>
               Select your state
@@ -202,6 +203,7 @@ const Register: FunctionComponent = () => {
         </div>
 
         <Button
+          id="submitRegistration"
           color="blue"
           className="w-full"
           isProcessing={processing}
@@ -222,24 +224,11 @@ const Register: FunctionComponent = () => {
         <Modal show={openTermsModal} onClose={() => setOpenTermsModal(false)}>
           <Modal.Header>Terms of Service</Modal.Header>
           <Modal.Body>
-            <div className="space-y-6">
-              <p className="text-base leading-relaxed text-gray-500 dark:text-gray-400">
-                With less than a month to go before the European Union enacts
-                new consumer privacy laws for its citizens, companies around the
-                world are updating their terms of service agreements to comply.
-              </p>
-              <p className="text-base leading-relaxed text-gray-500 dark:text-gray-400">
-                The European Union’s General Data Protection Regulation
-                (G.D.P.R.) goes into effect on May 25 and is meant to ensure a
-                common set of data rights in the European Union. It requires
-                organizations to notify users as soon as possible of high-risk
-                data breaches that could personally affect them.
-              </p>
-            </div>
+             <Terms />
           </Modal.Body>
           <Modal.Footer>
             <Button
-              id="submit"
+              id="acceptTerms"
               color="blue"
               type="submit"
               isProcessing={processing}
@@ -248,6 +237,7 @@ const Register: FunctionComponent = () => {
               I accept
             </Button>
             <Button
+               id="declineTerms"
               type="button"
               color="gray"
               onClick={() => setOpenTermsModal(false)}

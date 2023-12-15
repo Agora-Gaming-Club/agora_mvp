@@ -119,6 +119,7 @@ class Wager(models.Model):
     )
     winner_paypal = models.CharField(max_length=100, blank=True, null=True)
     paypal_payment_id = models.CharField(max_length=40, null=True, blank=True)
+    paypal_time_start = models.DateTimeField(null=True, blank=True)
     winner_paid = models.BooleanField(default=False)
 
     def __str__(self):
@@ -220,6 +221,8 @@ class Wager(models.Model):
             return 45.00
         elif self.amount == 50.00:
             return 90.00
+        else:
+            return None
 
     def award_payment(self):
         """Adds calculated payment to winner's profile"""
@@ -227,6 +230,10 @@ class Wager(models.Model):
         winner = UserProfile.objects.get(user=self.winner)
         winner.winnings += Decimal(winning)
         winner.save()
+
+    def save(self, *args, **kwargs):
+        self.winning_amt = self.calculate_winning_payment()
+        super(Wager, self).save(*args, **kwargs)
 
 
 class Payment(models.Model):

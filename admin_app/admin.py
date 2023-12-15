@@ -21,6 +21,12 @@ class GameProxyAdmin(admin.ModelAdmin):
         "terms",
         "discord_link",
     ]
+    search_fields = [
+        "game__name",
+        "platform__name",
+        "terms__terms",
+        "discord_link",
+    ]
 
 
 class WagerDisputeAdmin(admin.ModelAdmin):
@@ -42,6 +48,15 @@ class WagerDisputeAdmin(admin.ModelAdmin):
     ]
     raw_id_fields = ("winner",)
     readonly_fields = ["winner_paid"]
+    search_fields = [
+        "unique_code",
+        "amount",
+        "foreign_key__challenger",
+    ]
+    list_filter = [
+        "game__game",
+        "amount",
+    ]
 
     def get_actions(self, request):
         actions = super().get_actions(request)
@@ -83,10 +98,9 @@ def mark_paid(modeladmin, request, queryset):
     for challenge in queryset:
         winner = UserProfile.objects.get(user=challenge.winner)
         PaidSMS(
-            context={"challenge", challenge},
+            context={"challenge": challenge},
             target=winner.phone_number,
         ).send()
-        print(challenge)
     queryset.update(winner_paid=True)
 
 
@@ -100,10 +114,20 @@ class WagerPayoutAdmin(admin.ModelAdmin):
         "winner_paid",
         "winner",
         "winning_amt",
+        "paypal_time_start",
     ]
     list_filter = ["winner_paid"]
     readonly_fields = ["winner_paid"]
     actions = [mark_paid]
+    search_fields = [
+        "unique_code",
+        "amount",
+        "status",
+        "winner_paypal",
+        "paypal_payment_id",
+        "winner_paid",
+        "winner__username",
+    ]
 
     def get_actions(self, request):
         actions = super().get_actions(request)
@@ -121,14 +145,17 @@ class WagerPayoutAdmin(admin.ModelAdmin):
 
 class GameNameProxydmin(admin.ModelAdmin):
     list_display = ["name"]
+    search_fields = list_display
 
 
 class PlatformProxyAdmin(admin.ModelAdmin):
     list_display = ["name"]
+    search_fields = list_display
 
 
 class TermProxyAdmin(admin.ModelAdmin):
     list_display = ["terms"]
+    search_fields = list_display
 
 
 admin.site.register(GameProxy, GameProxyAdmin)

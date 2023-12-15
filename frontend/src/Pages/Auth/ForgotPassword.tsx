@@ -21,7 +21,9 @@ const ForgotPassword: FunctionComponent = () => {
         console.log(err);
         setFormErrors(transformErrors(err));
       },
-      onSuccess: () => {},
+      onSuccess: () => {
+        window.location.href = '/accounts/login'
+      },
       only: ['errors'],
     });
   };
@@ -54,6 +56,7 @@ const ForgotPassword: FunctionComponent = () => {
 
         <div className="flex items-center justify-end mt-4">
           <Button
+            id="sendPasswordReset"
             type="submit"
             className="w-full"
             color="blue"

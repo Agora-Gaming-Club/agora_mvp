@@ -13,9 +13,9 @@ const Index: FunctionComponent<Props> = ({ user }) => {
     <AuthenticatedLayout user={user} title="Find / Start a Challenge">
       <div className="max-w-5xl mx-auto py-5 px-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-          <Card className="max-w-md">
+          <Card className="max-w-md text-center">
             <h5 className="text-center text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-              Initiate
+              Create
             </h5>
             <p className="font-normal text-gray-700 dark:text-gray-400">
               Start here to create your own challenge. You’ll choose a game and
@@ -23,12 +23,11 @@ const Index: FunctionComponent<Props> = ({ user }) => {
               with an opponent.
             </p>
 
-            {/*@ts-ignore*/}
-            <Button as={Link} href="/challenge" color="blue">
+            <Button id="createNewChallenge" as={Link as any} href="/challenge" color="blue">
               Create Challenge
             </Button>
           </Card>
-          <Card className="max-w-md">
+          <Card className="max-w-md text-center">
             <h5 className="text-center text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
               Accept
             </h5>
@@ -37,8 +36,7 @@ const Index: FunctionComponent<Props> = ({ user }) => {
               their challenge and get started playing here.
             </p>
 
-            {/*@ts-ignore*/}
-            <Button as={Link} href="/challenge/search" color="blue">
+            <Button id="acceptNewChallenge" as={Link as any} href="/challenge/search" color="blue">
               Accept Challenge
             </Button>
           </Card>
@@ -47,7 +45,7 @@ const Index: FunctionComponent<Props> = ({ user }) => {
         <div className="max-w-sm mx-auto mt-4 md:mt-12">
           <h3 className="text-gray-400 text-center text-sm tracking-tight">
             Want to browse through existing active challenges? Head over to our{' '}
-            <a href="https://https://discord.com/channels/1173680090371068006" target="_blank" className="underline">
+            <a href="https://discord.com/channels/1173680090371068006" target="_blank" className="underline">
               Agora Discord channel
             </a>{' '}
             to find a challenge that you can take on!
