@@ -124,7 +124,6 @@ def load_text(file_name, context):
 
     Replaces contents with context
     """
-    print(file_name)
     file = File.objects.filter(name=file_name)
     if file:
         text = Template(file.first().contents)
