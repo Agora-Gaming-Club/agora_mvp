@@ -3,15 +3,14 @@ from datetime import datetime, timezone
 import json
 
 from django.conf import settings
-
-from django.contrib.auth.models import User
 from django.contrib.auth import logout, login, authenticate
+from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.views.decorators.csrf import ensure_csrf_cookie
 from inertia import inertia
 
-from api.emails import WelcomeEmail, PasswordResetEmail
+from api.emails import Email, WelcomeEmail, PasswordResetEmail
 from api.models import UserProfile
 from api.forms import (
     RegisterForm,
@@ -104,8 +103,12 @@ def register(request):
                 acct_verified=False,
             )
             login(request, user)
-            email = WelcomeEmail({"profile": profile}, target=profile.email)
-            email.send()
+            email = Email(
+                "welcome",
+                context={"profile": profile},
+                sent_from=settings.EMAIL_DEFAULT_SENDER,
+                target=profile.email,
+            ).send()
             if redirect:
                 return HttpResponseRedirect(redirect)
             return HttpResponseRedirect(reverse("dashboard"))
@@ -150,14 +153,15 @@ def forgot_password(request):
                 profile.reset_password_time = datetime.now(timezone.utc)
                 username = profile.username
                 profile.reset_password()
-                email = PasswordResetEmail(
-                    {
+                email = Email(
+                    "password_reset",
+                    sent_from=settings.EMAIL_DEFAULT_SENDER,
+                    context={
                         "code": profile.reset_password_id,
                         "site_root": settings.SITE_ROOT,
                     },
                     target=profile.email,
-                )
-                email.send()
+                ).send()
             return {"message": "email sent"}
     return {}
 

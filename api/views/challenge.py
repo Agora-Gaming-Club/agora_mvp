@@ -10,7 +10,7 @@ from django.shortcuts import get_object_or_404
 from django.views.decorators.csrf import ensure_csrf_cookie
 from inertia import inertia, share
 
-from api.emails import DisputeEmail
+from api.emails import Email
 from api.sms import (
     AcceptedSMS,
     BeginSMS,
@@ -238,9 +238,11 @@ def challenge_winner(request, challenge_id):
                 email_context = challenge.get_competitors()
                 email_context["challenge"] = challenge
                 email_context["game"] = challenge.game
-                email = DisputeEmail(
-                    email_context,
-                    target="product@agoragaming.gg",
+                email = Email(
+                    "dispute",
+                    context=email_context,
+                    sent_from="contact@agoragaming.gg",
+                    target="contact@agoragaming.gg",
                     bcc=[
                         email_context["challenger"].email,
                         email_context["respondent"].email,
