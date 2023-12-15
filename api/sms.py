@@ -20,7 +20,7 @@ class SMS:
 
     def send(self):
         file_name = f"sms/{self.sms_type}.txt"
-        text_content = load_text(file_name)
+        text_content = load_text(file_name, self.context)
 
         if settings.SMS_ENABLED:
             try:
@@ -37,7 +37,7 @@ class SMS:
         else:
             print("FAKE SMS SENT:")
             print(f"TO: {self.target}")
-            print(f"FROM: {from_number}")
+            print(f"FROM: {settings.TWILIO_DEFAULT_NUMBER}")
             print(f"BODY: {text_content}")
             return True
 
