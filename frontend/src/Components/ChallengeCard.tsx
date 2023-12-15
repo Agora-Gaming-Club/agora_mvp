@@ -38,7 +38,7 @@ const ChallengeCard: FunctionComponent<Props> = ({ challenge, user }) => {
           >
             <circle cx={1} cy={1} r={1} />
           </svg>
-          <p className="whitespace-nowrap capitalize">Code: {challenge.unique_code}</p>
+          <p className="whitespace-nowrap capitalize">{challenge.unique_code}</p>
         </div>
       </div>
       <ChallengeButton
@@ -59,7 +59,7 @@ const ChallengeButton: FunctionComponent<{
   switch (status) {
     case WagerStatus.AWAITING_RESPONSE:
       return (
-        <Button id="shareCode" size="xs" as={Link as any} href={href} color="blue" pill>
+        <Button id="shareCode" size="xs" className='text-xs' as={Link as any} href={href} color="blue" pill>
           <ShareIcon className="h-4 w-4 mr-1" />
           Share Code
         </Button>
@@ -68,7 +68,7 @@ const ChallengeButton: FunctionComponent<{
       // check if already selected
       // check if not selected
       return (
-        <Button id="selectOutcome" as={Link as any} href={href} size="xs" color="blue" pill>
+        <Button id="selectOutcome" as={Link as any} href={href} size="xs" className='text-xs' color="blue" pill>
           <CursorArrowRaysIcon className="h-4 w-4 mr-1" />
           Select Outcome
         </Button>
@@ -77,21 +77,21 @@ const ChallengeButton: FunctionComponent<{
       // check if already paid
       // check if not paid
       return (
-        <Button id="makePayment" as={Link as any} href={href} size="xs" color="blue" pill>
+        <Button id="makePayment" as={Link as any} href={href} size="xs" className='text-xs' color="blue" pill>
           <CursorArrowRaysIcon className="h-4 w-4 mr-1" />
           Make Payment
         </Button>
       );
     case WagerStatus.DISPUTED:
       return (
-        <Button id="viewDispute" as={Link as any} href={href} size="xs" color="blue" pill>
+        <Button id="viewDispute" as={Link as any} href={href} size="xs" className='text-xs' color="blue" pill>
           View Dispute Status
         </Button>
       );
     case WagerStatus.COMPLETED:
       if (challenge.winner_id == user.user && !challenge.winner_paypal) {
         return (
-          <Button id="getPaid" as={Link as any} href={href} size="xs" color="blue" pill>
+          <Button id="getPaid" as={Link as any} href={href} size="xs" className='text-xs' color="blue" pill>
             <BanknotesIcon className="h-4 w-4 mr-1" />
             Get Paid
           </Button>
@@ -99,7 +99,7 @@ const ChallengeButton: FunctionComponent<{
       }
 
       if (challenge.winner_id == user.user && challenge.winner_paypal) {
-        return <Badge color="success">You Won</Badge>;
+        return <Badge size='xs' color="success">You Won</Badge>;
       }
 
       return <></>;
