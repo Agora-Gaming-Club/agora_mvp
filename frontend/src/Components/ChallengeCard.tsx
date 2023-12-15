@@ -32,6 +32,13 @@ const ChallengeCard: FunctionComponent<Props> = ({ challenge, user }) => {
             <circle cx={1} cy={1} r={1} />
           </svg>
           <p className="whitespace-nowrap capitalize">{challenge.status}</p>
+             <svg
+            viewBox="0 0 2 2"
+            className="h-0.5 w-0.5 flex-none fill-gray-300"
+          >
+            <circle cx={1} cy={1} r={1} />
+          </svg>
+          <p className="whitespace-nowrap capitalize">{challenge.unique_code}</p>
         </div>
       </div>
       <ChallengeButton
