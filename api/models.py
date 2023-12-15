@@ -226,10 +226,11 @@ class Wager(models.Model):
 
     def award_payment(self):
         """Adds calculated payment to winner's profile"""
-        winning = self.calculate_winning_payment()
-        winner = UserProfile.objects.get(user=self.winner)
-        winner.winnings += Decimal(winning)
-        winner.save()
+        if self.winner:
+            winning = self.calculate_winning_payment()
+            winner = UserProfile.objects.get(user=self.winner)
+            winner.winnings += Decimal(winning)
+            winner.save()
 
     def save(self, *args, **kwargs):
         self.winning_amt = self.calculate_winning_payment()
