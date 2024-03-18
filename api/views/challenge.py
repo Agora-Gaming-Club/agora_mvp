@@ -1,6 +1,7 @@
 """
 Challenge related endpoints
 """
+
 from datetime import datetime, timezone
 import json
 import os
@@ -247,6 +248,7 @@ def challenge_winner(request, challenge_id):
                         email_context["challenger"].email,
                         email_context["respondent"].email,
                     ],
+                    subject="Challenge Dispute",
                 )
                 email.send()
                 challenge.save()
