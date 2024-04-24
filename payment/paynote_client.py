@@ -11,6 +11,7 @@ class PaynoteClient:
             "Authorization": f"Basic {PAYNOTE_SECRET_KEY}:{PAYNOTE_PUBLIC_KEY}"  # Note reversed order
         }
         self.base_url = "https://api.paynote.com/v1"
+        print("PaynoteClient initialized with API keys.")
 
     def send_payment(self, data_value, amount, user_id):
         """
@@ -26,6 +27,7 @@ class PaynoteClient:
         Returns:
             dict: A dictionary containing transaction details or error information.
         """
+        print(f"Sending payment: Amount={amount}, UserID={user_id}, Description='{data_value}'")
 
         # Prepare Paynote API request data
         data = {
@@ -38,6 +40,7 @@ class PaynoteClient:
         # Send POST request to Paynote API endpoint for payments
         url = f"{self.base_url}/payments"
         response = requests.post(url, headers=self.headers, json=data)
+        print(f"Payment request sent, awaiting response...")
 
         # Handle response
         return self._process_response(response)
@@ -45,6 +48,7 @@ class PaynoteClient:
     def _process_response(self, response):
         if response.status_code == 200:
             response_data = response.json()
+            print(f"Payment successful: Transaction ID={response_data.get('id')}, Status={response_data.get('status')}")
             # Assuming "id" and "status" are present in successful response
             return {
                 "transId": response_data.get("id"),
@@ -52,6 +56,7 @@ class PaynoteClient:
             }
         else:
             error_text = response.text or "Unknown error"
+            print(f"Payment failed: HTTP {response.status_code}, Error={error_text}")
             # Check for specific Paynote error codes (refer to docs for error codes)
             if response.status_code == 400:  # Example: Bad request
                 error_data = response.json().get("errors")
@@ -67,3 +72,4 @@ if __name__ == "__main__":
     client = PaynoteClient()
     result = client.send_payment("Payment Description", 123.45, user_id=1)  # Assuming user_id is available
     print(result)
+    print("Final result:", result)
