@@ -162,7 +162,7 @@ def forgot_password(request):
                         "code": profile.reset_password_id,
                         "site_root": settings.SITE_ROOT,
                     },
-                    subject="Password Reset"
+                    subject="Password Reset",
                     target=profile.email,
                 ).send()
             return {"message": "email sent"}
