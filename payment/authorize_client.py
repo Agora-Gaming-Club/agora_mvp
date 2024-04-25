@@ -65,9 +65,8 @@ class AuthorizeClient:
                     result[
                         "description"
                     ] = response.transactionResponse.messages.message[0].description
-                    print("Payment successful with transaction ID:", result["transId"])  # Logging success
                 else:
-                    print("Failed Transaction. No message returned, but transaction was processed.")
+                    print("Failed Transaction.")
                     if hasattr(response.transactionResponse, "errors") is True:
                         result = {}
                         result["errorCode"] = response.transactionResponse.errors.error[
@@ -76,10 +75,10 @@ class AuthorizeClient:
                         result["errorText"] = response.transactionResponse.errors.error[
                             0
                         ].errorText
-                        print("Payment failed with error:", result["errorText"])  # Logging error
+
             # Or, print errors if the API request wasn't successful
             else:
-                print("Failed Transaction. API request was not successful.")
+                print("Failed Transaction.")
                 if (
                     hasattr(response, "transactionResponse") is True
                     and hasattr(response.transactionResponse, "errors") is True
@@ -98,7 +97,6 @@ class AuthorizeClient:
                     result["errorText"] = response.messages.message[0]["text"].text
         else:
             result = {"errorCode": "?", "errorText": "Null Response."}
-            print("No response received from the payment gateway.")  # Logging no response
 
         return result
 
