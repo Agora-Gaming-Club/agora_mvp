@@ -31,6 +31,7 @@ from api.utils import paginate
 from kernel import settings
 
 from payment.authorize_client import AuthorizeClient
+from payment.paynote_client import PaynoteClient
 
 
 @ensure_csrf_cookie
@@ -166,7 +167,8 @@ def challenge_ante(request, challenge_id):
     if form.is_valid():
         data_value = data.get("data_value")
 
-        payment_client = AuthorizeClient("token")
+        # payment_client = AuthorizeClient("token")
+        payment_client = PaynoteClient("token")
         payment_status = payment_client.send_payment(
             data_value=data_value,
             amount=challenge.amount,
