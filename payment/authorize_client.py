@@ -65,6 +65,7 @@ class AuthorizeClient:
                     result[
                         "description"
                     ] = response.transactionResponse.messages.message[0].description
+                    print("Payment successful with transaction ID:", result["transId"])  # Logging success
                 else:
                     print("Failed Transaction.")
                     if hasattr(response.transactionResponse, "errors") is True:
