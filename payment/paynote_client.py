@@ -10,7 +10,8 @@ class PaynoteClient:
         self.headers = {
             "Authorization": f"Basic {PAYNOTE_SECRET_KEY}:{PAYNOTE_PUBLIC_KEY}"  # Note reversed order
         }
-        self.base_url = "https://api.paynote.com/v1"
+        self.base_url = "https://api-paynote.seamlesschex.com/v1"
+        # https://api.paynote.com/v1
         # https://api-paynote.seamlesschex.com/v1
         print("PaynoteClient initialized with API keys.")
 
