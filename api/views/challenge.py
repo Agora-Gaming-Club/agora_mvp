@@ -173,7 +173,7 @@ def challenge_ante(request, challenge_id):
             data_value=data_value,
             amount=challenge.amount,
             # wager=challenge,
-            user_id=request.user,
+            user_id=request.user.id,
         )
         print("Payment Status: ", payment_status)
         status = Payment.BAD
