@@ -42,7 +42,8 @@ class PaynoteClient:
         # Send POST request to Paynote API endpoint for payments
         url = f"{self.base_url}/payments"
         response = requests.post(url, headers=self.headers, json=data)
-        print(f"Payment request sent, awaiting response...")
+        response_data = response.json()  # Ensure the API response is converted to JSON
+        print("Full API response: ", response_data)  # Log full response for debugging
 
         # Handle response
         return self._process_response(response)
