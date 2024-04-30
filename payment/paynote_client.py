@@ -1,11 +1,8 @@
 import requests
-import configparser
 
-config = configparser.ConfigParser()
-config.read('config.ini')
-
-PAYNOTE_PUBLIC_KEY = config['PAYNOTE']['PUBLIC_KEY']
-PAYNOTE_SECRET_KEY = config['PAYNOTE']['SECRET_KEY']
+# Replace with your Paynote API keys
+PAYNOTE_PUBLIC_KEY = "pk_01HW96B6NX3Q6TSXEJFX6JBAPR"
+PAYNOTE_SECRET_KEY = "sk_01HW96B6NX3Q6TSXEJFX6JBAPQ"
 
 
 class PaynoteClient:

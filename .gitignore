@@ -190,6 +190,3 @@ selftest-cert.crt
 selftest-cert.key
 key.pem
 cert.pem
-
-# Ignore configuration files that contain sensitive information
-config.ini
