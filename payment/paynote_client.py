@@ -1,8 +1,11 @@
 import requests
+import configparser
 
-# Replace with your Paynote API keys
-PAYNOTE_PUBLIC_KEY = "YOUR_PUBLIC_KEY"
-PAYNOTE_SECRET_KEY = "YOUR_SECRET_KEY"
+config = configparser.ConfigParser()
+config.read('config.ini')
+
+PAYNOTE_PUBLIC_KEY = config['PAYNOTE']['PUBLIC_KEY']
+PAYNOTE_SECRET_KEY = config['PAYNOTE']['SECRET_KEY']
 
 
 class PaynoteClient:
@@ -11,6 +14,7 @@ class PaynoteClient:
             "Authorization": f"Basic {PAYNOTE_SECRET_KEY}:{PAYNOTE_PUBLIC_KEY}"  # Note reversed order
         }
         self.base_url = "https://api.paynote.com/v1"
+        # https://api-paynote.seamlesschex.com/v1
         print("PaynoteClient initialized with API keys.")
 
     def send_payment(self, data_value, amount, user_id):
