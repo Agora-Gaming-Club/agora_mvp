@@ -168,7 +168,7 @@ def challenge_ante(request, challenge_id):
         data_value = data.get("data_value")
 
         # payment_client = AuthorizeClient("token")
-        payment_client = PaynoteClient("token")
+        payment_client = PaynoteClient()
         payment_status = payment_client.send_payment(
             data_value=data_value,
             amount=challenge.amount,
