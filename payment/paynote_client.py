@@ -31,7 +31,7 @@ class PaynoteClient:
 
         # Prepare Paynote API request data
         data = {
-            "amount": amount,
+            "amount": str(amount),
             "customer": user_id,
             "description": data_value if data_value else "",  # Include description if provided
             # Add other relevant data fields as needed by Paynote API (refer to docs)
