@@ -172,8 +172,8 @@ def challenge_ante(request, challenge_id):
         payment_status = payment_client.send_payment(
             data_value=data_value,
             amount=challenge.amount,
-            wager=challenge,
-            user=request.user,
+            # wager=challenge,
+            user_id=request.user,
         )
         print("Payment Status: ", payment_status)
         status = Payment.BAD
