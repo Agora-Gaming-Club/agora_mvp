@@ -1,6 +1,8 @@
 import requests
+import logging
 
-# Replace with your Paynote API keys
+logger = logging.getLogger('paynote_client')
+
 PAYNOTE_PUBLIC_KEY = "pk_01HW96B6NX3Q6TSXEJFX6JBAPR"
 PAYNOTE_SECRET_KEY = "sk_01HW96B6NX3Q6TSXEJFX6JBAPQ"
 
@@ -13,7 +15,8 @@ class PaynoteClient:
         self.base_url = "https://api-paynote.seamlesschex.com/v1"
         # https://api.paynote.com/v1
         # https://api-paynote.seamlesschex.com/v1
-        print("PaynoteClient initialized with API keys.")
+        # print("PaynoteClient initialized with API keys.")
+        logger.debug("PaynoteClient initialized with API keys.")
 
     def send_payment(self, data_value, amount, user_id):
         """

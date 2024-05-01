@@ -204,3 +204,27 @@ CRONJOBS = [
     ("*/10 * * * *", "api.cron.challenge_in_progress_expired"),
     ("*/10 * * * *", "api.cron.password_change_expired"),
 ]
+
+
+# Logging Settings
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+        'paynote_client': {  # Custom logger for your Paynote client
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    },
+}
