@@ -2,6 +2,7 @@ import requests
 import logging
 
 logger = logging.getLogger('paynote_client')
+logger.debug("Forced Logging Check")
 
 PAYNOTE_PUBLIC_KEY = "pk_01HW96B6NX3Q6TSXEJFX6JBAPR"
 PAYNOTE_SECRET_KEY = "sk_01HW96B6NX3Q6TSXEJFX6JBAPQ"
