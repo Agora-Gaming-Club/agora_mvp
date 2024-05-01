@@ -223,7 +223,7 @@ LOGGING = {
         },
         'paynote_client': {  # Custom logger for your Paynote client
             'handlers': ['console'],
-            'level': 'DEBUG',
+            'level': 'INFO',
             'propagate': False,
         },
     },
