@@ -160,7 +160,7 @@ def challenge_ante(request, challenge_id):
     challengers = [challenge.challenger_id, challenge.respondent_id]
 
     if request.user.id not in challengers:
-        raise Exception("Why are you here if you aren't part of this?")
+        raise Exception("You are not part of this challenge.")
 
     data = json.loads(request.body)
     form = AnteForm(data)
@@ -189,15 +189,17 @@ def challenge_ante(request, challenge_id):
                 for number in phone_numbers:
                     BeginSMS(context={"challenge": challenge}, target=number).send()
                 return {"status": payment.authorize_net_payment_status, "challenge": challenge}
-
             return {"status": "payment processed", "challenge": challenge}
         else:
-            error_details = payment_status.get("errorText", payment_status.get("errorDetails", "No additional error information available."))
+            # Collect all available error details from the payment_status
+            error_details = payment_status.get("errorText", payment_status.get("errorDetails", "No detailed error information available."))
             return {
                 "errors": "Bad Payment",
-                "details": error_details
+                "details": error_details,  # Ensure this key contains the actual error message
+                "full_response": payment_status  # Optionally include the full response for debugging
             }
     return {"errors": "Form validation failed or other errors"}
+
 
 
 
