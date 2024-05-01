@@ -160,23 +160,20 @@ def challenge_ante(request, challenge_id):
     challengers = [challenge.challenger_id, challenge.respondent_id]
 
     if request.user.id not in challengers:
-        raise Exception("Why are you here if you arent part of this?")
+        raise Exception("Why are you here if you aren't part of this?")
 
     data = json.loads(request.body)
     form = AnteForm(data)
     if form.is_valid():
         data_value = data.get("data_value")
 
-        # payment_client = AuthorizeClient("token")
         payment_client = PaynoteClient()
         payment_status = payment_client.send_payment(
             data_value=data_value,
             amount=challenge.amount,
-            # wager=challenge,
             user_id=request.user.id,
         )
-        print("Payment Status: ", payment_status)
-        status = Payment.BAD
+
         if payment_status.get("responseCode"):
             status = Payment.GOOD
             payment, _ = Payment.objects.get_or_create(
@@ -184,25 +181,24 @@ def challenge_ante(request, challenge_id):
                 wager=challenge,
                 authorize_net_payment_id=payment_status.get("transId"),
                 authorize_net_payment_status=status,
-                description=payment_status["description"],
+                description=payment_status.get("description"),
             )
             both_paid = challenge.all_payments_received()
             if both_paid:
-                phone_numbers = [
-                    challenge.get_challenger().phone_number,
-                    challenge.get_respondent().phone_number,
-                ]
+                phone_numbers = [challenge.get_challenger().phone_number, challenge.get_respondent().phone_number]
                 for number in phone_numbers:
-                    BeginSMS(
-                        context={"challenge": challenge},
-                        target=number,
-                    ).send()
-            return {
-                "status": payment.authorize_net_payment_status,
-                "challenge": challenge,
-            }
+                    BeginSMS(context={"challenge": challenge}, target=number).send()
+                return {"status": payment.authorize_net_payment_status, "challenge": challenge}
 
-    return {"errors": "Bad Payment"}
+            return {"status": "payment processed", "challenge": challenge}
+        else:
+            error_details = payment_status.get("errorText", payment_status.get("errorDetails", "No additional error information available."))
+            return {
+                "errors": "Bad Payment",
+                "details": error_details
+            }
+    return {"errors": "Form validation failed or other errors"}
+
 
 
 def challenge_winner(request, challenge_id):
