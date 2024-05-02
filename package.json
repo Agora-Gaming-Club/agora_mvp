@@ -44,6 +44,7 @@
     "@heroicons/react": "^2.0.18",
     "@tailwindcss/forms": "^0.5.7",
     "@types/js-cookie": "^3.0.6",
+    "checkout.js": "^2.1.21",
     "flowbite": "^2.1.1",
     "flowbite-react": "^0.6.4",
     "js-cookie": "^3.0.5",
