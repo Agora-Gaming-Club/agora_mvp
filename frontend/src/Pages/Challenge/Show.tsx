@@ -18,7 +18,6 @@ import PaypalChallengePartial from '@/Components/Partials/Challenge/PaypalChalle
 import WonChallengePartial from '@/Components/Partials/Challenge/WonChallengePartial';
 import LostChallengePartial from '@/Components/Partials/Challenge/LostChallengePartial';
 import { Link, usePage } from '@inertiajs/react';
-import PaynoteChallengePaymentPartial from '@/Components/Partials/Challenge/PaynoteChallengePaymentPartial';
 
 type Props = {
   challenge: Wager;
@@ -174,8 +173,7 @@ const ChallengeDetail: FunctionComponent<{
           clientKey: authorize_public_key,
         };
         return (
-          // <RequireChallengePaymentPartial challenge={challenge} user={user} authData={authorizeAuthData}/>
-          <PaynoteChallengePaymentPartial // Replace RequireChallengePaymentPartial
+          <RequireChallengePaymentPartial
             challenge={challenge}
             user={user}
             authData={authorizeAuthData}
