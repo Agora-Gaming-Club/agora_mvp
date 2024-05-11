@@ -1,92 +1,82 @@
 import * as React from 'react';
-import { FormEventHandler, FunctionComponent, useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Button, Card, Modal } from 'flowbite-react';
 import { BanknotesIcon } from '@heroicons/react/24/solid';
 import { currencyFormatter } from '@/Utils/money';
 import { UserProfile, Wager } from '@/schema';
-import { useAcceptJs } from 'react-acceptjs';
-import { PaymentInputsWrapper, usePaymentInputs } from 'react-payment-inputs';
-import images from 'react-payment-inputs/images';
-import { useForm } from '@inertiajs/react';
 
-type BasicCardInfo = {
-  cardNumber: string;
-  cardCode: string;
-  month: string;
-  year: string;
-};
+declare namespace SeamlessChex {
+  class Paynote {
+    constructor(options: {
+      token: string;
+      onSuccess: (data: any) => void;
+      onError: (error: any) => void;
+    });
+    open(): void;
+    close(): void;
+  }
+}
 
 type Props = {
   challenge: Wager;
   user: UserProfile;
-  authData: {
-    apiLoginID: string
-    clientKey: string
-  }
 };
 
-
-const RequireChallengePaymentPartial: FunctionComponent<Props> = ({
+const RequireChallengePaymentPartial: React.FC<Props> = ({
   challenge,
   user,
-  authData
 }) => {
   const [openModal, setOpenModal] = useState(false);
-  const { dispatchData, loading, error } = useAcceptJs({ authData });
-  const [creditCard, setCreditCard] = useState({
-    cardNumber: '',
-    expYear: '',
-    cvc: '',
-  });
-  const { data, setData, post } = useForm({
-    data_value: '',
-  });
-  const [errorMessage, setErrorMessage] = useState('');
+  const [paynoteToken, setPaynoteToken] = useState<string | null>(null);
+  const seamlessRef = useRef<SeamlessChex.Paynote | null>(null);
 
-  const {
-    meta,
-    getCardNumberProps,
-    getExpiryDateProps,
-    getCVCProps,
-    getCardImageProps,
-    wrapperProps,
-  } = usePaymentInputs();
-
-  const handleSubmit: FormEventHandler = async (event) => {
-    event.preventDefault();
-
-    if (meta.isTouched && meta.error) {
-      return;
-    }
-
-    const exp = creditCard.expYear.split('/');
-    const authorizeNetCard: BasicCardInfo = {
-      cardNumber: creditCard.cardNumber.replaceAll(' ', ''),
-      month: exp[0].replaceAll(' ', ''),
-      year: exp[1].replaceAll(' ', ''),
-      cardCode: creditCard.cvc.replaceAll(' ', ''),
-    };
-
-    // Dispatch CC data to Authorize.net and receive payment nonce for use on your server
+  const handlePayNow = async () => {
     try {
-      const { messages, opaqueData } = await dispatchData({
-        cardData: authorizeNetCard,
+      const response = await fetch('/api/generate-paynote-token', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          amount: challenge.amount,
+          userId: user.user,
+        }),
       });
 
-      data.data_value = opaqueData.dataValue;
-      post(`/challenge/${challenge.unique_code}`, {
-        onError: (err) => {
-          console.log(err);
-          // setFormErrors(transformErrors(err));
-        },
-        onSuccess: () => location.reload(),
-        only: ['errors', 'challenge'],
-      });
-    } catch (e: any) {
-      console.log(e)
-      setErrorMessage(e.messages.message[0].text);
+      if (!response.ok) {
+        throw new Error('Failed to generate Paynote token');
+      }
+
+      const tokenData = await response.json();
+      setPaynoteToken(tokenData.token);
+      setOpenModal(true); // Open modal after receiving the token
+    } catch (error) {
+      console.error('Error during payment process:', error);
+      // Handle the error appropriately (e.g., show error message to the user)
     }
   };
+
+  useEffect(() => {
+    if (openModal && paynoteToken && !seamlessRef.current) {
+      const seamless = new SeamlessChex.Paynote({
+        token: paynoteToken,
+        onSuccess: (data) => {
+          console.log('Payment Successful:', data);
+          if (seamlessRef.current) {
+            seamlessRef.current.close();
+            setOpenModal(false); // Close the modal after successful payment
+          }
+          // Notify your backend of successful payment here
+          console.log('Payment Successful (2):', data);
+        },
+        onError: (error) => {
+          console.error('Payment Error:', error);
+          // Handle the error (e.g., show error message to the user)
+        },
+      });
+
+      seamlessRef.current = seamless;
+      seamless.open();
+    }
+  }, [openModal, paynoteToken]); // Trigger effect when openModal or paynoteToken changes
 
   return (
     <Card className="max-w-xl text-center mx-auto">
@@ -107,79 +97,33 @@ const RequireChallengePaymentPartial: FunctionComponent<Props> = ({
         </h1>
       </div>
 
+      {/* Existing logic for checking user role and displaying challenge details */}
+      {user.user === challenge.challenger_id ? (
+        <p className="text-gray-400 text-xs mt-2">
+          You challenged {challenge.challenger_gamer_tag} to this wager.
+          Awaiting their payment.
+        </p>
+      ) : (
+        <p className="text-gray-400 text-xs mt-2">
+          {challenge.challenger_gamer_tag} challenged you to this wager. Pay{' '}
+          {currencyFormatter.format(challenge.amount)} to accept.
+        </p>
+      )}
+
       <Button
         id="payNow"
         className="w-full mt-5"
         color="blue"
-        onClick={() => setOpenModal(true)}
+        onClick={handlePayNow}
       >
         Pay Now
       </Button>
 
-      <Modal size="sm" show={openModal} onClose={() => setOpenModal(false)}>
-        <form onSubmit={handleSubmit}>
-          <Modal.Header>Make Payment</Modal.Header>
-          <Modal.Body>
-            <div className="flex justify-center">
-              <PaymentInputsWrapper {...wrapperProps}>
-                <svg
-                  {...getCardImageProps({
-                    images,
-                  })}
-                />
-                <input
-                  {...getCardNumberProps({
-                    onChange: (event: any) =>
-                      setCreditCard({
-                        ...creditCard,
-                        cardNumber: event.target.value,
-                      }),
-                  })}
-                />
-                <input
-                  {...getExpiryDateProps({
-                    onChange: (event: any) =>
-                      setCreditCard({
-                        ...creditCard,
-                        expYear: event.target.value,
-                      }),
-                  })}
-                />
-                <input
-                  {...getCVCProps({
-                    onChange: (event: any) =>
-                      setCreditCard({
-                        ...creditCard,
-                        cvc: event.target.value,
-                      }),
-                  })}
-                />
-              </PaymentInputsWrapper>
-            </div>
-            {errorMessage && (
-              <span className="text-red-500 text-xs mt-1">{errorMessage}</span>
-            )}
-          </Modal.Body>
-          <Modal.Footer>
-            <Button
-              id="submitPayment"
-              color="blue"
-              type="submit"
-              isProcessing={loading}
-              disabled={loading}
-            >
-              Pay {currencyFormatter.format(challenge.amount)}
-            </Button>
-            <Button
-              id="cancelPayment"
-              color="failure"
-              onClick={() => setOpenModal(false)}
-              type="button"
-            >
-              Cancel
-            </Button>
-          </Modal.Footer>
-        </form>
+      <Modal show={openModal} onClose={() => setOpenModal(false)}>
+        <Modal.Header>Payment</Modal.Header>
+        <Modal.Body>
+          {/* Modal content is empty, as Paynote will be loaded within useEffect */}
+        </Modal.Body>
       </Modal>
     </Card>
   );
