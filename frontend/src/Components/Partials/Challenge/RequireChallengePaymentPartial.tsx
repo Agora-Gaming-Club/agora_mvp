@@ -5,6 +5,7 @@ import { BanknotesIcon } from '@heroicons/react/24/solid';
 import { currencyFormatter } from '@/Utils/money';
 import { UserProfile, Wager } from '@/schema';
 
+
 declare namespace SeamlessChex {
   class Paynote {
     constructor(options: {
@@ -51,6 +52,7 @@ const RequireChallengePaymentPartial: React.FC<Props> = ({
     } catch (error) {
       console.error('Error during payment process:', error);
       // Handle the error appropriately (e.g., show error message to the user)
+      // Matt was here
     }
   };
 
