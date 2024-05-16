@@ -4,7 +4,7 @@ import { Button, Card, Modal } from 'flowbite-react';
 import { BanknotesIcon } from '@heroicons/react/24/solid';
 import { currencyFormatter } from '@/Utils/money';
 import { UserProfile, Wager } from '@/schema';
-
+import axio from 'axios'; //mf
 
 declare namespace SeamlessChex {
   class Paynote {
@@ -33,9 +33,11 @@ const RequireChallengePaymentPartial: React.FC<Props> = ({
 
   const handlePayNow = async () => {
     try {
-      const response = await fetch('/api/generate-paynote-token', {
+      const response = await fetch('https://api-paynote.seamlesschex.com/v1', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json',
+        'Authorization': 'Bearer pk_01HW96B6NX3Q6TSXEJFX6JBAPR',
+         },
         body: JSON.stringify({
           amount: challenge.amount,
           userId: user.user,
@@ -52,10 +54,10 @@ const RequireChallengePaymentPartial: React.FC<Props> = ({
     } catch (error) {
       console.error('Error during payment process:', error);
       // Handle the error appropriately (e.g., show error message to the user)
-      // Matt was here
+      
     }
   };
-
+*/ 
   useEffect(() => {
     if (openModal && paynoteToken && !seamlessRef.current) {
       const seamless = new SeamlessChex.Paynote({
