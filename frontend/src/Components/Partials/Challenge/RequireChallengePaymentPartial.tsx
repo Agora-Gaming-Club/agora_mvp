@@ -9,6 +9,7 @@ declare namespace SeamlessChex {
   class Paynote {
     constructor(options: {
       key: string;
+      transaction_amount: number;
       onSuccess: (data: any) => void;
       onError: (error: any) => void;
     });
@@ -31,17 +32,10 @@ const RequireChallengePaymentPartial: React.FC<Props> = ({
 
   const handlePayNow = async () => {
     try {
-      // Load the Paynote script (if not already loaded)
-      if (!window.SeamlessChex) {
-        const script = document.createElement('script');
-        script.src = 'https://cdn.seamlesschex.com/paynote/v1/seamless.js';
-        document.body.appendChild(script);
-        await new Promise((resolve) => (script.onload = resolve));
-      }
-
       // Initialize Paynote directly on the frontend
       const seamless = new SeamlessChex.Paynote({
         key: 'pk_01HW96B6NX3Q6TSXEJFX6JBAPR', // Your Paynote public key
+        transaction_amount: challenge.amount,
         onSuccess: (data) => {
           console.log('Payment Successful:', data);
           if (seamlessRef.current) {
