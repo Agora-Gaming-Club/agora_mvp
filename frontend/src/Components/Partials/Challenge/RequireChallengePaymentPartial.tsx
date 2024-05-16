@@ -8,7 +8,7 @@ import { UserProfile, Wager } from '@/schema';
 declare namespace SeamlessChex {
   class Paynote {
     constructor(options: {
-      token: string;
+      key: string;
       onSuccess: (data: any) => void;
       onError: (error: any) => void;
     });
@@ -27,40 +27,21 @@ const RequireChallengePaymentPartial: React.FC<Props> = ({
   user,
 }) => {
   const [openModal, setOpenModal] = useState(false);
-  const [paynoteToken, setPaynoteToken] = useState<string | null>(null);
   const seamlessRef = useRef<SeamlessChex.Paynote | null>(null);
 
   const handlePayNow = async () => {
     try {
-      const response = await fetch('https://api-paynote.seamlesschex.com/v1', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: 'Bearer pk_01HW96B6NX3Q6TSXEJFX6JBAPR',
-        },
-        body: JSON.stringify({
-          amount: challenge.amount,
-          userId: user.user,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to generate Paynote token');
+      // Load the Paynote script (if not already loaded)
+      if (!window.SeamlessChex) {
+        const script = document.createElement('script');
+        script.src = 'https://cdn.seamlesschex.com/paynote/v1/seamless.js';
+        document.body.appendChild(script);
+        await new Promise((resolve) => (script.onload = resolve));
       }
 
-      const tokenData = await response.json();
-      setPaynoteToken(tokenData.token);
-      setOpenModal(true); // Open modal after receiving the token
-    } catch (error) {
-      console.error('Error during payment process:', error);
-      // Handle the error appropriately (e.g., show error message to the user)
-    }
-  };
-
-  useEffect(() => {
-    if (openModal && paynoteToken && !seamlessRef.current) {
+      // Initialize Paynote directly on the frontend
       const seamless = new SeamlessChex.Paynote({
-        token: paynoteToken,
+        key: 'pk_01HW96B6NX3Q6TSXEJFX6JBAPR', // Your Paynote public key
         onSuccess: (data) => {
           console.log('Payment Successful:', data);
           if (seamlessRef.current) {
@@ -68,7 +49,6 @@ const RequireChallengePaymentPartial: React.FC<Props> = ({
             setOpenModal(false); // Close the modal after successful payment
           }
           // Notify your backend of successful payment here
-          console.log('Payment Successful (2):', data);
         },
         onError: (error) => {
           console.error('Payment Error:', error);
@@ -77,9 +57,19 @@ const RequireChallengePaymentPartial: React.FC<Props> = ({
       });
 
       seamlessRef.current = seamless;
-      seamless.open();
+      setOpenModal(true); // Open the modal
+    } catch (error) {
+      console.error('Error during payment process:', error);
+      // Handle the error appropriately (e.g., show error message to the user)
     }
-  }, [openModal, paynoteToken]); // Trigger effect when openModal or paynoteToken changes
+  };
+
+  useEffect(() => {
+    // Ensure the Paynote script is loaded before calling `seamless.open()`
+    if (openModal && seamlessRef.current) {
+      seamlessRef.current.open();
+    }
+  }, [openModal]); // Only run when openModal changes
 
   return (
     <Card className="max-w-xl text-center mx-auto">
