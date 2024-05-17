@@ -78,7 +78,7 @@ const RequireChallengePaymentPartial: React.FC<Props> = ({
         }
       })
       .catch((error) => {
-        console.error('Error loading Paynote script:', error);
+        console.error('Error loading Paynote script:', JSON.stringify(error));
         // Handle the error appropriately
       });
 
