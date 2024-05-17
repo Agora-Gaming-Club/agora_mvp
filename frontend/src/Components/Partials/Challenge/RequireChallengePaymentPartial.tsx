@@ -7,11 +7,30 @@ import { UserProfile, Wager } from '@/schema';
 
 declare global {
   interface Window {
-    SeamlessChex: any;
+    SeamlessChex: {
+      Paynote: new (options: {
+        publicKey: string;
+        sandbox?: boolean;
+        displayMethod?: 'iframe' | 'lightbox';
+        paymentToken: string;
+        widgetContainerSelector?: string;
+        checkout: {
+          totalValue: number;
+          currency: string;
+          description?: string;
+          items?: { title: string; price: number }[];
+          customerEmail?: string;
+          customerFirstName?: string;
+          customerLastName?: string;
+        };
+        onSuccess?: (data: any) => void;
+        onError?: (error: any) => void;
+      }) => any; // You might want to replace 'any' with a more specific type if possible
+    };
   }
 }
 
-declare namespace SeamlessChex {
+/* declare namespace SeamlessChex {
   class Paynote {
     constructor(options: {
       key: string;
@@ -24,7 +43,7 @@ declare namespace SeamlessChex {
     open(): void;
     close(): void;
   }
-}
+} */
 
 type Props = {
   challenge: Wager;
@@ -36,42 +55,62 @@ const RequireChallengePaymentPartial: React.FC<Props> = ({
   user,
 }) => {
   const [openModal, setOpenModal] = useState(false);
-  const seamlessRef = useRef<SeamlessChex.Paynote | null>(null);
 
   useEffect(() => {
     // Wait for window.onload to ensure the script has executed
     window.onload = () => {
-      if (openModal) {
-        const seamless = new SeamlessChex.Paynote({
-          key: 'YOUR_PAYNOTE_PUBLIC_KEY',
-          transaction_amount: challenge.amount,
-          customer_email: user.email,
-          customer_name: user.username,
-          // ... other optional Paynote parameters
+      try {
+        if (typeof window.SeamlessChex === 'undefined') {
+          const script = document.createElement('script');
+          script.src =
+            'https://developers.seamlesschex.com/docs/checkoutjs/sdk-min.js';
+          script.async = true;
+
+          document.head.appendChild(script);
+        }
+      } catch {
+        console.error('SeamlessChex load error.');
+      }
+
+      if (window.SeamlessChex) {
+        console.log('SeamlessChex is loaded!');
+      } else {
+        console.error('SeamlessChex not found.');
+      }
+
+      if (openModal && window.SeamlessChex) {
+        const objRequestIframe = {
+          publicKey: 'YOUR_PAYNOTE_PUBLIC_KEY', // Replace with your actual public key
+          sandbox: true,
+          displayMethod: 'iframe',
+          paymentToken: `pay_tok_SPECIMEN-${Math.random()}`,
+          widgetContainerSelector: '#paynote-widget-container',
+          checkout: {
+            totalValue: challenge.amount, // Use challenge amount
+            currency: 'USD', // Adjust currency as needed
+            description: 'Wager Payment',
+            items: [{ title: 'Wager', price: challenge.amount }],
+            // ... (Add customer info from your 'user' object if available)
+          },
           onSuccess: (data) => {
             console.log('Payment Successful:', data);
-            if (seamlessRef.current) {
-              seamlessRef.current.close();
-              setOpenModal(false);
-            }
+            setOpenModal(false); // Close the modal
             // Notify your backend of successful payment here
           },
           onError: (error) => {
             console.error('Payment Error:', error);
             // Handle the error (e.g., show error message to the user)
           },
-        });
+        };
 
-        seamlessRef.current = seamless;
-        seamless.open();
+        new SeamlessChex.Paynote(objRequestIframe).render();
       }
     };
 
     return () => {
-      // Clean up (remove event listener) if needed
       window.onload = null;
     };
-  }, [openModal]);
+  }, [openModal, challenge.amount]);
 
   const handlePayNow = () => {
     setOpenModal(true);
@@ -121,7 +160,8 @@ const RequireChallengePaymentPartial: React.FC<Props> = ({
       <Modal show={openModal} onClose={() => setOpenModal(false)}>
         <Modal.Header>Payment</Modal.Header>
         <Modal.Body>
-          {/* Modal content is empty, as Paynote will be loaded within useEffect */}
+          <div id="paynote-widget-container"></div>{' '}
+          {/* Container for the iframe */}
         </Modal.Body>
       </Modal>
     </Card>
