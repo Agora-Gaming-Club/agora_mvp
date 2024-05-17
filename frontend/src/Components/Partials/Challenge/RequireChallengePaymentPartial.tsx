@@ -101,6 +101,7 @@ const RequireChallengePaymentPartial: React.FC<Props> = ({
 
           // new window.SeamlessChex.Paynote(objRequestIframe).render();
           // (window as any).SeamlessChex.Paynote(objRequestIframe).render;
+          console.log(objRequestIframe);
           console.log(PAYNOTE);
           new PAYNOTE(objRequestIframe).render();
         }
