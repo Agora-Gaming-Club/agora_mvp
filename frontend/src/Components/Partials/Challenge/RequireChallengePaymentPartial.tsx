@@ -7,11 +7,11 @@ import { UserProfile, Wager } from '@/schema';
 
 declare global {
   interface Window {
-    SeamlessChex?: {
+    SeamlessChex: {
       Paynote: new (options: {
         publicKey: string;
         sandbox?: boolean;
-        displayMethod?: 'iframe' | 'lightbox';
+        displayMethod?: string;
         paymentToken: string;
         widgetContainerSelector?: string;
         checkout: {
@@ -99,7 +99,7 @@ const RequireChallengePaymentPartial: React.FC<Props> = ({
             },
           };
 
-          new SeamlessChex.Paynote(objRequestIframe).render();
+          new window.SeamlessChex.Paynote(objRequestIframe).render();
           // (window as any).SeamlessChex.Paynote(objRequestIframe).render;
         }
       })
