@@ -5,6 +5,12 @@ import { BanknotesIcon } from '@heroicons/react/24/solid';
 import { currencyFormatter } from '@/Utils/money';
 import { UserProfile, Wager } from '@/schema';
 
+declare global {
+  interface Window {
+    SeamlessChex: any;
+  }
+}
+
 declare namespace SeamlessChex {
   class Paynote {
     constructor(options: {
@@ -30,40 +36,66 @@ const RequireChallengePaymentPartial: React.FC<Props> = ({
   const [openModal, setOpenModal] = useState(false);
   const seamlessRef = useRef<SeamlessChex.Paynote | null>(null);
 
-  const handlePayNow = async () => {
-    try {
-      // Initialize Paynote directly on the frontend
-      const seamless = new SeamlessChex.Paynote({
-        key: 'pk_01HW96B6NX3Q6TSXEJFX6JBAPR', // Your Paynote public key
-        transaction_amount: challenge.amount,
-        onSuccess: (data) => {
-          console.log('Payment Successful:', data);
-          if (seamlessRef.current) {
-            seamlessRef.current.close();
-            setOpenModal(false); // Close the modal after successful payment
-          }
-          // Notify your backend of successful payment here
-        },
-        onError: (error) => {
-          console.error('Payment Error:', error);
-          // Handle the error (e.g., show error message to the user)
-        },
+  useEffect(() => {
+    const loadScript = async () => {
+      if (!window.SeamlessChex) {
+        const script = document.createElement('script');
+        script.src = 'https://cdn.seamlesschex.com/paynote/v1/seamless.js';
+        script.async = true;
+
+        document.head.appendChild(script);
+
+        await new Promise((resolve, reject) => {
+          script.onload = resolve;
+          script.onerror = reject;
+        });
+      }
+    };
+
+    loadScript()
+      .then(() => {
+        if (openModal) {
+          const seamless = new SeamlessChex.Paynote({
+            key: 'pk_01HW96B6NX3Q6TSXEJFX6JBAPR', // Replace with your actual key
+            transaction_amount: challenge.amount,
+            // ... other optional Paynote parameters (customer_email, etc.)
+            onSuccess: (data) => {
+              console.log('Payment Successful:', data);
+              if (seamlessRef.current) {
+                seamlessRef.current.close();
+                setOpenModal(false); // Close the modal after successful payment
+              }
+              // Notify your backend of successful payment here
+            },
+            onError: (error) => {
+              console.error('Payment Error:', error);
+              // Handle the error (e.g., show error message to the user)
+            },
+          });
+
+          seamlessRef.current = seamless;
+          seamless.open();
+        }
+      })
+      .catch((error) => {
+        console.error('Error loading Paynote script:', error);
+        // Handle the error appropriately
       });
 
-      seamlessRef.current = seamless;
-      setOpenModal(true); // Open the modal
-    } catch (error) {
-      console.error('Error during payment process:', error);
-      // Handle the error appropriately (e.g., show error message to the user)
-    }
-  };
+    // Clean up: Remove the script on component unmount (if necessary)
+    return () => {
+      const script = document.querySelector(
+        'script[src="https://cdn.seamlesschex.com/paynote/v1/seamless.js"]'
+      );
+      if (script) {
+        document.head.removeChild(script);
+      }
+    };
+  }, [openModal]);
 
-  useEffect(() => {
-    // Ensure the Paynote script is loaded before calling `seamless.open()`
-    if (openModal && seamlessRef.current) {
-      seamlessRef.current.open();
-    }
-  }, [openModal]); // Only run when openModal changes
+  const handlePayNow = () => {
+    setOpenModal(true);
+  };
 
   return (
     <Card className="max-w-xl text-center mx-auto">
