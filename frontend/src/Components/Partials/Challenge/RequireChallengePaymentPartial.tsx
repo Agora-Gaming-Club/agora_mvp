@@ -167,10 +167,12 @@ const RequireChallengePaymentPartial: React.FC<Props> = ({
         Pay Now
       </Button>
 
+      <div id="paynote-widget-container"></div>
+
       <Modal show={openModal} onClose={() => setOpenModal(false)}>
         <Modal.Header>Payment</Modal.Header>
         <Modal.Body>
-          <div id="paynote-widget-container"></div>{' '}
+          {/* <div id="paynote-widget-container"></div>{' '} */}
           {/* Container for the iframe */}
         </Modal.Body>
       </Modal>
