@@ -52,16 +52,16 @@ const RequireChallengePaymentPartial: React.FC<Props> = ({
           return;
         }
 
-        // paynoteScript = document.createElement('script');
-        // paynoteScript.src =
-        //   'https://developers.seamlesschex.com/docs/checkoutjs/sdk-min.js';
-        // paynoteScript.async = true;
+        paynoteScript = document.createElement('script');
+        paynoteScript.src =
+          'https://developers.seamlesschex.com/docs/checkoutjs/sdk-min.js';
+        paynoteScript.async = true;
 
-        // paynoteScript.onload = () => resolve();
-        // paynoteScript.onerror = () =>
-        //   reject(new Error('SeamlessChex script failed to load'));
+        paynoteScript.onload = () => resolve();
+        paynoteScript.onerror = () =>
+          reject(new Error('SeamlessChex script failed to load'));
 
-        // document.head.appendChild(paynoteScript);
+        document.head.appendChild(paynoteScript);
       });
 
     loadScript()
