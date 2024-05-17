@@ -42,28 +42,21 @@ const RequireChallengePaymentPartial: React.FC<Props> = ({
         const script = document.createElement('script');
         script.src = 'https://cdn.seamlesschex.com/paynote/v1/seamless.js';
         script.async = true;
-
         document.head.appendChild(script);
-
-        await new Promise((resolve, reject) => {
-          script.onload = resolve;
-          script.onerror = reject;
-        });
       }
-    };
 
-    loadScript()
-      .then(() => {
+      // Wait for window.onload to ensure the script has executed
+      window.onload = () => {
         if (openModal) {
           const seamless = new SeamlessChex.Paynote({
-            key: 'pk_01HW96B6NX3Q6TSXEJFX6JBAPR', // Replace with your actual key
+            key: 'pk_01HW96B6NX3Q6TSXEJFX6JBAPR',
             transaction_amount: challenge.amount,
-            // ... other optional Paynote parameters (customer_email, etc.)
+            // ... other optional Paynote parameters
             onSuccess: (data) => {
               console.log('Payment Successful:', data);
               if (seamlessRef.current) {
                 seamlessRef.current.close();
-                setOpenModal(false); // Close the modal after successful payment
+                setOpenModal(false);
               }
               // Notify your backend of successful payment here
             },
@@ -76,20 +69,14 @@ const RequireChallengePaymentPartial: React.FC<Props> = ({
           seamlessRef.current = seamless;
           seamless.open();
         }
-      })
-      .catch((error) => {
-        console.error('Error loading Paynote script:', JSON.stringify(error));
-        // Handle the error appropriately
-      });
+      };
+    };
 
-    // Clean up: Remove the script on component unmount (if necessary)
+    loadScript(); // Load the script immediately
+
     return () => {
-      const script = document.querySelector(
-        'script[src="https://cdn.seamlesschex.com/paynote/v1/seamless.js"]'
-      );
-      if (script) {
-        document.head.removeChild(script);
-      }
+      // Clean up (remove event listener) if needed
+      window.onload = null;
     };
   }, [openModal]);
 
