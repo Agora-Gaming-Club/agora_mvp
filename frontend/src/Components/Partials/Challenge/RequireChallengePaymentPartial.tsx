@@ -30,21 +30,6 @@ declare global {
   }
 }
 
-/* declare namespace SeamlessChex {
-  class Paynote {
-    constructor(options: {
-      key: string;
-      transaction_amount: number;
-      customer_email: string;
-      customer_name: string;
-      onSuccess: (data: any) => void;
-      onError: (error: any) => void;
-    });
-    open(): void;
-    close(): void;
-  }
-} */
-
 type Props = {
   challenge: Wager;
   user: UserProfile;
@@ -57,58 +42,44 @@ const RequireChallengePaymentPartial: React.FC<Props> = ({
   const [openModal, setOpenModal] = useState(false);
 
   useEffect(() => {
-    // Wait for window.onload to ensure the script has executed
-    window.onload = () => {
-      try {
-        if (typeof window.SeamlessChex === 'undefined') {
-          const script = document.createElement('script');
-          script.src =
-            'https://developers.seamlesschex.com/docs/checkoutjs/sdk-min.js';
-          script.async = true;
+    let paynoteScript: HTMLScriptElement | null = null;
 
-          document.head.appendChild(script);
+    const loadScript = () =>
+      new Promise<void>((resolve, reject) => {
+        if (window.SeamlessChex) {
+          // Already loaded
+          resolve();
+          return;
         }
-      } catch {
-        console.error('SeamlessChex load error.');
-      }
 
-      if (window.SeamlessChex) {
-        console.log('SeamlessChex is loaded!');
-      } else {
-        console.error('SeamlessChex not found.');
-      }
+        paynoteScript = document.createElement('script');
+        paynoteScript.src =
+          'https://developers.seamlesschex.com/docs/checkoutjs/sdk-min.js';
+        paynoteScript.async = true;
 
-      if (openModal && window.SeamlessChex) {
-        const objRequestIframe = {
-          publicKey: 'YOUR_PAYNOTE_PUBLIC_KEY', // Replace with your actual public key
-          sandbox: true,
-          displayMethod: 'iframe',
-          paymentToken: `pay_tok_SPECIMEN-${Math.random()}`,
-          widgetContainerSelector: '#paynote-widget-container',
-          checkout: {
-            totalValue: challenge.amount, // Use challenge amount
-            currency: 'USD', // Adjust currency as needed
-            description: 'Wager Payment',
-            items: [{ title: 'Wager', price: challenge.amount }],
-            // ... (Add customer info from your 'user' object if available)
-          },
-          onSuccess: (data) => {
-            console.log('Payment Successful:', data);
-            setOpenModal(false); // Close the modal
-            // Notify your backend of successful payment here
-          },
-          onError: (error) => {
-            console.error('Payment Error:', error);
-            // Handle the error (e.g., show error message to the user)
-          },
-        };
+        paynoteScript.onload = () => resolve();
+        paynoteScript.onerror = () =>
+          reject(new Error('SeamlessChex script failed to load'));
 
-        new SeamlessChex.Paynote(objRequestIframe).render();
-      }
-    };
+        document.head.appendChild(paynoteScript);
+      });
 
+    loadScript()
+      .then(() => {
+        if (openModal && window.SeamlessChex) {
+          // ... (your existing Paynote iframe initialization logic)
+        }
+      })
+      .catch((error) => {
+        console.error('Error loading SeamlessChex:', error);
+        // Implement error handling (show message to the user, etc.)
+      });
+
+    // Clean up: Remove the script on component unmount (if necessary)
     return () => {
-      window.onload = null;
+      if (paynoteScript) {
+        document.head.removeChild(paynoteScript);
+      }
     };
   }, [openModal, challenge.amount]);
 
