@@ -42,8 +42,6 @@ const RequireChallengePaymentPartial: React.FC<Props> = ({
   const [openModal, setOpenModal] = useState(false);
   const [isSeamlessChexLoaded, setIsSeamlessChexLoaded] = useState(false); // New state to track script loading
 
-  const containerRef = useRef(null);
-
   useEffect(() => {
     const loadScript = () =>
       new Promise<void>((resolve, reject) => {
@@ -73,7 +71,7 @@ const RequireChallengePaymentPartial: React.FC<Props> = ({
 
     loadScript()
       .then(() => {
-        if (openModal && containerRef.current && isSeamlessChexLoaded) {
+        if (openModal) {
           const objRequestIframe = {
             publicKey: 'pk_test_01HRX9QGX6Q2N8E5Z12D07X87', // Replace with your actual public key
             sandbox: true,
@@ -122,7 +120,7 @@ const RequireChallengePaymentPartial: React.FC<Props> = ({
         document.head.removeChild(seamlessScript);
       }
     };
-  }, [openModal, challenge.amount, isSeamlessChexLoaded]); // Dependency on openModal and challenge.amount
+  }, [openModal, challenge.amount]); // Dependency on openModal and challenge.amount
 
   const handlePayNow = () => {
     setOpenModal(true);
@@ -172,7 +170,8 @@ const RequireChallengePaymentPartial: React.FC<Props> = ({
       <Modal show={openModal} onClose={() => setOpenModal(false)}>
         <Modal.Header>Payment</Modal.Header>
         <Modal.Body>
-          <div ref={containerRef} id="paynote-widget-container"></div>
+          <div id="paynote-widget-container"></div>{' '}
+          {/* Container for the iframe */}
         </Modal.Body>
       </Modal>
     </Card>
