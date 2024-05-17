@@ -99,8 +99,8 @@ const RequireChallengePaymentPartial: React.FC<Props> = ({
             },
           };
 
-          // new SeamlessChex.Paynote(objRequestIframe).render();
-          (window as any).SeamlessChex.Paynote(objRequestIframe).render;
+          new SeamlessChex.Paynote(objRequestIframe).render();
+          // (window as any).SeamlessChex.Paynote(objRequestIframe).render;
         }
       })
       .catch((error) => {
