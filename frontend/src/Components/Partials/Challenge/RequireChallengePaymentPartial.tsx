@@ -41,10 +41,9 @@ const RequireChallengePaymentPartial: React.FC<Props> = ({
 }) => {
   const [openModal, setOpenModal] = useState(false);
   const [isSeamlessChexLoaded, setIsSeamlessChexLoaded] = useState(false); // New state to track script loading
-  const containerRef = useRef(null);
 
   useEffect(() => {
-    const loadScript = async () => {
+    const loadScript = () =>
       new Promise<void>((resolve, reject) => {
         if (window.SeamlessChex) {
           // Already loaded
@@ -70,10 +69,9 @@ const RequireChallengePaymentPartial: React.FC<Props> = ({
         document.head.appendChild(script);
       });
 
-      await loadScript();
-
-      if (containerRef.current && !window.PAYNOTE) {
-        try {
+    loadScript()
+      .then(() => {
+        if (openModal) {
           const objRequestIframe = {
             publicKey: 'pk_test_01HRX9QGX6Q2N8E5Z12D07X87', // Replace with your actual public key
             sandbox: true,
@@ -101,16 +99,17 @@ const RequireChallengePaymentPartial: React.FC<Props> = ({
             },
           };
 
-          console.log(window.PAYNOTE);
+          // new window.SeamlessChex.Paynote(objRequestIframe).render();
+          // (window as any).SeamlessChex.Paynote(objRequestIframe).render;
+          console.log(objRequestIframe);
           console.log(PAYNOTE);
-          new window.PAYNOTE(objRequestIframe).render(containerRef.current);
-        } catch (error) {
-          console.error('Error initializing Paynote:', error);
+          new PAYNOTE(objRequestIframe).render();
         }
-      }
-    };
-
-    loadScript();
+      })
+      .catch((error) => {
+        console.error('Error loading SeamlessChex:', error);
+        // Handle the error appropriately
+      });
 
     return () => {
       setIsSeamlessChexLoaded(false);
@@ -122,7 +121,7 @@ const RequireChallengePaymentPartial: React.FC<Props> = ({
         document.head.removeChild(seamlessScript);
       }
     };
-  }, []);
+  }, [openModal, challenge.amount]); // Dependency on openModal and challenge.amount
 
   const handlePayNow = () => {
     setOpenModal(true);
@@ -169,7 +168,7 @@ const RequireChallengePaymentPartial: React.FC<Props> = ({
         Pay Now
       </Button>
 
-      <div id="paynote-widget-container" ref={containerRef}></div>
+      <div id="paynote-widget-container"></div>
 
       <Modal show={openModal} onClose={() => setOpenModal(false)}>
         <Modal.Header>Payment</Modal.Header>
