@@ -40,33 +40,38 @@ const RequireChallengePaymentPartial: React.FC<Props> = ({
   user,
 }) => {
   const [openModal, setOpenModal] = useState(false);
+  const [isSeamlessChexLoaded, setIsSeamlessChexLoaded] = useState(false); // New state to track script loading
 
   useEffect(() => {
-    let paynoteScript: HTMLScriptElement | null = null;
-
     const loadScript = () =>
       new Promise<void>((resolve, reject) => {
         if (window.SeamlessChex) {
           // Already loaded
+          setIsSeamlessChexLoaded(true);
           resolve();
           return;
         }
 
-        paynoteScript = document.createElement('script');
-        paynoteScript.src =
+        const script = document.createElement('script');
+        script.src =
           'https://developers.seamlesschex.com/docs/checkoutjs/sdk-min.js';
-        paynoteScript.async = true;
+        script.async = true;
 
-        paynoteScript.onload = () => resolve();
-        paynoteScript.onerror = () =>
+        script.onload = () => {
+          setIsSeamlessChexLoaded(true);
+          resolve();
+        };
+
+        script.onerror = () => {
           reject(new Error('SeamlessChex script failed to load'));
+        };
 
-        document.head.appendChild(paynoteScript);
+        document.head.appendChild(script);
       });
 
     loadScript()
       .then(() => {
-        if (openModal && window.SeamlessChex) {
+        if (openModal) {
           const objRequestIframe = {
             publicKey: 'pk_test_01HRX9QGX6Q2N8E5Z12D07X87', // Replace with your actual public key
             sandbox: true,
@@ -78,6 +83,7 @@ const RequireChallengePaymentPartial: React.FC<Props> = ({
               currency: 'USD',
               description: 'Wager Payment',
               items: [{ title: 'Wager', price: challenge.amount }],
+              // Customer information (optional, but recommended)
               customerEmail: user.email,
               customerFirstName: user.first_name,
               customerLastName: user.last_name,
@@ -94,21 +100,25 @@ const RequireChallengePaymentPartial: React.FC<Props> = ({
           };
 
           // new SeamlessChex.Paynote(objRequestIframe).render();
-          (window as any).SeamlessChex.Paynote(objRequestIframe).render();
+          (window as any).SeamlessChex.Paynote(objRequestIframe).render;
         }
       })
       .catch((error) => {
         console.error('Error loading SeamlessChex:', error);
-        // Implement error handling (show message to the user, etc.)
+        // Handle the error appropriately
       });
 
-    // Clean up: Remove the script on component unmount (if necessary)
     return () => {
-      if (paynoteScript) {
-        document.head.removeChild(paynoteScript);
+      setIsSeamlessChexLoaded(false);
+      // Optional cleanup: Remove the script when the component unmounts
+      const seamlessScript = document.querySelector(
+        'script[src="https://developers.seamlesschex.com/docs/checkoutjs/sdk-min.js"]'
+      );
+      if (seamlessScript) {
+        document.head.removeChild(seamlessScript);
       }
     };
-  }, [openModal, challenge.amount]);
+  }, [openModal, challenge.amount]); // Dependency on openModal and challenge.amount
 
   const handlePayNow = () => {
     setOpenModal(true);
