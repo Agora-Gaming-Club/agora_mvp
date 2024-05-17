@@ -16,6 +16,8 @@ declare namespace SeamlessChex {
     constructor(options: {
       key: string;
       transaction_amount: number;
+      customer_email: string;
+      customer_name: string;
       onSuccess: (data: any) => void;
       onError: (error: any) => void;
     });
@@ -37,42 +39,33 @@ const RequireChallengePaymentPartial: React.FC<Props> = ({
   const seamlessRef = useRef<SeamlessChex.Paynote | null>(null);
 
   useEffect(() => {
-    const loadScript = async () => {
-      if (!window.SeamlessChex) {
-        const script = document.createElement('script');
-        script.src = 'https://cdn.seamlesschex.com/paynote/v1/seamless.js';
-        script.async = true;
-        document.head.appendChild(script);
+    // Wait for window.onload to ensure the script has executed
+    window.onload = () => {
+      if (openModal) {
+        const seamless = new SeamlessChex.Paynote({
+          key: 'YOUR_PAYNOTE_PUBLIC_KEY',
+          transaction_amount: challenge.amount,
+          customer_email: user.email,
+          customer_name: user.username,
+          // ... other optional Paynote parameters
+          onSuccess: (data) => {
+            console.log('Payment Successful:', data);
+            if (seamlessRef.current) {
+              seamlessRef.current.close();
+              setOpenModal(false);
+            }
+            // Notify your backend of successful payment here
+          },
+          onError: (error) => {
+            console.error('Payment Error:', error);
+            // Handle the error (e.g., show error message to the user)
+          },
+        });
+
+        seamlessRef.current = seamless;
+        seamless.open();
       }
-
-      // Wait for window.onload to ensure the script has executed
-      window.onload = () => {
-        if (openModal) {
-          const seamless = new SeamlessChex.Paynote({
-            key: 'pk_01HW96B6NX3Q6TSXEJFX6JBAPR',
-            transaction_amount: challenge.amount,
-            // ... other optional Paynote parameters
-            onSuccess: (data) => {
-              console.log('Payment Successful:', data);
-              if (seamlessRef.current) {
-                seamlessRef.current.close();
-                setOpenModal(false);
-              }
-              // Notify your backend of successful payment here
-            },
-            onError: (error) => {
-              console.error('Payment Error:', error);
-              // Handle the error (e.g., show error message to the user)
-            },
-          });
-
-          seamlessRef.current = seamless;
-          seamless.open();
-        }
-      };
     };
-
-    loadScript(); // Load the script immediately
 
     return () => {
       // Clean up (remove event listener) if needed
