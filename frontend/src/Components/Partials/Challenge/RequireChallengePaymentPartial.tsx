@@ -40,6 +40,9 @@ const RequireChallengePaymentPartial: React.FC<Props> = ({ challenge, user }) =>
   const containerRef = useRef<HTMLDivElement>(null); 
 
   useEffect(() => {
+    const MAX_RETRIES = 3; 
+    let retries = 0;
+
     const loadScript = async () => {
       if (window.SeamlessChex) return; 
 
@@ -49,7 +52,15 @@ const RequireChallengePaymentPartial: React.FC<Props> = ({ challenge, user }) =>
 
       return new Promise<void>((resolve, reject) => {
         script.onload = () => resolve();
-        script.onerror = () => reject(new Error('SeamlessChex script failed to load'));
+        script.onerror = () => {
+          if (retries < MAX_RETRIES) {
+            retries++;
+            console.error('SeamlessChex script failed to load. Retrying...');
+            setTimeout(loadScript, 1000); // Retry after 1 second
+          } else {
+            reject(new Error('SeamlessChex script failed to load after multiple retries.'));
+          }
+        };
         document.head.appendChild(script);
       });
     };
