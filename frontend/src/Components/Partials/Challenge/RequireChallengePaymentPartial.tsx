@@ -40,11 +40,12 @@ const RequireChallengePaymentPartial: React.FC<Props> = ({ challenge, user }) =>
   const containerRef = useRef<HTMLDivElement>(null); 
 
   useEffect(() => {
-    const MAX_RETRIES = 3; 
-    let retries = 0;
+    let scriptLoaded = false
 
     const loadScript = async () => {
       if (window.SeamlessChex) return; 
+      
+      scriptLoaded = true;
 
       const script = document.createElement('script');
       script.src = 'https://developers.seamlesschex.com/docs/checkoutjs/sdk-min.js';
@@ -70,8 +71,9 @@ const RequireChallengePaymentPartial: React.FC<Props> = ({ challenge, user }) =>
 
       // Wait for SeamlessChex to signal it's ready
       window.addEventListener('seamlesschexLoaded', () => { 
-        if (containerRef.current) {
-          try {
+        if (containerRef.current && window.SeamlessChex && window.SeamlessChex.Paynote) {
+    try {
+      // ... (Paynote initialization logic)
             const objRequestIframe = {
               publicKey: 'pk_test_01HRX9QGX6Q2N8E5Z12D07X87', 
               sandbox: true,
@@ -97,6 +99,7 @@ const RequireChallengePaymentPartial: React.FC<Props> = ({ challenge, user }) =>
                 // Handle the error (show message to user)
               },
             };
+          } catch (error) {
 
             new window.SeamlessChex.Paynote(objRequestIframe).render(containerRef.current);
           } catch (error) {
