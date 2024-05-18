@@ -34,7 +34,72 @@ type Props = {
   challenge: Wager;
   user: UserProfile;
 };
+//mf add 5_18
+const RequireChallengePaymentPartial: React.FC<Props> = ({ challenge, user }) => {
+  const [openModal, setOpenModal] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null); 
 
+  useEffect(() => {
+    const loadScript = async () => {
+      if (window.SeamlessChex) return; 
+
+      const script = document.createElement('script');
+      script.src = 'https://developers.seamlesschex.com/docs/checkoutjs/sdk-min.js';
+      script.async = true;
+
+      return new Promise<void>((resolve, reject) => {
+        script.onload = () => resolve();
+        script.onerror = () => reject(new Error('SeamlessChex script failed to load'));
+        document.head.appendChild(script);
+      });
+    };
+
+    const initializePaynote = async () => {
+      await loadScript();
+
+      // Wait for SeamlessChex to signal it's ready
+      window.addEventListener('seamlesschexLoaded', () => { 
+        if (containerRef.current) {
+          try {
+            const objRequestIframe = {
+              publicKey: 'pk_test_01HRX9QGX6Q2N8E5Z12D07X87', 
+              sandbox: true,
+              displayMethod: 'iframe',
+              paymentToken: `pay_tok_SPECIMEN-${Math.random()}`,
+              widgetContainerSelector: '#paynote-widget-container',
+              checkout: {
+                totalValue: challenge.amount,
+                currency: 'USD',
+                description: 'Wager Payment',
+                items: [{ title: 'Wager', price: challenge.amount }],
+                customerEmail: user.email,
+                customerFirstName: user.first_name,
+                customerLastName: user.last_name,
+              },
+              onSuccess: (data) => {
+                console.log('Payment Successful:', data);
+                setOpenModal(false); 
+                // Notify your backend of successful payment
+              },
+              onError: (error) => {
+                console.error('Payment Error:', error);
+                // Handle the error (show message to user)
+              },
+            };
+
+            new window.SeamlessChex.Paynote(objRequestIframe).render(containerRef.current);
+          } catch (error) {
+            console.error('Error initializing Paynote:', error);
+          }
+        }
+      }); 
+    };
+
+    initializePaynote();
+  }, []);
+//mf add 5_18
+
+/*
 const RequireChallengePaymentPartial: React.FC<Props> = ({
   challenge,
   user,
@@ -68,6 +133,9 @@ const RequireChallengePaymentPartial: React.FC<Props> = ({
 
         document.head.appendChild(script);
       });
+
+
+
 
     loadScript()
       .then(() => {
@@ -123,6 +191,7 @@ const RequireChallengePaymentPartial: React.FC<Props> = ({
     };
   }, [openModal, challenge.amount]); // Dependency on openModal and challenge.amount
 
+  */
   const handlePayNow = () => {
     setOpenModal(true);
   };
