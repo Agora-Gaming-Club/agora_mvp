@@ -25,7 +25,7 @@ declare global {
         };
         onSuccess?: (data: any) => void;
         onError?: (error: any) => void;
-      }) => any;
+      }) => any; // You might want to replace 'any' with a more specific type if possible
     };
   }
 }
@@ -42,62 +42,40 @@ const RequireChallengePaymentPartial: React.FC<Props> = ({
   const [openModal, setOpenModal] = useState(false);
 
   useEffect(() => {
-    const loadSeamlessChex = () => {
-      return new Promise<void>((resolve, reject) => {
-        if (window.SeamlessChex) {
-          resolve();
-        } else {
-          const checkInterval = setInterval(() => {
-            if (window.SeamlessChex) {
-              clearInterval(checkInterval);
-              resolve();
-            }
-          }, 100);
-
-          setTimeout(() => {
-            clearInterval(checkInterval);
-            reject(new Error('SeamlessChex script load timeout'));
-          }, 10000); // Timeout after 10 seconds
-        }
-      });
-    };
-
     if (openModal) {
-      loadSeamlessChex()
-        .then(() => {
-          const objRequestIframe = {
-            publicKey: 'pk_test_01HRX9QGX6Q2N8E5Z12D07X87', // Replace with your actual public key
-            sandbox: true,
-            displayMethod: 'iframe',
-            paymentToken: `pay_tok_SPECIMEN-${Math.random()}`,
-            widgetContainerSelector: '#paynote-widget-container',
-            checkout: {
-              totalValue: challenge.amount,
-              currency: 'USD',
-              description: 'Wager Payment',
-              items: [{ title: 'Wager', price: challenge.amount }],
-              customerEmail: user.email,
-              customerFirstName: user.first_name,
-              customerLastName: user.last_name,
-            },
-            onSuccess: (data) => {
-              console.log('Payment Successful:', data);
-              setOpenModal(false);
-            },
-            onError: (error) => {
-              console.error('Payment Error:', error);
-            },
-          };
+      const objRequestIframe = {
+        publicKey: 'pk_test_01HRX9QGX6Q2N8E5Z12D07X87', // Replace with your actual public key
+        sandbox: true,
+        displayMethod: 'iframe',
+        paymentToken: `pay_tok_SPECIMEN-${Math.random()}`,
+        widgetContainerSelector: '#paynote-widget-container',
+        checkout: {
+          totalValue: challenge.amount,
+          currency: 'USD',
+          description: 'Wager Payment',
+          items: [{ title: 'Wager', price: challenge.amount }],
+          customerEmail: user.email,
+          customerFirstName: user.first_name,
+          customerLastName: user.last_name,
+        },
+        onSuccess: (data) => {
+          console.log('Payment Successful:', data);
+          setOpenModal(false);
+        },
+        onError: (error) => {
+          console.error('Payment Error:', error);
+        },
+      };
 
-          try {
-            new window.SeamlessChex.Paynote(objRequestIframe).render();
-          } catch (error) {
-            console.error('Error initializing SeamlessChex:', error);
-          }
-        })
-        .catch((error) => {
-          console.error('Error loading SeamlessChex:', error);
-        });
+      if (window.SeamlessChex && window.SeamlessChex.Paynote) {
+        try {
+          new window.SeamlessChex.Paynote(objRequestIframe).render();
+        } catch (error) {
+          console.error('Error initializing SeamlessChex:', error);
+        }
+      } else {
+        console.error('SeamlessChex or SeamlessChex.Paynote is not available');
+      }
     }
   }, [openModal, challenge.amount, user.email, user.first_name, user.last_name]);
 
