@@ -1,4 +1,5 @@
-{% load django_vite %} {% load static %}
+{% load django_vite %}
+{% load static %}
 <!doctype html>
 <html class="dark" lang="en">
   <head>
@@ -8,10 +9,15 @@
     <link rel="stylesheet" href="{% static 'css/app.css' %}" />
 
     <!-- Vite assets -->
-    {% if DJANGO_VITE_DEV_MODE %} {% vite_hmr_client %} {% else %} {% vite_asset
-    'src/main.tsx' %} {% endif %}
+    {% if DJANGO_VITE_DEV_MODE %}
+      {% vite_hmr_client %}
+    {% else %}
+      {% vite_asset 'src/main.tsx' %}
+    {% endif %}
+    
     <title inertia>Agora Gaming</title>
     <link rel="icon" href="{% static 'favicon.ico' %}" />
+    
     <!-- Google Tag Manager -->
     <script>
       (function (w, d, s, l, i) {
@@ -29,15 +35,14 @@
       })(window, document, 'script', 'dataLayer', 'GTM-PHHDVBBP');
     </script>
     <!-- End Google Tag Manager -->
+
     <!-- SeamlessChex Script -->
-    <script
-      src="https://developers.seamlesschex.com/docs/checkoutjs/sdk-min.js"
-      async
-    ></script>
+    <script src="https://developers.seamlesschex.com/docs/checkoutjs/sdk-min.js" async></script>
   </head>
   <body>
     <!-- inertia -->
     {% block inertia %}{% endblock %}
+    
     <!-- Google Tag Manager (noscript) -->
     <noscript>
       <iframe
