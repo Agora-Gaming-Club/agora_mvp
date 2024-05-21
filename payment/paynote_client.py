@@ -4,28 +4,23 @@ import logging
 logger = logging.getLogger('paynote_client')
 logger.info("Forced Logging Check")
 
-PAYNOTE_PUBLIC_KEY = "pk_01HW96B6NX3Q6TSXEJFX6JBAPR"
-PAYNOTE_SECRET_KEY = "sk_01HW96B6NX3Q6TSXEJFX6JBAPQ"
-
+PAYNOTE_PUBLIC_KEY = "pk_00LKO88"  # Ensure these keys are correct
+PAYNOTE_SECRET_KEY = "sk_01WDSDF"
 
 class PaynoteClient:
     def __init__(self):
         self.headers = {
-            "Authorization": f"Basic {PAYNOTE_SECRET_KEY}:{PAYNOTE_PUBLIC_KEY}"  # Note reversed order
+            "Authorization": f"Bearer {PAYNOTE_SECRET_KEY}"  # Typically Bearer token
         }
         self.base_url = "https://api-paynote.seamlesschex.com/v1"
-        # https://api.paynote.com/v1
-        # https://api-paynote.seamlesschex.com/v1
         print("PaynoteClient initialized with API keys.")
 
     def send_payment(self, data_value, amount, user_id):
         """
-        Sends a payment request to the Paynote API, similar to an authorization
-        transaction in Authorize.Net. Paynote doesn't support capturing funds
-        during authorization, so this initiates a payment request.
+        Sends a payment request to the Paynote API.
 
         Args:
-            data_value (str, optional): Opaque data for the payment (refer to Paynote API docs). Defaults to None.
+            data_value (str): Opaque data for the payment (refer to Paynote API docs).
             amount (float): The payment amount.
             user_id (int): The user ID to associate with the payment.
 
@@ -34,28 +29,27 @@ class PaynoteClient:
         """
         print(f"Sending payment: Amount={amount}, UserID={user_id}, Description='{data_value}'")
 
-        # Prepare Paynote API request data
         data = {
             "amount": str(amount),
-            "customer": user_id,
+            "customer": {
+                "id": user_id,
+                # Include other customer-related fields as required by the API
+            },
             "description": data_value if data_value else "",  # Include description if provided
             # Add other relevant data fields as needed by Paynote API (refer to docs)
         }
 
-        # Send POST request to Paynote API endpoint for payments
         url = f"{self.base_url}/payments"
         response = requests.post(url, headers=self.headers, json=data)
-        response_data = response.json()  # Ensure the API response is converted to JSON
-        print("Full API response: ", response_data)  # Log full response for debugging
+        response_data = response.json()
+        print("Full API response: ", response_data)
 
-        # Handle response
         return self._process_response(response)
 
     def _process_response(self, response):
         if response.status_code == 200:
             response_data = response.json()
             print(f"Payment successful: Transaction ID={response_data.get('id')}, Status={response_data.get('status')}")
-            # Assuming "id" and "status" are present in successful response
             return {
                 "transId": response_data.get("id"),
                 "responseCode": response_data.get("status"),
@@ -63,8 +57,7 @@ class PaynoteClient:
         else:
             error_text = response.text or "Unknown error"
             print(f"Payment failed: HTTP {response.status_code}, Error={error_text}")
-            # Check for specific Paynote error codes (refer to docs for error codes)
-            if response.status_code == 400:  # Example: Bad request
+            if response.status_code == 400:
                 error_data = response.json().get("errors")
                 if error_data:
                     error_text = ", ".join([error["message"] for error in error_data])
@@ -73,9 +66,8 @@ class PaynoteClient:
                 "errorText": error_text,
             }
 
-
 if __name__ == "__main__":
     client = PaynoteClient()
-    result = client.send_payment("Payment Description", 123.45, user_id=1)  # Assuming user_id is available
+    result = client.send_payment("Payment Description", 123.45, user_id=1)
     print(result)
     print("Final result:", result)

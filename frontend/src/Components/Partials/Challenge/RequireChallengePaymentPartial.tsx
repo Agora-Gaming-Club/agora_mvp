@@ -25,7 +25,7 @@ declare global {
         };
         onSuccess?: (data: any) => void;
         onError?: (error: any) => void;
-      }) => any; // You might want to replace 'any' with a more specific type if possible
+      }) => any;
     };
   }
 }
@@ -67,15 +67,19 @@ const RequireChallengePaymentPartial: React.FC<Props> = ({
         },
       };
 
-      if (window.SeamlessChex && window.SeamlessChex.Paynote) {
-        try {
-          new window.SeamlessChex.Paynote(objRequestIframe).render();
-        } catch (error) {
-          console.error('Error initializing SeamlessChex:', error);
+      const initializePaynote = () => {
+        if (window.SeamlessChex && window.SeamlessChex.Paynote) {
+          try {
+            new window.SeamlessChex.Paynote(objRequestIframe).render();
+          } catch (error) {
+            console.error('Error initializing SeamlessChex:', error);
+          }
+        } else {
+          console.error('SeamlessChex or SeamlessChex.Paynote is not available');
         }
-      } else {
-        console.error('SeamlessChex or SeamlessChex.Paynote is not available');
-      }
+      };
+
+      initializePaynote();
     }
   }, [openModal, challenge.amount, user.email, user.first_name, user.last_name]);
 
