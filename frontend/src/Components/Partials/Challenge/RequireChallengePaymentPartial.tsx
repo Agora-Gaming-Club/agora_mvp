@@ -68,9 +68,12 @@ const RequireChallengePaymentPartial: React.FC<Props> = ({
       };
 
       const initializePaynote = () => {
-        
-        window.SeamlessChex.Paynote = new PAYNOTE(objRequestIframe);
-        window.SeamlessChex.Paynote.render();
+        try {
+          window.SeamlessChex.Paynote = new PAYNOTE(objRequestIframe);
+          window.SeamlessChex.Paynote.render();
+        } catch (error) {
+          console.error('Error initializing SeamlessChex:', error);
+        }
         
 //         if (window.SeamlessChex && window.SeamlessChex.Paynote) {
 //           try {
