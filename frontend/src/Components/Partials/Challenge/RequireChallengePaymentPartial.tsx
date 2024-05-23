@@ -81,7 +81,7 @@ const RequireChallengePaymentPartial: React.FC<Props> = ({
 
       initializePaynote();
     }
-  }, []);
+  }, [openModal]);
 
   const handlePayNow = () => {
     setOpenModal(true);
