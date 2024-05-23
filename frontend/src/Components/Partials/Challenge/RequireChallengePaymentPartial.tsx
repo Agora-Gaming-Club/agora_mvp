@@ -44,7 +44,7 @@ const RequireChallengePaymentPartial: React.FC<Props> = ({
   useEffect(() => {
     if (openModal) {
       const objRequestIframe = {
-        publicKey: 'pk_test_01HRX9QGX6Q2N8E5Z12D07X87', // Replace with your actual public key
+        publicKey: 'pk_test_01HRX9QGX6Q2N8E5Z12D07X87', // Replace with actual public key
         sandbox: true,
         displayMethod: 'iframe',
         paymentToken: `pay_tok_SPECIMEN-${Math.random()}`,
@@ -68,20 +68,24 @@ const RequireChallengePaymentPartial: React.FC<Props> = ({
       };
 
       const initializePaynote = () => {
-        if (window.SeamlessChex && window.SeamlessChex.Paynote) {
-          try {
-            new window.SeamlessChex.Paynote(objRequestIframe).render();
-          } catch (error) {
-            console.error('Error initializing SeamlessChex:', error);
-          }
-        } else {
-          console.error('SeamlessChex or SeamlessChex.Paynote is not available');
-        }
+        
+        window.SeamlessChex.Paynote = new PAYNOTE(objRequestIframe);
+        window.SeamlessChex.Paynote.render();
+        
+//         if (window.SeamlessChex && window.SeamlessChex.Paynote) {
+//           try {
+//             new window.SeamlessChex.Paynote(objRequestIframe).render();
+//           } catch (error) {
+//             console.error('Error initializing SeamlessChex:', error);
+//           }
+//         } else {
+//           console.error('SeamlessChex or SeamlessChex.Paynote is not available');
+//         }
       };
 
       initializePaynote();
     }
-  }, [openModal, challenge.amount, user.email, user.first_name, user.last_name]);
+  }, []);
 
   const handlePayNow = () => {
     setOpenModal(true);

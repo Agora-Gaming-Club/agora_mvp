@@ -1,8 +1,4 @@
 import requests
-import logging
-
-logger = logging.getLogger('paynote_client')
-logger.info("Forced Logging Check")
 
 PAYNOTE_PUBLIC_KEY = "pk_00LKO88"  # Ensure these keys are correct
 PAYNOTE_SECRET_KEY = "sk_01WDSDF"
