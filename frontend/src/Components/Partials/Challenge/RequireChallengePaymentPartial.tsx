@@ -40,9 +40,11 @@ const RequireChallengePaymentPartial: React.FC<Props> = ({
   user,
 }) => {
   const [openModal, setOpenModal] = useState(false);
+  console.log('Open Modal 1', openModal);
 
   useEffect(() => {
     if (openModal) {
+      console.log('Open Modal 2', openModal);
       const objRequestIframe = {
         publicKey: 'pk_test_01HRX9QGX6Q2N8E5Z12D07X87', // Replace with actual public key
         sandbox: true,
