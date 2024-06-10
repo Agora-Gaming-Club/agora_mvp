@@ -52,7 +52,7 @@ export const PaynoteButton = ({
   const renderRef = useRef<HTMLDivElement>(null);
 
   const objRequestIframe = {
-    publicKey: 'pk_test_01HRX9QGX6Q2N8E5Z12D07X87', // Replace with actual public key
+    publicKey: 'pk_01HW96B6NX3Q6TSXEJFX6JBAPR', // Replace with actual public key
     sandbox: true,
     displayMethod: 'iframe',
     paymentToken: `pay_tok_SPECIMEN-${Math.random()}`,
