@@ -1,7 +1,7 @@
 import requests
 
-PAYNOTE_PUBLIC_KEY = "pk_test_01HW96B6NX3Q6TSXEJFX6JBAPR"  # Ensure these keys are correct
-PAYNOTE_SECRET_KEY = "sk_01WDSDF"
+PAYNOTE_PUBLIC_KEY = "pk_01HW96B6NX3Q6TSXEJFX6JBAPR"  # Ensure these keys are correct
+PAYNOTE_SECRET_KEY = "sk_01HW96B6NX3Q6TSXEJFX6JBAPQ"
 
 class PaynoteClient:
     def __init__(self):
