@@ -72,10 +72,10 @@ export const PaynoteButton = ({
 
       try {
         // Call the challenge_ante endpoint
-        await axios.post(`/api/challenge/ante/${challengeId}`, { data_value: data });
+        await axios.post(`/challenge/ante/${challengeId}`, { data_value: data });
 
         // Call the challenge_winner endpoint
-        await axios.post(`/api/challenge/winner/${challengeId}`);
+        await axios.post(`/challenge/winner/${challengeId}`);
 
         onSuccess && onSuccess();
       } catch (error) {
