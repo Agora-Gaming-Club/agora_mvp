@@ -188,20 +188,20 @@ def challenge_ante(request, challenge_id):
                 phone_numbers = [challenge.get_challenger().phone_number, challenge.get_respondent().phone_number]
                 for number in phone_numbers:
                     BeginSMS(context={"challenge": challenge}, target=number).send()
+                
+                # Automatically trigger challenge_winner function
+                challenge.determine_winner()
+                
                 return {"status": payment.authorize_net_payment_status, "challenge": challenge}
             return {"status": "payment processed", "challenge": challenge}
         else:
-            # Collect all available error details from the payment_status
             error_details = payment_status.get("errorText", payment_status.get("errorDetails", "No detailed error information available."))
             return {
                 "errors": "Bad Payment",
-                "details": error_details,  # Ensure this key contains the actual error message
-                "full_response": payment_status  # Optionally include the full response for debugging
+                "details": error_details,
+                "full_response": payment_status
             }
     return {"errors": "Form validation failed or other errors"}
-
-
-
 
 def challenge_winner(request, challenge_id):
     """

@@ -9,6 +9,7 @@ type Props = {
   challenge: Wager;
   user: UserProfile;
 };
+
 const RequireChallengePaymentPartial: React.FC<Props> = ({
   challenge,
   user,
@@ -58,6 +59,7 @@ const RequireChallengePaymentPartial: React.FC<Props> = ({
 
       <PaynoteButton
         payload={payload}
+        challengeId={challenge.unique_code} // Added challengeId prop
         onSuccess={() => {
           console.log('onSuccessCallback');
         }}
