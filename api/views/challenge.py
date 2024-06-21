@@ -183,6 +183,14 @@ def challenge_ante(request, challenge_id):
                 authorize_net_payment_status=status,
                 description=payment_status.get("description"),
             )
+            
+            # Update challenge status to reflect payment
+            if request.user.id == challenge.challenger_id:
+                challenge.challenger_paid = True
+            elif request.user.id == challenge.respondent_id:
+                challenge.respondent_paid = True
+            challenge.save()
+            
             both_paid = challenge.all_payments_received()
             if both_paid:
                 phone_numbers = [challenge.get_challenger().phone_number, challenge.get_respondent().phone_number]
@@ -202,6 +210,7 @@ def challenge_ante(request, challenge_id):
                 "full_response": payment_status
             }
     return {"errors": "Form validation failed or other errors"}
+
 
 def challenge_winner(request, challenge_id):
     """
