@@ -70,18 +70,18 @@ export const PaynoteButton = ({
     onSuccess: async (data: any) => {
       console.log('Payment Successful:', data);
 
-      try {
-        // Call the challenge_ante endpoint
-        await axios.post(`/challenge/ante/${challengeId}`, { data_value: data });
+      // try {
+      //   // Call the challenge_ante endpoint
+      //   await axios.post(`/challenge/ante/${challengeId}`, { data_value: data });
 
-        // Call the challenge_winner endpoint
-        await axios.post(`/challenge/winner/${challengeId}`);
+      //   // Call the challenge_winner endpoint
+      //   await axios.post(`/challenge/winner/${challengeId}`);
 
-        onSuccess && onSuccess();
-      } catch (error) {
-        console.error('Error in payment process:', error);
-        onError && onError();
-      }
+      //   onSuccess && onSuccess();
+      // } catch (error) {
+      //   console.error('Error in payment process:', error);
+      //   onError && onError();
+      // }
     },
     onError: (error: any) => {
       console.error('Payment Error:', error);
