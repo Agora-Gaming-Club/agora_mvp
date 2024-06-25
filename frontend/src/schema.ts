@@ -46,6 +46,7 @@ export type UserProfile = {
   updated_at: Date;
   verification_id: string;
   acct_verified: boolean;
+  paynote_id: string;
   winnings: number; // Assuming this represents a decimal
 };
 

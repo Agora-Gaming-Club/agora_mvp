@@ -203,7 +203,7 @@ class AnteForm(forms.Form):
     unsure atm.
     """
 
-    data_value = forms.CharField(max_length=400)
+    data_value = forms.CharField(max_length=1000)
 
 
 class PayPalForm(forms.Form):

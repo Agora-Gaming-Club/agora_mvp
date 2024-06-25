@@ -18,9 +18,13 @@ declare global {
         description?: string;
         items?: { title: string; price: number }[];
         customerEmail?: string;
+        customerPhone?: string;
         customerFirstName?: string;
         customerLastName?: string;
+        customerAgoraID?: string;
+        customerUsername?: string;
       };
+      authorizationOnly?: boolean;
       onSuccess?: (data: any) => void;
       onError?: (error: any) => void;
     });
@@ -38,8 +42,11 @@ export type PaynoteButtonType = {
       description?: string;
       items?: { title: string; price: number }[];
       customerEmail?: string;
+      customerPhone?: string;
       customerFirstName?: string;
       customerLastName?: string;
+      customerAgoraID?: string;
+      customerUsername?: string;
     };
   };
   challengeId: string;
@@ -57,6 +64,7 @@ export const PaynoteButton = ({
   const objRequestIframe = {
     publicKey: 'pk_test_01J0TXFJPMGF0WFHHSD2GVBB29', // Replace with actual public key
     sandbox: true,
+    authorizationOnly: true, // Save bank details for future use
     displayMethod: 'iframe',
     paymentToken: `pay_tok_SPECIMEN-${Math.random()}`,
     widgetContainerSelector: 'paynote-widget-container',
@@ -68,20 +76,46 @@ export const PaynoteButton = ({
     },
     ...payload,
     onSuccess: async (data: any) => {
-      console.log('Payment Successful:', data);
+      console.log('Bank Details Saved:', data);
+      console.log('Payload:', payload);
 
-      // try {
-      //   // Call the challenge_ante endpoint
-      //   await axios.post(`/challenge/ante/${challengeId}`, { data_value: data });
+      try {
+        // Call the create_customer endpoint
+        const customerResponse = await axios.post(`/user`, {
+          firstName: payload.checkout.customerFirstName,
+          lastName: payload.checkout.customerLastName,
+          email: payload.checkout.customerEmail,
+          businessName: payload.checkout.customerUsername, // Add business name if available
+          phone: payload.checkout.customerPhone, // Add phone number if available
+        });
+        const userId = customerResponse.data.user.user_id;
+        console.log('Customer Created:', customerResponse.data);
 
-      //   // Call the challenge_winner endpoint
-      //   await axios.post(`/challenge/winner/${challengeId}`);
+        // Save the userId to your UserProfile
+        await axios.post('/accounts/update_profile/', {
+          agoraUserId: payload.checkout.customerAgoraID,
+          paynoteUserId: userId,
+        });
+        console.log('User Profile Updated with Paynote User ID:', userId);
 
-      //   onSuccess && onSuccess();
-      // } catch (error) {
-      //   console.error('Error in payment process:', error);
-      //   onError && onError();
-      // }
+        // Call the create_funding_source endpoint
+        const fundingResponse = await axios.post(`/on-demand/create_funding_source/`, {
+          user_id: userId,
+          routing: data.routing, // Replace with actual routing
+          number: data.number, // Replace with actual account number
+          type: data.type, // Replace with actual account type
+          bank: data.rec_bname, // Replace with actual bank name
+        });
+        console.log('Funding Source Created:', fundingResponse.data);
+
+        // Call the challenge_ante endpoint
+        await axios.post(`/challenge/ante/${challengeId}`, { data_value: data });
+
+        onSuccess && onSuccess();
+      } catch (error) {
+        console.error('Error in payment process:', error);
+        onError && onError();
+      }
     },
     onError: (error: any) => {
       console.error('Payment Error:', error);

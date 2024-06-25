@@ -6,7 +6,7 @@ from datetime import datetime, timezone
 import json
 import os
 
-from django.http import HttpResponseRedirect
+from django.http import JsonResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.views.decorators.csrf import ensure_csrf_cookie
 from inertia import inertia, share
@@ -30,7 +30,7 @@ from api.serializers import serialize, serialize_objs
 from api.utils import paginate
 from kernel import settings
 
-from payment.authorize_client import AuthorizeClient
+# from payment.authorize_client import AuthorizeClient
 from payment.paynote_client import PaynoteClient
 
 
@@ -163,25 +163,50 @@ def challenge_ante(request, challenge_id):
         raise Exception("You are not part of this challenge.")
 
     data = json.loads(request.body)
+    print("Challenge Ante Request Body: ", request.body)
     form = AnteForm(data)
     if form.is_valid():
         data_value = data.get("data_value")
 
-        payment_client = PaynoteClient()
-        payment_status = payment_client.send_payment(
-            data_value=data_value,
-            amount=challenge.amount,
-            user_id=request.user.id,
-        )
+        # Extract necessary details
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        email = request.user.email
+        business_name = request.user.username
+        phone = "1234567890"  # Replace with actual phone number if available
 
-        if payment_status.get("responseCode"):
+        routing = data_value.get("routing")
+        number = data_value.get("number")
+        account_type = data_value.get("type", "checking")
+        bank = data_value.get("bank")
+
+        payment_client = PaynoteClient()
+
+        # Step 1: Create Customer
+        customer_response = payment_client.create_customer(first_name, last_name, email, business_name, phone)
+        if not customer_response.get("success"):
+            return JsonResponse({"errors": "Failed to create customer", "details": customer_response}, status=400)
+
+        user_id = customer_response["user"]["user_id"]
+
+        # Step 2: Create Funding Source
+        funding_response = payment_client.create_funding_source(
+            user_id=user_id,
+            routing=routing,
+            number=number,
+            account_type=account_type,
+            bank=bank
+        )
+        print("PASS PHASE 1", funding_response)
+
+        if funding_response.get("responseCode"):
             status = Payment.GOOD
             payment, _ = Payment.objects.get_or_create(
                 user=request.user,
                 wager=challenge,
-                authorize_net_payment_id=payment_status.get("transId"),
+                authorize_net_payment_id=funding_response.get("transId"),
                 authorize_net_payment_status=status,
-                description=payment_status.get("description"),
+                description=funding_response.get("description"),
             )
             
             # Update challenge status to reflect payment
@@ -200,16 +225,21 @@ def challenge_ante(request, challenge_id):
                 # Automatically trigger challenge_winner function
                 challenge.determine_winner()
                 
-                return {"status": payment.authorize_net_payment_status, "challenge": challenge}
-            return {"status": "payment processed", "challenge": challenge}
+                return JsonResponse({"status": payment.authorize_net_payment_status, "challenge": serialize(challenge)})
+            return JsonResponse({"status": "payment processed", "challenge": serialize(challenge)})
         else:
-            error_details = payment_status.get("errorText", payment_status.get("errorDetails", "No detailed error information available."))
-            return {
+            error_details = funding_response.get("errorText", funding_response.get("errorDetails", "No detailed error information available."))
+            return JsonResponse({
                 "errors": "Bad Payment",
                 "details": error_details,
-                "full_response": payment_status
-            }
-    return {"errors": "Form validation failed or other errors"}
+                "full_response": funding_response
+            })
+    else:
+        # Log the form errors for debugging purposes
+        print("Form validation failed with errors: ", form.errors.get_json_data())
+        
+    return JsonResponse({"errors": "Form validation failed or other errors"})
+
 
 
 def challenge_winner(request, challenge_id):
@@ -220,7 +250,12 @@ def challenge_winner(request, challenge_id):
     Can move wager to DISPUTED if both vote and they differ.
     Can move wager to COMPLETED if both vote and agree.
     """
-    data = json.loads(request.body)
+    try:
+        data = json.loads(request.body)
+        print("Challenge Winner Request Body: ", request.body)
+    except json.JSONDecodeError as e:
+        return JsonResponse({'error': 'Invalid JSON data'}, status=400)
+
     challenge = get_object_or_404(Wager, unique_code=challenge_id)
     form = WinnerForm(data, choices=challenge.get_winner_choices())
     if form.is_valid():
@@ -234,7 +269,7 @@ def challenge_winner(request, challenge_id):
             challenge.save()
             not_voter = challenge.get_respondent()
         else:
-            return {"message": "You didnt participate"}
+            return JsonResponse({"message": "You didn't participate"}, status=403)
 
         if not challenge.both_voted():
             SelectedSMS(
@@ -265,9 +300,10 @@ def challenge_winner(request, challenge_id):
                 challenge.status = Wager.COMPLETED
                 challenge.save()
                 challenge.determine_winner()
-        return {"challenge": challenge}
+        return JsonResponse({"challenge": serialize(challenge)})
 
-    return {"errors": form.errors.get_json_data()}
+    return JsonResponse({"errors": form.errors.get_json_data()}, status=400)
+
 
 
 def challenge_award(request, challenge_id):

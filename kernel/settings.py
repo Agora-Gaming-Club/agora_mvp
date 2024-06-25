@@ -154,6 +154,8 @@ DJANGO_VITE_ASSETS_PATH = BASE_DIR / "static" / "js"
 TAILWIND_CSS_ASSETS_PATH = BASE_DIR / "static" / "dist"
 IMAGE_ASSETS = BASE_DIR / "static" / "assets"
 
+VITE_MANIFEST_PATH = os.path.join(BASE_DIR, 'static', 'dist', 'manifest.json')
+
 # If we should use HMR or not.
 DJANGO_VITE_DEV_MODE = False
 

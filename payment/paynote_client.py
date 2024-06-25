@@ -6,51 +6,53 @@ logger.info("Forced Logging Check")
 
 PAYNOTE_PUBLIC_KEY = "pk_test_01J0TXFJPMGF0WFHHSD2GVBB29"
 PAYNOTE_SECRET_KEY = "sk_test_01J0TXFJPMGF0WFHHSD2GVBB28"
+PAYNOTE_LIVE_ENDPOINT = "https://api-paynote.seamlesschex.com/"
+PAYNOTE_SANDBOX_ENDPOINT = "https://sandbox-paynote.seamlesschex.com/"
 
 class PaynoteClient:
     def __init__(self):
+        self.api_url = 'https://sandbox-paynote.seamlesschex.com/v1/'  # Ensure this is the correct base URL
+        self.api_key = 'sk_test_01J0TXFJPMGF0WFHHSD2GVBB28'  # Replace with your actual API key
         self.headers = {
-            "Authorization": f"Bearer {PAYNOTE_SECRET_KEY}"  # Typically Bearer token
+            'Authorization': f'Bearer {self.api_key}',
+            'Content-Type': 'application/json'
         }
-        self.base_url = "https://api-paynote.seamlesschex.com/v1"
-        logger.info("PaynoteClient initialized with API keys.")
+        print("PaynoteClient initialized with API keys.")
 
-    def send_payment(self, data_value, amount, user_id):
-        """Sends a payment request to the Paynote API."""
-        logger.info(f"Sending payment: Amount={amount}, UserID={user_id}, Description='{data_value}'")
-
-        data = {
-            "amount": str(amount),
-            "customer": {
-                "id": user_id,
-            },
-            "description": data_value if data_value else "",
+    def create_customer(self, first_name, last_name, email, business_name, phone):
+        url = f"{self.api_url}user"
+        payload = {
+            "firstName": first_name,
+            "lastName": last_name,
+            "email": email,
+            "businessName": business_name,
+            "phone": phone
         }
+        response = requests.post(url, json=payload, headers=self.headers)
+        return self._process_response(response)
 
-        url = f"{self.base_url}/payments"
-        response = requests.post(url, headers=self.headers, json=data)
-        logger.info(f"API response status: {response.status_code}")
-        response_data = response.json()
-        logger.info(f"Full API response: {response_data}")
-
+    def create_funding_source(self, user_id, routing, number, account_type, bank):
+        url = f"{self.api_url}on-demand/funding-source"
+        payload = {
+            "user_id": user_id,
+            "routing": routing,
+            "number": number,
+            "type": account_type,
+            "bank": bank
+        }
+        response = requests.post(url, json=payload, headers=self.headers)
         return self._process_response(response)
 
     def _process_response(self, response):
-        if response.status_code == 200:
-            response_data = response.json()
-            logger.info(f"Payment successful: Transaction ID={response_data.get('id')}, Status={response_data.get('status')}")
-            return {
-                "transId": response_data.get("id"),
-                "responseCode": response_data.get("status"),
+        try:
+            response_json = response.json()
+        except requests.exceptions.JSONDecodeError:
+            response_json = {
+                'responseCode': None,
+                'errorText': response.text
             }
-        else:
-            error_text = response.text or "Unknown error"
-            logger.error(f"Payment failed: HTTP {response.status_code}, Error={error_text}")
-            if response.status_code == 400:
-                error_data = response.json().get("errors")
-                if error_data:
-                    error_text = ", ".join([error["message"] for error in error_data])
-            return {
-                "errorCode": response.status_code,
-                "errorText": error_text,
-            }
+
+        if response.status_code not in [200, 201]:
+            print(f"Payment failed: HTTP {response.status_code}, Error={response.text}")
+            return response_json
+        return response_json

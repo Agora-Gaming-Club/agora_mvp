@@ -37,4 +37,7 @@ urlpatterns = [
         views.password_reset,
         name="password_reset",
     ),
+    path("on-demand/create_funding_source/", views.create_funding_source, name="create_funding_source"),
+    path("user", views.create_customer, name="create_customer"),
+    path("accounts/update_profile/", views.update_user_profile, name="update_user_profile"),
 ]

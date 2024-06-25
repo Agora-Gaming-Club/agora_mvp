@@ -5,7 +5,7 @@ module.exports = {
   // this was changed
   plugins: [
     react({
-      include: '**/*.disabled',
+      include: ['**/*.disabled', '**/*.tsx'],
     }),
   ],
   root: resolve('./frontend'),

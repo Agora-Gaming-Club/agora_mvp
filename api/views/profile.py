@@ -2,7 +2,7 @@
 import json
 
 from django.core import serializers
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, render
 from django.views.decorators.csrf import ensure_csrf_cookie
 from inertia import inertia
@@ -41,3 +41,12 @@ def profile_edit(request):
         form = ProfileForm(initial=serialized_dict["fields"])
         context = {"form": form}
         return {"user": profile}
+
+
+def update_user_profile(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        user_profile = UserProfile.objects.get(user=request.user)
+        user_profile.paynote_id = data.get("paynoteUserId")
+        user_profile.save()
+        return JsonResponse({"message": "UserProfile updated successfully"})
