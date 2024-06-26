@@ -9,7 +9,7 @@ import os
 from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.views.decorators.csrf import ensure_csrf_cookie
-from inertia import inertia, share
+from inertia import inertia, share, render
 
 from api.emails import Email
 from api.sms import (
@@ -206,7 +206,7 @@ def challenge_winner(request, challenge_id):
         data = json.loads(request.body)
         print("Challenge Winner Request Body: ", request.body)
     except json.JSONDecodeError as e:
-        return inertia.render(request, 'ErrorPage', {'error': 'Invalid JSON data'}, status=400)
+        return render(request, 'ErrorPage', {'error': 'Invalid JSON data'}, status=400)
 
     challenge = get_object_or_404(Wager, unique_code=challenge_id)
     form = WinnerForm(data, choices=challenge.get_winner_choices())
@@ -221,7 +221,7 @@ def challenge_winner(request, challenge_id):
             challenge.save()
             not_voter = challenge.get_challenger()
         else:
-            return inertia.render(request, 'ErrorPage', {'message': "You didn't participate"}, status=403)
+            return render(request, 'ErrorPage', {'message': "You didn't participate"}, status=403)
 
         if not challenge.both_voted():
             SelectedSMS(
@@ -253,9 +253,9 @@ def challenge_winner(request, challenge_id):
                 challenge.save()
                 challenge.determine_winner()
 
-        return inertia.render(request, "ChallengeDetail", {"challenge": serialize(challenge)})
+        return render(request, "ChallengeDetail", {"challenge": serialize(challenge)})
     
-    return inertia.render(request, "ErrorPage", {"errors": form.errors.get_json_data()}, status=400)
+    return render(request, "ErrorPage", {"errors": form.errors.get_json_data()}, status=400)
 
 
 
