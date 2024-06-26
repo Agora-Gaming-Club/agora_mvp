@@ -206,7 +206,7 @@ def challenge_winner(request, challenge_id):
         data = json.loads(request.body)
         print("Challenge Winner Request Body: ", request.body)
     except json.JSONDecodeError as e:
-        return JsonResponse({'error': 'Invalid JSON data'}, status=400)
+        return inertia.render(request, 'ErrorPage', {'error': 'Invalid JSON data'}, status=400)
 
     challenge = get_object_or_404(Wager, unique_code=challenge_id)
     form = WinnerForm(data, choices=challenge.get_winner_choices())
@@ -221,7 +221,7 @@ def challenge_winner(request, challenge_id):
             challenge.save()
             not_voter = challenge.get_respondent()
         else:
-            return JsonResponse({"message": "You didn't participate"}, status=403)
+            return inertia.render(request, 'ErrorPage', {'message': "You didn't participate"}, status=403)
 
         if not challenge.both_voted():
             SelectedSMS(
@@ -252,9 +252,10 @@ def challenge_winner(request, challenge_id):
                 challenge.status = Wager.COMPLETED
                 challenge.save()
                 challenge.determine_winner()
-        return JsonResponse({"challenge": serialize(challenge)})
-
-    return JsonResponse({"errors": form.errors.get_json_data()}, status=400)
+        
+        return inertia.render(request, "ChallengeDetail", {"challenge": serialize(challenge)})
+    
+    return inertia.render(request, "ErrorPage", {"errors": form.errors.get_json_data()}, status=400)
 
 
 
