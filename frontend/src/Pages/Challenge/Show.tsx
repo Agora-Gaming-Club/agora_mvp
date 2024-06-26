@@ -64,27 +64,36 @@ const Show: FunctionComponent<Props> = ({ challenge, user }) => {
     if (challenge.status === WagerStatus.IN_PROGRESS) {
       if (
         challenge.respondent_id == user.user &&
-        challenge.challenger_vote &&
-        !challenge.respondent_vote
+        !challenge.respondent_vote &&
+        challenge.challenger_vote
       ) {
-        description = 'We are now waiting for the other players vote.';
+        description = 'We received the other player\'s vote and are now waiting for your vote.';
         return [description];
       }
-
+    
       if (
-        challenge.respondent_id == user.user &&
+        challenge.challenger_id == user.user &&
         !challenge.challenger_vote &&
         challenge.respondent_vote
       ) {
-        description = 'We are now waiting for the other players vote.';
+        description = 'We received the other player\'s vote and are now waiting for your vote.';
         return [description];
       }
+    
+      if (
+        (challenge.challenger_id == user.user && challenge.challenger_vote) ||
+        (challenge.respondent_id == user.user && challenge.respondent_vote)
+      ) {
+        description = 'We received your vote and are now waiting for the other player\'s vote.';
+        return [description];
+      }
+    
       description =
         'Your payment has been received, and your challenge is now active! You and your opponent have 24 hours to play the game on your designated platform, using the gamertag provided below. <br/>' +
         '<br/>' +
         'Once you have completed the game, come back here to select the outcome and collect your prize!';
       return [description];
-    }
+    }    
 
     if (challenge.status === WagerStatus.DISPUTED) {
       description = 'This challenge has been disputed.';
@@ -281,7 +290,7 @@ const ChallengeDetail: FunctionComponent<{
       return (
         <Card className="max-w-xl text-center mx-auto">
           <Alert color="failure" className="text-lg font-semibold text-center">
-            Oops! Looks no one accepted your challenge.
+            Oops! Looks like no one accepted your challenge.
           </Alert>
 
           <p className="text-gray-400 text-center text-sm tracking-tight">
