@@ -30,6 +30,16 @@ class PaynoteClient:
         }
         response = requests.post(url, json=payload, headers=self.headers)
         return self._process_response(response)
+    
+    def get_funding_sources(self, user_id):
+        url = f"{self.api_url}funding-source/user/:{user_id}"
+        response = requests.get(url, headers=self.headers)
+        return self._process_response(response)
+    
+    def get_funding_details(self, source_id):
+        url = f"{self.api_url}funding-source/:{source_id}"
+        response = requests.get(url, headers=self.headers)
+        return self._process_response(response)
 
     def create_funding_source(self, user_id, routing, number, account_type, bank):
         url = f"{self.api_url}on-demand/funding-source"
@@ -39,6 +49,19 @@ class PaynoteClient:
             "number": number,
             "type": account_type,
             "bank": bank
+        }
+        response = requests.post(url, json=payload, headers=self.headers)
+        return self._process_response(response)
+    
+    def create_ach_debit(self, sender, name, amount, description, number="", recurring=None):
+        url = f"{self.api_url}ach-debit"
+        payload = {
+            "sender": sender,
+            "name": name,
+            "amount": amount,
+            "description": description,
+            "number": number,
+            "recurring": recurring
         }
         response = requests.post(url, json=payload, headers=self.headers)
         return self._process_response(response)

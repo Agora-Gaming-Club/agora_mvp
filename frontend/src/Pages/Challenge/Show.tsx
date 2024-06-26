@@ -50,7 +50,14 @@ const Show: FunctionComponent<Props> = ({ challenge, user }) => {
     }
 
     if (challenge.status === WagerStatus.ACCEPTED) {
-      description = 'Click the pay now button to proceed with this challenge.';
+      if (
+        (challenge.challenger_id === user.user && challenge.challenger_paid) ||
+        (challenge.respondent_id === user.user && challenge.respondent_paid)
+      ) {
+        description = 'Your payment has been received.';
+      } else {
+        description = 'Click the pay now button to proceed with this challenge.';
+      }
       return [description];
     }
 

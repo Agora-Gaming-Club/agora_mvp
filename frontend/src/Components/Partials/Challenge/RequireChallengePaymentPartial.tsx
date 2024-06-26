@@ -18,7 +18,7 @@ const RequireChallengePaymentPartial: React.FC<Props> = ({
     checkout: {
       totalValue: challenge.amount,
       currency: 'USD',
-      description: `Challenge ${challenge.id} Payment`,
+      description: `Challenge ${challenge.unique_code} Payment`,
       items: [{ title: 'Wager', price: challenge.amount }],
       customerEmail: user.email,
       customerPhone: user.phone_number,
@@ -26,6 +26,7 @@ const RequireChallengePaymentPartial: React.FC<Props> = ({
       customerLastName: user.last_name,
       customerAgoraID: user.verification_id,
       customerUsername: user.username,
+      customerPaynoteID: user.paynote_id,
     },
   };
 

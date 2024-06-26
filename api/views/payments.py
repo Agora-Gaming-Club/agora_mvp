@@ -1,6 +1,7 @@
 import json
 from django.http import JsonResponse
 from payment.paynote_client import PaynoteClient
+from api.models import Wager
 
 def create_customer(request):
     data = json.loads(request.body)
@@ -14,6 +15,16 @@ def create_customer(request):
     )
     return JsonResponse(response)
 
+def get_funding_sources(request, user_id):
+    paynote_client = PaynoteClient()
+    response = paynote_client.get_funding_sources(user_id)
+    return JsonResponse(response)
+
+def get_funding_details(request, source_id):
+    paynote_client = PaynoteClient()
+    response = paynote_client.get_funding_details(source_id)
+    return JsonResponse(response)
+
 def create_funding_source(request):
     data = json.loads(request.body)
     paynote_client = PaynoteClient()
@@ -25,3 +36,35 @@ def create_funding_source(request):
         bank=data["bank"]
     )
     return JsonResponse(response)
+
+def update_payment_status(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        challenge_id = data.get("challengeId")
+        customer_username = data.get("customerUsername")
+
+        try:
+            wager = Wager.objects.get(unique_code=challenge_id)
+            if wager.challenger_gamer_tag == customer_username:
+                wager.challenger_paid = True
+            elif wager.respondent_gamer_tag == customer_username:
+                wager.respondent_paid = True
+            wager.save()
+            return JsonResponse({"message": "Wager updated successfully"})
+        except Wager.DoesNotExist:
+            return JsonResponse({"error": "Wager not found"}, status=404)
+        
+
+def create_ach_debit(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        sender = data.get("sender")
+        name = data.get("name")
+        amount = data.get("amount")
+        description = data.get("description")
+        number = data.get("number", "")
+        recurring = data.get("recurring", None)
+
+        paynote_client = PaynoteClient()
+        response = paynote_client.create_ach_debit(sender, name, amount, description, number, recurring)
+        return JsonResponse(response)

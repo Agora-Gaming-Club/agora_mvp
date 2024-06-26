@@ -23,6 +23,7 @@ declare global {
         customerLastName?: string;
         customerAgoraID?: string;
         customerUsername?: string;
+        customerPaynoteID?: string;
       };
       authorizationOnly?: boolean;
       onSuccess?: (data: any) => void;
@@ -47,6 +48,7 @@ export type PaynoteButtonType = {
       customerLastName?: string;
       customerAgoraID?: string;
       customerUsername?: string;
+      customerPaynoteID?: string;
     };
   };
   challengeId: string;
@@ -76,40 +78,93 @@ export const PaynoteButton = ({
     },
     ...payload,
     onSuccess: async (data: any) => {
-      console.log('Bank Details Saved:', data);
-      console.log('Payload:', payload);
+      // console.log('Bank Details Saved:', data);
+      // console.log('Payload:', payload);
 
       try {
-        // Call the create_customer endpoint
-        const customerResponse = await axios.post(`/user`, {
-          firstName: payload.checkout.customerFirstName,
-          lastName: payload.checkout.customerLastName,
-          email: payload.checkout.customerEmail,
-          businessName: payload.checkout.customerUsername, // Add business name if available
-          phone: payload.checkout.customerPhone, // Add phone number if available
+        // Update the Wager in your system
+        const x = await axios.post(`/wager/update_payment_status/`, {
+          challengeId,
+          customerUsername: payload.checkout.customerUsername,
         });
-        const userId = customerResponse.data.user.user_id;
-        console.log('Customer Created:', customerResponse.data);
+        console.log('x:', x);
+      } catch (error) {
+        console.error('Error in payment process:', error);
+        onError && onError();
+      }
 
-        // Save the userId to your UserProfile
-        await axios.post('/accounts/update_profile/', {
-          agoraUserId: payload.checkout.customerAgoraID,
-          paynoteUserId: userId,
-        });
-        console.log('User Profile Updated with Paynote User ID:', userId);
+      try {
+        let userId = payload.checkout.customerPaynoteID;
 
-        // Call the create_funding_source endpoint
-        const fundingResponse = await axios.post(`/on-demand/create_funding_source/`, {
-          user_id: userId,
-          routing: data.routing, // Replace with actual routing
-          number: data.number, // Replace with actual account number
-          type: data.type, // Replace with actual account type
-          bank: data.rec_bname, // Replace with actual bank name
-        });
-        console.log('Funding Source Created:', fundingResponse.data);
+        if (!userId) {
+          // Call the create_customer endpoint
+          const customerResponse = await axios.post(`/user`, {
+            firstName: payload.checkout.customerFirstName,
+            lastName: payload.checkout.customerLastName,
+            email: payload.checkout.customerEmail,
+            businessName: payload.checkout.customerUsername, // Add business name if available
+            phone: payload.checkout.customerPhone, // Add phone number if available
+          });
+          userId = customerResponse.data.user.user_id;
+          console.log('Customer Created:', customerResponse.data);
+
+          // Save the userId to your UserProfile
+          await axios.post('/accounts/update_profile/', {
+            agoraUserId: payload.checkout.customerAgoraID,
+            paynoteUserId: userId,
+          });
+          console.log('User Profile Updated with Paynote User ID:', userId);
+        }
+
+        // Refresh the page
+        window.location.reload();
 
         // Call the challenge_ante endpoint
-        await axios.post(`/challenge/ante/${challengeId}`, { data_value: data });
+        const response = await axios.post(`/challenge/ante/${challengeId}`, data);
+        console.log("challenge_ante response: ", response)
+
+        // Check if both payments are received and refresh the page
+        // if (response.data.both_paid) {
+        //   window.location.reload();
+        // }
+
+        // // Create ACH Debit
+        // const achDebitResponse = await axios.post(`/ach-debit`, {
+        //   sender: payload.checkout.customerUsername,
+        //   name: payload.checkout.customerEmail,
+        //   amount: payload.checkout.totalValue,
+        //   description: payload.checkout.description,
+        //   number: '', // optional, based on your requirements
+        //   recurring: null, // optional, based on your requirements
+        // });
+        // console.log('ACH Debit Created:', achDebitResponse.data);
+
+        // // Get Funding Sources
+        // const fundingSourcesResponse = await axios.get(`/funding-source/user/${userId}`);
+        // console.log('Funding Sources:', fundingSourcesResponse.data);
+
+        // // Get Primary Funding Source Details
+        // const fundingSources = fundingSourcesResponse.data.list;
+        // const primarySource = fundingSources.find((source: { is_primary: boolean; }) => source.is_primary === true);
+
+        // if (primarySource) {
+        //   const primarySourceId = primarySource.source_id;
+        //   console.log('Primary Source:', primarySource);
+
+        //   // Get the primary funding source details
+        //   const fundingSourceDetailsResponse = await axios.get(`/funding-source/${primarySourceId}`);
+        //   console.log('Funding Source Details:', fundingSourceDetailsResponse.data);
+        // }
+
+        // // Call the create_funding_source endpoint
+        // const fundingResponse = await axios.post(`/on-demand/create_funding_source/`, {
+        //   user_id: userId,
+        //   routing: data.routing, // Replace with actual routing
+        //   number: data.number, // Replace with actual account number
+        //   type: data.type, // Replace with actual account type
+        //   bank: data.rec_bname, // Replace with actual bank name
+        // });
+        // console.log('Funding Source Created:', fundingResponse.data);
 
         onSuccess && onSuccess();
       } catch (error) {

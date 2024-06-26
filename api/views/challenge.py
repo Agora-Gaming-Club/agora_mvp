@@ -6,7 +6,7 @@ from datetime import datetime, timezone
 import json
 import os
 
-from django.http import JsonResponse, HttpResponseRedirect
+from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.views.decorators.csrf import ensure_csrf_cookie
 from inertia import inertia, share
@@ -156,89 +156,41 @@ def challenge_accept(request, challenge_id):
 
 def challenge_ante(request, challenge_id):
     """Takes payments from users."""
-    challenge = get_object_or_404(Wager, unique_code=challenge_id)
-    challengers = [challenge.challenger_id, challenge.respondent_id]
+    if request.method == "POST":
+        challenge = get_object_or_404(Wager, unique_code=challenge_id)
+        challengers = [challenge.challenger_id, challenge.respondent_id]
+        print('TESTTESTTEST', request)
 
-    if request.user.id not in challengers:
-        raise Exception("You are not part of this challenge.")
+        if request.user.id not in challengers:
+            return JsonResponse({"error": "You are not part of this challenge."}, status=403)
 
-    data = json.loads(request.body)
-    print("Challenge Ante Request Body: ", request.body)
-    form = AnteForm(data)
-    if form.is_valid():
-        data_value = data.get("data_value")
-
-        # Extract necessary details
-        first_name = request.user.first_name
-        last_name = request.user.last_name
-        email = request.user.email
-        business_name = request.user.username
-        phone = "1234567890"  # Replace with actual phone number if available
-
-        routing = data_value.get("routing")
-        number = data_value.get("number")
-        account_type = data_value.get("type", "checking")
-        bank = data_value.get("bank")
-
-        payment_client = PaynoteClient()
-
-        # Step 1: Create Customer
-        customer_response = payment_client.create_customer(first_name, last_name, email, business_name, phone)
-        if not customer_response.get("success"):
-            return JsonResponse({"errors": "Failed to create customer", "details": customer_response}, status=400)
-
-        user_id = customer_response["user"]["user_id"]
-
-        # Step 2: Create Funding Source
-        funding_response = payment_client.create_funding_source(
-            user_id=user_id,
-            routing=routing,
-            number=number,
-            account_type=account_type,
-            bank=bank
-        )
-        print("PASS PHASE 1", funding_response)
-
-        if funding_response.get("responseCode"):
-            status = Payment.GOOD
-            payment, _ = Payment.objects.get_or_create(
-                user=request.user,
-                wager=challenge,
-                authorize_net_payment_id=funding_response.get("transId"),
-                authorize_net_payment_status=status,
-                description=funding_response.get("description"),
-            )
-            
-            # Update challenge status to reflect payment
-            if request.user.id == challenge.challenger_id:
-                challenge.challenger_paid = True
-            elif request.user.id == challenge.respondent_id:
-                challenge.respondent_paid = True
-            challenge.save()
+        try:
+            data = json.loads(request.body.decode('utf-8'))
+            # print("Challenge Ante Request Body: ", data)
             
             both_paid = challenge.all_payments_received()
+            print('BOTH PAID: ', both_paid)
             if both_paid:
-                phone_numbers = [challenge.get_challenger().phone_number, challenge.get_respondent().phone_number]
+                phone_numbers = [
+                    challenge.get_challenger().phone_number,
+                    challenge.get_respondent().phone_number,
+                ]
                 for number in phone_numbers:
-                    BeginSMS(context={"challenge": challenge}, target=number).send()
-                
-                # Automatically trigger challenge_winner function
-                challenge.determine_winner()
-                
-                return JsonResponse({"status": payment.authorize_net_payment_status, "challenge": serialize(challenge)})
-            return JsonResponse({"status": "payment processed", "challenge": serialize(challenge)})
-        else:
-            error_details = funding_response.get("errorText", funding_response.get("errorDetails", "No detailed error information available."))
-            return JsonResponse({
-                "errors": "Bad Payment",
-                "details": error_details,
-                "full_response": funding_response
-            })
+                    BeginSMS(
+                        context={"challenge": challenge},
+                        target=number,
+                    ).send()
+                return JsonResponse({"message": "Payment processed successfully", "both_paid": True})
+            else:
+                return JsonResponse({"message": "Payment processed successfully", "both_paid": False})
+
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "Invalid JSON data"}, status=400)
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=500)
     else:
-        # Log the form errors for debugging purposes
-        print("Form validation failed with errors: ", form.errors.get_json_data())
-        
-    return JsonResponse({"errors": "Form validation failed or other errors"})
+        return HttpResponse(status=405)
+
 
 
 
