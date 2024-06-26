@@ -124,9 +124,9 @@ export const PaynoteButton = ({
         console.log("challenge_ante response: ", response)
 
         // Check if both payments are received and refresh the page
-        // if (response.data.both_paid) {
-        //   window.location.reload();
-        // }
+        if (response.data.both_paid) {
+          window.location.reload();
+        }
 
         // // Create ACH Debit
         // const achDebitResponse = await axios.post(`/ach-debit`, {
