@@ -219,7 +219,7 @@ def challenge_winner(request, challenge_id):
         elif user_id == challenge.respondent_id:
             challenge.respondent_vote = data["winner"]
             challenge.save()
-            not_voter = challenge.get_respondent()
+            not_voter = challenge.get_challenger()
         else:
             return inertia.render(request, 'ErrorPage', {'message': "You didn't participate"}, status=403)
 
@@ -252,7 +252,7 @@ def challenge_winner(request, challenge_id):
                 challenge.status = Wager.COMPLETED
                 challenge.save()
                 challenge.determine_winner()
-        
+
         return inertia.render(request, "ChallengeDetail", {"challenge": serialize(challenge)})
     
     return inertia.render(request, "ErrorPage", {"errors": form.errors.get_json_data()}, status=400)
