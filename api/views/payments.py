@@ -40,19 +40,21 @@ def create_funding_source(request):
 def update_payment_status(request):
     if request.method == "POST":
         data = json.loads(request.body)
+        print('PAYMENT DATA: ', data)
         challenge_id = data.get("challengeId")
-        customer_username = data.get("customerUsername")
+        customer_agora_id = data.get("customerAgoraId")
 
         try:
             wager = Wager.objects.get(unique_code=challenge_id)
-            if wager.challenger_gamer_tag == customer_username:
+            if wager.challenger_id == customer_agora_id:
                 wager.challenger_paid = True
-            elif wager.respondent_gamer_tag == customer_username:
+            elif wager.respondent_id == customer_agora_id:
                 wager.respondent_paid = True
             wager.save()
             return JsonResponse({"message": "Wager updated successfully"})
         except Wager.DoesNotExist:
             return JsonResponse({"error": "Wager not found"}, status=404)
+
         
 
 def create_ach_debit(request):

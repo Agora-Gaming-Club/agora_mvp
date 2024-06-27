@@ -27,6 +27,7 @@ const RequireChallengePaymentPartial: React.FC<Props> = ({
       customerAgoraID: user.verification_id,
       customerUsername: user.username,
       customerPaynoteID: user.paynote_id,
+      customerUserNumber: user.user,
     },
   };
 

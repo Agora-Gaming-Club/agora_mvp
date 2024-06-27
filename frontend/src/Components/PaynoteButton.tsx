@@ -24,6 +24,7 @@ declare global {
         customerAgoraID?: string;
         customerUsername?: string;
         customerPaynoteID?: string;
+        customerUserNumber?: number;
       };
       authorizationOnly?: boolean;
       onSuccess?: (data: any) => void;
@@ -49,6 +50,7 @@ export type PaynoteButtonType = {
       customerAgoraID?: string;
       customerUsername?: string;
       customerPaynoteID?: string;
+      customerUserNumber?: number;
     };
   };
   challengeId: string;
@@ -86,6 +88,7 @@ export const PaynoteButton = ({
         const x = await axios.post(`/wager/update_payment_status/`, {
           challengeId,
           customerUsername: payload.checkout.customerUsername,
+          customerAgoraId: payload.checkout.customerUserNumber,
         });
         console.log('x:', x);
       } catch (error) {
