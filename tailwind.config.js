@@ -36,7 +36,10 @@ module.exports = {
           800: '#162364',
           900: '#0b1232',
         },
-        dark: '#111928',
+        dark: '#0c0917',
+        'agora-purp': {
+          DEFAULT: '#6d3ef3'
+        }
       },
     },
   },

@@ -38,6 +38,14 @@
 
     <!-- SeamlessChex Script -->
     <script src="https://developers.seamlesschex.com/docs/checkoutjs/sdk-min.js" async></script>
+
+    <!-- Context Processing -->
+    <script>
+      window.PAYNOTE_KEYS = {
+          publicKeySandbox: "{{ PAYNOTE_PUBLIC_KEY_SANDBOX }}",
+          publicKeyProd: "{{ PAYNOTE_PUBLIC_KEY_PROD }}"
+      };
+  </script>
   </head>
   <body>
     <!-- inertia -->

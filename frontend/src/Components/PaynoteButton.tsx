@@ -2,6 +2,15 @@ import React, { useRef, useEffect } from 'react';
 import axios from 'axios';
 
 declare global {
+  interface Window {
+    PAYNOTE_KEYS: {
+      publicKeySandbox: string;
+      publicKeyProd: string;
+    };
+  }
+}
+
+declare global {
   class PAYNOTE {
     constructor(options: {
       publicKey: string;
@@ -66,7 +75,7 @@ export const PaynoteButton = ({
   const renderRef = useRef<HTMLDivElement>(null);
 
   const objRequestIframe = {
-    publicKey: 'pk_test_01J0TXFJPMGF0WFHHSD2GVBB29', // Replace with actual public key
+    publicKey: window.PAYNOTE_KEYS.publicKeySandbox, // Replace with actual public key
     sandbox: true,
     authorizationOnly: true, // Save bank details for future use
     displayMethod: 'iframe',
