@@ -31,6 +31,8 @@ const RequireChallengePaymentPartial: React.FC<Props> = ({
     },
   };
 
+  const environment = process.env.REACT_APP_ENV;
+
   return (
     <Card className="max-w-xl text-center mx-auto">
       <h3 className="text-white font-medium text-sm">Stake Your Claim</h3>

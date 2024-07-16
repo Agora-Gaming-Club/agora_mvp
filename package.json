@@ -23,7 +23,7 @@
   "devDependencies": {
     "@inertiajs/react": "^1.0.14",
     "@tailwindcss/typography": "^0.5.10",
-    "@types/node": "^20.9.0",
+    "@types/node": "^20.14.11",
     "@types/react": "^18.2.37",
     "@types/react-dom": "^18.2.15",
     "@types/react-payment-inputs": "^1.1.4",
