@@ -5,8 +5,9 @@ from kernel import settings
 logger = logging.getLogger('paynote_client')
 logger.info("Forced Logging Check")
 
-PAYNOTE_PUBLIC_KEY = settings.PAYNOTE_PUBLIC_KEY_SANDBOX
-PAYNOTE_SECRET_KEY = settings.PAYNOTE_SECRET_KEY_SANDBOX
+PAYNOTE_PUBLIC_KEY = settings.PAYNOTE_PUBLIC_KEY
+PAYNOTE_SECRET_KEY = settings.PAYNOTE_SECRET_KEY
+logger.info("Forced Logging Check 2")
 PAYNOTE_LIVE_ENDPOINT = "https://api-paynote.seamlesschex.com/"
 PAYNOTE_SANDBOX_ENDPOINT = "https://sandbox-paynote.seamlesschex.com/"
 

@@ -3,6 +3,6 @@ import os
 
 def paynote_keys(request):
     return {
-        'PAYNOTE_PUBLIC_KEY_SANDBOX': os.getenv('PAYNOTE_PUBLIC_KEY_SANDBOX'),
-        'PAYNOTE_PUBLIC_KEY_PROD': os.getenv('PAYNOTE_PUBLIC_KEY_PROD'),
+        'PAYNOTE_PUBLIC_KEY': os.getenv('PAYNOTE_PUBLIC_KEY'),
+        'PAYNOTE_SECRET_KEY': os.getenv('PAYNOTE_SECRET_KEY'),
     }
