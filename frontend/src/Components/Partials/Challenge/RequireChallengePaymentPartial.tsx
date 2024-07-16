@@ -74,6 +74,10 @@ const RequireChallengePaymentPartial: React.FC<Props> = ({
           console.log('onErrorCallback');
         }}
       />
+
+      <div className="text-gray-400 text-xs mt-4">
+        Current Environment: {environment}
+      </div>
     </Card>
   );
 };
