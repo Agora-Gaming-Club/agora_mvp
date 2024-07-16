@@ -7,7 +7,7 @@ logger.info("Forced Logging Check")
 
 PAYNOTE_PUBLIC_KEY = settings.PAYNOTE_PUBLIC_KEY
 PAYNOTE_SECRET_KEY = settings.PAYNOTE_SECRET_KEY
-logger.info("Forced Logging Check 2")
+logger.info("ENV CHECK:", settings.REACT_APP_ENV)
 PAYNOTE_LIVE_ENDPOINT = "https://api-paynote.seamlesschex.com/"
 PAYNOTE_SANDBOX_ENDPOINT = "https://sandbox-paynote.seamlesschex.com/"
 
