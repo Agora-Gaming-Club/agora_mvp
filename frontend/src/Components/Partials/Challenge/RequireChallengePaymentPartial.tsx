@@ -76,7 +76,7 @@ const RequireChallengePaymentPartial: React.FC<Props> = ({
       />
 
       <div className="text-gray-400 text-xs mt-4">
-        Current Environment: {environment}
+        Environment: {environment}
       </div>
     </Card>
   );
