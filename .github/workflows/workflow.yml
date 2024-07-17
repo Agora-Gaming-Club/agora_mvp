@@ -19,17 +19,19 @@ jobs:
               git config --global user.name "CI/CD Pipeline"
               git stash
 
+              # Ensure NVM is available
+              export NVM_DIR="$HOME/.nvm"
+              [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+
               # Now we have got the access of EC2 and we will start the deploy
-              export NVM_DIR=~/.nvm &&
               export DJANGO_SETTINGS_MODULE=kernel.settings_prod &&
-              source ~/.nvm/nvm.sh &&
               git reset --hard &&
               git pull origin main &&
               npm install &&
               npm run build &&
               source .venv/bin/activate  # Ensure virtual environment is activated
               python manage.py collectstatic --noinput &&
-              sudo systemctl restart your-web-server.service
+              sudo systemctl restart nginx  # Use the correct web server service name
           '
   deploy-dev:
     runs-on: ubuntu-latest
@@ -49,14 +51,16 @@ jobs:
               git config --global user.name "CI/CD Pipeline"
               git stash
 
+              # Ensure NVM is available
+              export NVM_DIR="$HOME/.nvm"
+              [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+
               # Now we have got the access of EC2 and we will start the deploy
-              export NVM_DIR=~/.nvm &&
-              source ~/.nvm/nvm.sh &&
               git reset --hard &&
               git pull origin develop &&
               npm install &&
               npm run build &&
               source .venv/bin/activate  # Ensure virtual environment is activated
               python manage.py collectstatic --noinput &&
-              sudo systemctl restart your-web-server.service
+              sudo systemctl restart nginx  # Use the correct web server service name
           '
