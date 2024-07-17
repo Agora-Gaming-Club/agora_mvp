@@ -207,6 +207,7 @@ PAYNOTE_SECRET_KEY = os.getenv("PAYNOTE_SECRET_KEY")
 
 # Environment
 REACT_APP_ENV = os.getenv("REACT_APP_ENV")
+print(f"REACT_APP_ENV: {REACT_APP_ENV}")
 
 CRONJOBS = [
     ("*/10 * * * *", "api.cron.challenge_creation_expired"),

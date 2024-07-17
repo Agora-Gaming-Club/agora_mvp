@@ -8,3 +8,4 @@ inertia-django==0.5.3
 python-dotenv~=1.0.0
 twilio==8.10.3
 werkzeug==3.0.1
+mysqlclient==2.1.0
