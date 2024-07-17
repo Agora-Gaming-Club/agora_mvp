@@ -4,6 +4,7 @@ from kernel import settings
 
 logger = logging.getLogger('paynote_client')
 logger.info("Forced Logging Check")
+logger.info(f"ENV CHECK: {settings.REACT_APP_ENV}")
 
 PAYNOTE_PUBLIC_KEY = settings.PAYNOTE_PUBLIC_KEY
 PAYNOTE_SECRET_KEY = settings.PAYNOTE_SECRET_KEY
@@ -13,7 +14,7 @@ PAYNOTE_SANDBOX_ENDPOINT = "https://sandbox-paynote.seamlesschex.com/"
 class PaynoteClient:
     def __init__(self):
         self.api_url = 'https://sandbox-paynote.seamlesschex.com/v1/'  # Ensure this is the correct base URL
-        self.api_key = 'sk_test_01J0TXFJPMGF0WFHHSD2GVBB28'  # Replace with your actual API key
+        self.api_key = 'PAYNOTE_SECRET_KEY'  
         self.headers = {
             'Authorization': f'Bearer {self.api_key}',
             'Content-Type': 'application/json'
