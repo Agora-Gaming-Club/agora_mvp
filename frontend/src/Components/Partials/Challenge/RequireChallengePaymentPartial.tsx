@@ -32,6 +32,7 @@ const RequireChallengePaymentPartial: React.FC<Props> = ({
   };
 
   const environment = process.env.REACT_APP_ENV;
+  console.log('Current Environment:', environment); 
 
   return (
     <Card className="max-w-xl text-center mx-auto">
@@ -74,10 +75,6 @@ const RequireChallengePaymentPartial: React.FC<Props> = ({
           console.log('onErrorCallback');
         }}
       />
-
-      <div className="text-gray-400 text-xs mt-4">
-        Environment: {environment}
-      </div>
     </Card>
   );
 };
