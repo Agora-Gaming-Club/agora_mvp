@@ -14,7 +14,7 @@ PAYNOTE_SANDBOX_ENDPOINT = "https://sandbox-paynote.seamlesschex.com/"
 class PaynoteClient:
     def __init__(self):
         self.api_url = 'https://sandbox-paynote.seamlesschex.com/v1/'  # Ensure this is the correct base URL
-        self.api_key = 'PAYNOTE_SECRET_KEY'  
+        self.api_key = PAYNOTE_SECRET_KEY
         self.headers = {
             'Authorization': f'Bearer {self.api_key}',
             'Content-Type': 'application/json'
