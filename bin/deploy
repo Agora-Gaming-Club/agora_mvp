@@ -11,11 +11,13 @@ fi
 
 # Source the environment variables from the appropriate .env file
 echo "Sourcing environment variables from $ENV_FILE"
-export $(grep -v '^#' $ENV_FILE | xargs)
+set -o allexport
+source $ENV_FILE
+set +o allexport
 
 # Activate the virtual environment
 echo "Activate the virtual environment"
-source .venv/bin/activate
+source /home/ubuntu/dev.agoragaming.gg/.venv/bin/activate
 
 # Pull Latest Git Changes
 echo "Pull Latest Git Changes"
@@ -23,13 +25,13 @@ git pull
 
 # Install Python requirements
 echo "Install Python requirements"
-pip install -r requirements.txt
+pip install -r /home/ubuntu/dev.agoragaming.gg/requirements.txt
 
 # Run Migrations
 echo "Run Migrations"
-python manage.py makemigrations api
-python manage.py makemigrations admin_app
-python manage.py migrate
+python /home/ubuntu/dev.agoragaming.gg/manage.py makemigrations api
+python /home/ubuntu/dev.agoragaming.gg/manage.py makemigrations admin_app
+python /home/ubuntu/dev.agoragaming.gg/manage.py migrate
 
 # Install Node Dependencies
 echo "Install Node Dependencies"
@@ -41,7 +43,7 @@ npm run build
 
 # Stash Static Files
 echo "Stash Static Files"
-python manage.py collectstatic --noinput
+python /home/ubuntu/dev.agoragaming.gg/manage.py collectstatic --noinput
 
 # Restart Python Daemon Processes
 echo "Restart Python Daemon Processes"
