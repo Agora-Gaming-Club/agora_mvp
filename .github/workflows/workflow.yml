@@ -1,6 +1,7 @@
 name: Agora
 on: [push, pull_request]
 jobs:
+
   deploy-prod:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
@@ -8,31 +9,20 @@ jobs:
       - name: SSH into server
         env:
           PRIVATE_KEY: ${{ secrets.PROD_SSH_PRIVATE_KEY }}
-          HOSTNAME: ${{ secrets.PROD_SSH_HOST }}
+          HOSTNAME: ${{secrets.PROD_SSH_HOST}}
           USER_NAME: 'ubuntu'
         run: |
           echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
           ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} '
-              cd /home/ubuntu/agoragaming.gg  # Navigate to project directory
-              # Stash local changes
-              git config --global user.email "no-reply@yourproject.com"
-              git config --global user.name "CI/CD Pipeline"
-              git stash
 
-              # Ensure NVM is available
-              export NVM_DIR="$HOME/.nvm"
-              [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-
-              # Now we have got the access of EC2 and we will start the deploy
+              # Now we have got the access of EC2 and we will start the deploy .
+              export NVM_DIR=~/.nvm &&
               export DJANGO_SETTINGS_MODULE=kernel.settings_prod &&
-              git reset --hard &&
-              git pull origin main &&
-              npm install &&
-              npm run build &&
-              source .venv/bin/activate  # Ensure virtual environment is activated
-              python manage.py collectstatic --noinput &&
-              sudo systemctl restart nginx  # Use the correct web server service name
-          '
+              source ~/.nvm/nvm.sh  &&
+              cd /home/ubuntu/agoragaming.gg &&
+              source .venv/bin/activate &&
+              sh bin/deploy
+              '
   deploy-dev:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/develop'
@@ -40,27 +30,16 @@ jobs:
       - name: SSH into server
         env:
           PRIVATE_KEY: ${{ secrets.DEV_SSH_PRIVATE_KEY }}
-          HOSTNAME: ${{ secrets.DEV_SSH_HOST }}
+          HOSTNAME: ${{secrets.DEV_SSH_HOST}}
           USER_NAME: 'ubuntu'
         run: |
           echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
           ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} '
-              cd /home/ubuntu/dev.agoragaming.gg  # Navigate to project directory
-              # Stash local changes
-              git config --global user.email "no-reply@yourproject.com"
-              git config --global user.name "CI/CD Pipeline"
-              git stash
 
-              # Ensure NVM is available
-              export NVM_DIR="$HOME/.nvm"
-              [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-
-              # Now we have got the access of EC2 and we will start the deploy
-              git reset --hard &&
-              git pull origin develop &&
-              npm install &&
-              npm run build &&
-              source .venv/bin/activate  # Ensure virtual environment is activated
-              python manage.py collectstatic --noinput &&
-              sudo systemctl restart nginx  # Use the correct web server service name
-          '
+              # Now we have got the access of EC2 and we will start the deploy .
+              export NVM_DIR=~/.nvm &&
+              source ~/.nvm/nvm.sh  &&
+              cd /home/ubuntu/dev.agoragaming.gg &&
+              source .venv/bin/activate &&
+              sh bin/deploy
+              '
