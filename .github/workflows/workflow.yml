@@ -13,8 +13,9 @@ jobs:
         run: |
           echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
           ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} '
+              cd /home/ubuntu/agoragaming.gg  # Navigate to project directory
               # Stash local changes
-              git config --global user.email "no-reply@agora.com"
+              git config --global user.email "no-reply@yourproject.com"
               git config --global user.name "CI/CD Pipeline"
               git stash
 
@@ -22,11 +23,11 @@ jobs:
               export NVM_DIR=~/.nvm &&
               export DJANGO_SETTINGS_MODULE=kernel.settings_prod &&
               source ~/.nvm/nvm.sh &&
-              cd /home/ubuntu/agoragaming.gg &&
               git reset --hard &&
               git pull origin main &&
               npm install &&
               npm run build &&
+              source .venv/bin/activate  # Ensure virtual environment is activated
               python manage.py collectstatic --noinput &&
               sudo systemctl restart your-web-server.service
           '
@@ -42,19 +43,20 @@ jobs:
         run: |
           echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
           ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} '
+              cd /home/ubuntu/dev.agoragaming.gg  # Navigate to project directory
               # Stash local changes
-              git config --global user.email "no-reply@agora.com"
+              git config --global user.email "no-reply@yourproject.com"
               git config --global user.name "CI/CD Pipeline"
               git stash
 
               # Now we have got the access of EC2 and we will start the deploy
               export NVM_DIR=~/.nvm &&
               source ~/.nvm/nvm.sh &&
-              cd /home/ubuntu/dev.agoragaming.gg &&
               git reset --hard &&
               git pull origin develop &&
               npm install &&
               npm run build &&
+              source .venv/bin/activate  # Ensure virtual environment is activated
               python manage.py collectstatic --noinput &&
               sudo systemctl restart your-web-server.service
           '
