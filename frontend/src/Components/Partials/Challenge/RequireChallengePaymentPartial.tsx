@@ -31,8 +31,8 @@ const RequireChallengePaymentPartial: React.FC<Props> = ({
     },
   };
 
-  const environment = process.env.REACT_APP_ENV || 'Environment variable not set';
-  console.log('Current Environment:', environment); 
+  // const environment = process.env.REACT_APP_ENV || 'Environment variable not set';
+  // console.log('Current Environment:', environment); 
 
   return (
     <Card className="max-w-xl text-center mx-auto">
