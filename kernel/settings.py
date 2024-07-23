@@ -25,7 +25,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = "django-insecure-*qr-#1n!5qq@gg1xk7y4i$!iz*r)=6ezk7zmcxr8$a$zjs3u(l"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = [
     "127.0.0.1",
@@ -36,6 +36,7 @@ ALLOWED_HOSTS = [
     "dev.agoragaming.club",
     "18.226.170.241",
     "3.139.60.203",
+    "3.141.104.103",
 ]
 
 SITE_ROOT = "https://dev.agoragaming.gg"
