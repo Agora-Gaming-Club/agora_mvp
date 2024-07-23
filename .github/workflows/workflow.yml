@@ -1,7 +1,6 @@
 name: Agora
 on: [push, pull_request]
 jobs:
-
   deploy-prod:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
@@ -9,16 +8,14 @@ jobs:
       - name: SSH into server
         env:
           PRIVATE_KEY: ${{ secrets.PROD_SSH_PRIVATE_KEY }}
-          HOSTNAME: ${{secrets.PROD_SSH_HOST}}
+          HOSTNAME: ${{ secrets.PROD_SSH_HOST }}
           USER_NAME: 'ubuntu'
         run: |
           echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
-          ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} '
-
-              # Now we have got the access of EC2 and we will start the deploy .
+          ssh -vvv -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} '
               export NVM_DIR=~/.nvm &&
               export DJANGO_SETTINGS_MODULE=kernel.settings_prod &&
-              source ~/.nvm/nvm.sh  &&
+              source ~/.nvm/nvm.sh &&
               cd /home/ubuntu/agoragaming.gg &&
               source .venv/bin/activate &&
               sh bin/deploy
@@ -30,15 +27,13 @@ jobs:
       - name: SSH into server
         env:
           PRIVATE_KEY: ${{ secrets.DEV_SSH_PRIVATE_KEY }}
-          HOSTNAME: ${{secrets.DEV_SSH_HOST}}
+          HOSTNAME: ${{ secrets.DEV_SSH_HOST }}
           USER_NAME: 'ubuntu'
         run: |
           echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
-          ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} '
-
-              # Now we have got the access of EC2 and we will start the deploy .
+          ssh -vvv -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} '
               export NVM_DIR=~/.nvm &&
-              source ~/.nvm/nvm.sh  &&
+              source ~/.nvm/nvm.sh &&
               cd /home/ubuntu/dev.agoragaming.gg &&
               source .venv/bin/activate &&
               sh bin/deploy
