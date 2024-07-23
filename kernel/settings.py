@@ -36,6 +36,7 @@ ALLOWED_HOSTS = [
     "dev.agoragaming.club",
     "18.226.170.241",
     "3.139.60.203",
+    "3.141.104.103",
 ]
 
 SITE_ROOT = "https://dev.agoragaming.gg"
