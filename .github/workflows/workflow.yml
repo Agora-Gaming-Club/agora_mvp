@@ -17,7 +17,7 @@ jobs:
           USER_NAME: 'ubuntu'
         run: |
           echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
-          ssh -vvv -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} '
+          ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} '
               export NVM_DIR=~/.nvm &&
               export DJANGO_SETTINGS_MODULE=kernel.settings_prod &&
               source ~/.nvm/nvm.sh &&
@@ -25,6 +25,7 @@ jobs:
               source .venv/bin/activate &&
               sh bin/deploy
               '
+
   deploy-dev:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/develop'
@@ -36,7 +37,7 @@ jobs:
           USER_NAME: 'ubuntu'
         run: |
           echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
-          ssh -vvv -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} '
+          ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} '
               export NVM_DIR=~/.nvm &&
               source ~/.nvm/nvm.sh &&
               cd /home/ubuntu/dev.agoragaming.gg &&
