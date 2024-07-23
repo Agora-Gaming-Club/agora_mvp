@@ -1,4 +1,5 @@
 """Auth related endpooints"""
+
 from datetime import datetime, timezone
 import json
 
@@ -108,6 +109,7 @@ def register(request):
                 context={"profile": profile},
                 sent_from=settings.EMAIL_DEFAULT_SENDER,
                 target=profile.email,
+                subject="Welcome",
             ).send()
             if redirect:
                 return HttpResponseRedirect(redirect)
@@ -160,6 +162,7 @@ def forgot_password(request):
                         "code": profile.reset_password_id,
                         "site_root": settings.SITE_ROOT,
                     },
+                    subject="Password Reset",
                     target=profile.email,
                 ).send()
             return {"message": "email sent"}

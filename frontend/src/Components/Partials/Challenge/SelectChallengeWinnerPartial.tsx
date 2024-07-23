@@ -5,6 +5,7 @@ import { UserProfile, Wager } from '@/schema';
 import { classNames } from '@/Utils/styles';
 import { RadioGroup } from '@headlessui/react';
 import { useForm } from '@inertiajs/react';
+import axios from 'axios';
 import ChallengeDescription from '@/Components/ChallengeDescription';
 
 type Props = {
@@ -35,20 +36,35 @@ const SelectChallengeWinnerPartial: FunctionComponent<Props> = ({
     },
   ];
 
-  const { data, setData, post } = useForm({
+  const { data, setData } = useForm({
     winner: '',
   });
+
   const handleSubmit: FormEventHandler = async (event) => {
     event.preventDefault();
-    console.log(data);
-    post(`/challenge/${challenge.unique_code}`, {
-      onError: (err) => {
-        console.log(err);
-        // setFormErrors(transformErrors(err));
-      },
-      onSuccess: () => location.reload(),
-      only: ['errors', 'challenge'],
-    });
+    console.log("Form data:", data);
+    console.log("Challenge data:", challenge);
+
+    if (challenge && challenge.unique_code) {
+      try {
+        const response = await axios.post(`/challenge/${challenge.unique_code}`, {
+          winner: data.winner,
+        }, {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+        console.log("Post response:", response.data);
+        // Reload the page if the post request is successful
+        if (response.data) {
+          location.reload();
+        }
+      } catch (error) {
+        console.error("Post error:", error);
+      }
+    } else {
+      console.error('Challenge or unique_code is undefined');
+    }
   };
 
   return (

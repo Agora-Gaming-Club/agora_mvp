@@ -84,6 +84,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                'api.context_processors.paynote_keys',
             ],
         },
     },
@@ -156,6 +157,8 @@ DJANGO_VITE_ASSETS_PATH = BASE_DIR / "static" / "js"
 TAILWIND_CSS_ASSETS_PATH = BASE_DIR / "static" / "dist"
 IMAGE_ASSETS = BASE_DIR / "static" / "assets"
 
+VITE_MANIFEST_PATH = os.path.join(BASE_DIR, 'static', 'dist', 'manifest.json')
+
 # If we should use HMR or not.
 DJANGO_VITE_DEV_MODE = False
 
@@ -200,9 +203,40 @@ TWILIO_AUTH_TOKEN = os.getenv("TWILIO_AUTH_TOKEN")
 SMS_ENABLED = False
 TWILIO_DEFAULT_NUMBER = "+17025501706"
 
+# Paynote settings
+PAYNOTE_PUBLIC_KEY = os.getenv("PAYNOTE_PUBLIC_KEY")
+PAYNOTE_SECRET_KEY = os.getenv("PAYNOTE_SECRET_KEY")
+
+# Environment
+REACT_APP_ENV = os.getenv("REACT_APP_ENV")
+print(f"REACT_APP_ENV: {REACT_APP_ENV}")
 
 CRONJOBS = [
     ("*/10 * * * *", "api.cron.challenge_creation_expired"),
     ("*/10 * * * *", "api.cron.challenge_in_progress_expired"),
     ("*/10 * * * *", "api.cron.password_change_expired"),
 ]
+
+
+# Logging Settings
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+        'paynote_client': {  # Custom logger for your Paynote client
+            'handlers': ['console'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+    },
+}

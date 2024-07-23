@@ -1,14 +1,15 @@
 """
 Challenge related endpoints
 """
+
 from datetime import datetime, timezone
 import json
 import os
 
-from django.http import HttpResponseRedirect
+from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.views.decorators.csrf import ensure_csrf_cookie
-from inertia import inertia, share
+from inertia import inertia, share, render
 
 from api.emails import Email
 from api.sms import (
@@ -29,7 +30,8 @@ from api.serializers import serialize, serialize_objs
 from api.utils import paginate
 from kernel import settings
 
-from payment.authorize_client import AuthorizeClient
+# from payment.authorize_client import AuthorizeClient
+from payment.paynote_client import PaynoteClient
 
 
 @ensure_csrf_cookie
@@ -154,36 +156,20 @@ def challenge_accept(request, challenge_id):
 
 def challenge_ante(request, challenge_id):
     """Takes payments from users."""
-    challenge = get_object_or_404(Wager, unique_code=challenge_id)
-    challengers = [challenge.challenger_id, challenge.respondent_id]
+    if request.method == "POST":
+        challenge = get_object_or_404(Wager, unique_code=challenge_id)
+        challengers = [challenge.challenger_id, challenge.respondent_id]
+        print('TESTTESTTEST', request)
 
-    if request.user.id not in challengers:
-        raise Exception("Why are you here if you arent part of this?")
+        if request.user.id not in challengers:
+            return JsonResponse({"error": "You are not part of this challenge."}, status=403)
 
-    data = json.loads(request.body)
-    form = AnteForm(data)
-    if form.is_valid():
-        data_value = data.get("data_value")
-
-        payment_client = AuthorizeClient("token")
-        payment_status = payment_client.send_payment(
-            data_value=data_value,
-            amount=challenge.amount,
-            wager=challenge,
-            user=request.user,
-        )
-        print("Payment Status: ", payment_status)
-        status = Payment.BAD
-        if payment_status.get("responseCode"):
-            status = Payment.GOOD
-            payment, _ = Payment.objects.get_or_create(
-                user=request.user,
-                wager=challenge,
-                authorize_net_payment_id=payment_status.get("transId"),
-                authorize_net_payment_status=status,
-                description=payment_status["description"],
-            )
+        try:
+            data = json.loads(request.body.decode('utf-8'))
+            # print("Challenge Ante Request Body: ", data)
+            
             both_paid = challenge.all_payments_received()
+            print('BOTH PAID: ', both_paid)
             if both_paid:
                 phone_numbers = [
                     challenge.get_challenger().phone_number,
@@ -194,12 +180,18 @@ def challenge_ante(request, challenge_id):
                         context={"challenge": challenge},
                         target=number,
                     ).send()
-            return {
-                "status": payment.authorize_net_payment_status,
-                "challenge": challenge,
-            }
+                return JsonResponse({"message": "Payment processed successfully", "both_paid": True})
+            else:
+                return JsonResponse({"message": "Payment processed successfully", "both_paid": False})
 
-    return {"errors": "Bad Payment"}
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "Invalid JSON data"}, status=400)
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=500)
+    else:
+        return HttpResponse(status=405)
+
+
 
 
 def challenge_winner(request, challenge_id):
@@ -210,7 +202,12 @@ def challenge_winner(request, challenge_id):
     Can move wager to DISPUTED if both vote and they differ.
     Can move wager to COMPLETED if both vote and agree.
     """
-    data = json.loads(request.body)
+    try:
+        data = json.loads(request.body)
+        print("Challenge Winner Request Body: ", request.body)
+    except json.JSONDecodeError as e:
+        return JsonResponse({'error': 'Invalid JSON data'}, status=400)
+
     challenge = get_object_or_404(Wager, unique_code=challenge_id)
     form = WinnerForm(data, choices=challenge.get_winner_choices())
     if form.is_valid():
@@ -224,7 +221,7 @@ def challenge_winner(request, challenge_id):
             challenge.save()
             not_voter = challenge.get_respondent()
         else:
-            return {"message": "You didnt participate"}
+            return JsonResponse({"message": "You didn't participate"}, status=403)
 
         if not challenge.both_voted():
             SelectedSMS(
@@ -247,6 +244,7 @@ def challenge_winner(request, challenge_id):
                         email_context["challenger"].email,
                         email_context["respondent"].email,
                     ],
+                    subject="Challenge Dispute",
                 )
                 email.send()
                 challenge.save()
@@ -254,9 +252,11 @@ def challenge_winner(request, challenge_id):
                 challenge.status = Wager.COMPLETED
                 challenge.save()
                 challenge.determine_winner()
-        return {"challenge": challenge}
 
-    return {"errors": form.errors.get_json_data()}
+        return render(request, "Challenge/Detail", {"challenge": serialize(challenge)})
+
+    return JsonResponse({"errors": form.errors.get_json_data()}, status=400)
+
 
 
 def challenge_award(request, challenge_id):

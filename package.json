@@ -23,7 +23,7 @@
   "devDependencies": {
     "@inertiajs/react": "^1.0.14",
     "@tailwindcss/typography": "^0.5.10",
-    "@types/node": "^20.9.0",
+    "@types/node": "^20.14.11",
     "@types/react": "^18.2.37",
     "@types/react-dom": "^18.2.15",
     "@types/react-payment-inputs": "^1.1.4",
@@ -44,6 +44,7 @@
     "@heroicons/react": "^2.0.18",
     "@tailwindcss/forms": "^0.5.7",
     "@types/js-cookie": "^3.0.6",
+    "checkout.js": "^2.1.21",
     "flowbite": "^2.1.1",
     "flowbite-react": "^0.6.4",
     "js-cookie": "^3.0.5",

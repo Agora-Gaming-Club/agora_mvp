@@ -31,6 +31,7 @@ class UserProfile(models.Model):
     reset_password_time = models.DateTimeField(null=True, blank=True)
     verification_id = models.CharField(default=uuid.uuid4, max_length=36, blank=False)
     acct_verified = models.BooleanField(default=False, null=False)
+    paynote_id = models.CharField(max_length=36, null=True, blank=True)
 
     def __str__(self):
         return f"<Profile: {self.username} #{self.id}>"

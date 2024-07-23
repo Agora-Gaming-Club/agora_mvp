@@ -1,14 +1,7 @@
 name: Agora
 on: [push, pull_request]
 jobs:
-#  deploy-dev:
-#    runs-on: ubuntu-latest
-#    if: github.ref == 'refs/heads/develop'
-#    steps:
-#      - name: SSH into server
-#        run: # steps to ssh
-#      - name: SSH into serve
-#        run: # steps to call sh ~/dev.agoragaming.gg/bin/deploy
+
   deploy-prod:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'

@@ -7,13 +7,15 @@ from api.utils import load_text
 
 
 class Email:
-    def __init__(self, email_type, context, sent_from=None, target=None, bcc=None):
+    def __init__(
+        self, email_type, context, subject="", sent_from=None, target=None, bcc=None
+    ):
         self.email_type = email_type
         self.context = context
         self.sent_from = sent_from or settings.EMAIL_DEFAULT_SENDER
         self.target = target
         self.bcc = bcc
-        self.subject = ""
+        self.subject = subject
 
     def send(self):
         # TODO: Grab the templates from the DB if available, first.
