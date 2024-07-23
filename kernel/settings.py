@@ -25,7 +25,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = "django-insecure-*qr-#1n!5qq@gg1xk7y4i$!iz*r)=6ezk7zmcxr8$a$zjs3u(l"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+# DEBUG = False
+DEBUG = os.environ.get('DJANGO_DEBUG', 'False') == 'True'
 
 ALLOWED_HOSTS = [
     "127.0.0.1",
@@ -219,6 +220,9 @@ CRONJOBS = [
 ]
 
 
+# Determine environment
+ENVIRONMENT = os.getenv('REACT_APP_ENV', 'production')
+
 # Logging Settings
 LOGGING = {
     'version': 1,
@@ -226,18 +230,34 @@ LOGGING = {
     'handlers': {
         'console': {
             'class': 'logging.StreamHandler',
+            'formatter': 'simple',
+        },
+    },
+    'formatters': {
+        'simple': {
+            'format': '{levelname} {message}',
+            'style': '{',
         },
     },
     'loggers': {
         'django': {
             'handlers': ['console'],
-            'level': 'INFO',
+            'level': 'DEBUG' if ENVIRONMENT == 'dev' else 'INFO',
             'propagate': True,
         },
         'paynote_client': {  # Custom logger for your Paynote client
             'handlers': ['console'],
-            'level': 'INFO',
+            'level': 'DEBUG' if ENVIRONMENT == 'dev' else 'INFO',
             'propagate': False,
         },
     },
 }
+
+# Security settings
+CSRF_TRUSTED_ORIGINS = [
+    "https://dev.agoragaming.gg",
+    "https://agoragaming.gg",
+    "https://www.agoragaming.gg",
+]
+
+SECURE_SSL_REDIRECT = ENVIRONMENT == 'production'
