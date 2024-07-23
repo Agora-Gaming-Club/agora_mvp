@@ -5,6 +5,11 @@ jobs:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
     steps:
+      - name: Check Network Connectivity
+        run: |
+          sudo apt-get install -y nmap
+          nmap -p 22 ${HOSTNAME}
+
       - name: SSH into server
         env:
           PRIVATE_KEY: ${{ secrets.PROD_SSH_PRIVATE_KEY }}
