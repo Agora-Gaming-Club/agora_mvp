@@ -5,8 +5,8 @@ declare global {
   interface Window {
     PAYNOTE_KEYS: {
       publicKey: string;
-      secretKey: string;
     };
+    REACT_APP_ENV: string;
   }
 }
 
@@ -76,7 +76,7 @@ export const PaynoteButton = ({
 
   const objRequestIframe = {
     publicKey: window.PAYNOTE_KEYS.publicKey, // Replace with actual public key
-    sandbox: true,
+    sandbox: window.REACT_APP_ENV !== 'production', // Use sandbox in non-production environments
     authorizationOnly: true, // Save bank details for future use
     displayMethod: 'iframe',
     paymentToken: `pay_tok_SPECIMEN-${Math.random()}`,
