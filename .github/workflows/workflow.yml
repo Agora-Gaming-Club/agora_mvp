@@ -19,7 +19,7 @@ jobs:
               cd /home/ubuntu/agoragaming.gg &&
               . .venv/bin/activate &&
               sh bin/deploy prod
-              '
+          '
 
   deploy-dev:
     runs-on: ubuntu-latest
@@ -38,4 +38,4 @@ jobs:
               cd /home/ubuntu/dev.agoragaming.gg &&
               . .venv/bin/activate &&
               sh bin/deploy
-              '
+          '

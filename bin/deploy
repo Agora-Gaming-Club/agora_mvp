@@ -11,6 +11,12 @@ else
     APP_DIR="/home/ubuntu/dev.agoragaming.gg"
 fi
 
+# Debugging output
+echo "Environment argument: $1"
+echo "Environment file: $ENV_FILE"
+echo "Settings module: $SETTINGS_MODULE"
+echo "App directory: $APP_DIR"
+
 # Source the environment variables from the appropriate .env file
 echo "Sourcing environment variables from $ENV_FILE"
 set -o allexport
