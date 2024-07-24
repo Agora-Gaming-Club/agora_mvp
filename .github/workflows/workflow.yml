@@ -5,6 +5,8 @@ jobs:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
     steps:
+      - name: Check out code
+        uses: actions/checkout@v2
       - name: SSH into server
         env:
           PRIVATE_KEY: ${{ secrets.PROD_SSH_PRIVATE_KEY }}
@@ -13,18 +15,26 @@ jobs:
         run: |
           echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
           ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} '
-              export NVM_DIR=~/.nvm &&
-              export DJANGO_SETTINGS_MODULE=kernel.settings_prod &&
-              source ~/.nvm/nvm.sh &&
               cd /home/ubuntu/agoragaming.gg &&
+              git pull &&
               source .venv/bin/activate &&
-              sh bin/deploy prod
-              '
-
+              sudo apt-get update &&
+              sudo apt-get install -y libmysqlclient-dev &&
+              pip install -r requirements.txt &&
+              python manage.py makemigrations api &&
+              python manage.py makemigrations admin_app &&
+              python manage.py migrate &&
+              npm install &&
+              npm run build &&
+              python manage.py collectstatic --noinput &&
+              sudo service supervisor restart
+          '
   deploy-dev:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/develop'
     steps:
+      - name: Check out code
+        uses: actions/checkout@v2
       - name: SSH into server
         env:
           PRIVATE_KEY: ${{ secrets.DEV_SSH_PRIVATE_KEY }}
@@ -33,9 +43,17 @@ jobs:
         run: |
           echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
           ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} '
-              export NVM_DIR=~/.nvm &&
-              source ~/.nvm/nvm.sh &&
               cd /home/ubuntu/dev.agoragaming.gg &&
+              git pull &&
               source .venv/bin/activate &&
-              sh bin/deploy
-              '
+              sudo apt-get update &&
+              sudo apt-get install -y libmysqlclient-dev &&
+              pip install -r requirements.txt &&
+              python manage.py makemigrations api &&
+              python manage.py makemigrations admin_app &&
+              python manage.py migrate &&
+              npm install &&
+              npm run build &&
+              python manage.py collectstatic --noinput &&
+              sudo service supervisor restart
+          '
