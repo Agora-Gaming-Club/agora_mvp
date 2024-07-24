@@ -26,10 +26,6 @@ echo "Install MySQL development headers and libraries"
 sudo apt-get update
 sudo apt-get install -y libmysqlclient-dev
 
-# Ensure npm and zsh are installed
-echo "Ensure npm and zsh are installed"
-sudo apt-get install -y npm zsh
-
 # Pull Latest Git Changes
 echo "Pull Latest Git Changes"
 git pull
