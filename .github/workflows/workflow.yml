@@ -20,6 +20,7 @@ jobs:
               source .venv/bin/activate &&
               sudo apt-get update &&
               sudo apt-get install -y libmysqlclient-dev &&
+              sudo apt-get install -y npm zsh &&
               pip install -r requirements.txt &&
               python manage.py makemigrations api &&
               python manage.py makemigrations admin_app &&
@@ -48,6 +49,7 @@ jobs:
               source .venv/bin/activate &&
               sudo apt-get update &&
               sudo apt-get install -y libmysqlclient-dev &&
+              sudo apt-get install -y npm zsh &&
               pip install -r requirements.txt &&
               python manage.py makemigrations api &&
               python manage.py makemigrations admin_app &&
