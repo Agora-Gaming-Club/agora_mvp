@@ -2,6 +2,7 @@
 
 # Determine the environment
 echo "Environment argument: $1"
+
 if [ "$1" = "prod" ]; then
     ENV_FILE="/home/ubuntu/agoragaming.gg/.env"
     SETTINGS_MODULE="kernel.settings_prod"
