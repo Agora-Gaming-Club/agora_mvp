@@ -4,9 +4,11 @@
 if [ "$1" == "prod" ]; then
     ENV_FILE="/home/ubuntu/agoragaming.gg/.env"
     SETTINGS_MODULE="kernel.settings_prod"
+    APP_DIR="/home/ubuntu/agoragaming.gg"
 else
     ENV_FILE="/home/ubuntu/dev.agoragaming.gg/.env"
     SETTINGS_MODULE="kernel.settings"
+    APP_DIR="/home/ubuntu/dev.agoragaming.gg"
 fi
 
 # Source the environment variables from the appropriate .env file
@@ -17,7 +19,7 @@ set +o allexport
 
 # Activate the virtual environment
 echo "Activate the virtual environment"
-source /home/ubuntu/dev.agoragaming.gg/.venv/bin/activate
+source $APP_DIR/.venv/bin/activate
 
 # Pull Latest Git Changes
 echo "Pull Latest Git Changes"
@@ -25,25 +27,25 @@ git pull
 
 # Install Python requirements
 echo "Install Python requirements"
-pip install -r /home/ubuntu/dev.agoragaming.gg/requirements.txt
+pip install -r $APP_DIR/requirements.txt
 
 # Run Migrations
 echo "Run Migrations"
-python /home/ubuntu/dev.agoragaming.gg/manage.py makemigrations api
-python /home/ubuntu/dev.agoragaming.gg/manage.py makemigrations admin_app
-python /home/ubuntu/dev.agoragaming.gg/manage.py migrate
+python $APP_DIR/manage.py makemigrations api
+python $APP_DIR/manage.py makemigrations admin_app
+python $APP_DIR/manage.py migrate
 
 # Install Node Dependencies
 echo "Install Node Dependencies"
-npm install
+npm install --prefix $APP_DIR
 
 # Build Vite Assets
 echo "Build Vite Assets"
-npm run build
+npm run build --prefix $APP_DIR
 
 # Stash Static Files
 echo "Stash Static Files"
-python /home/ubuntu/dev.agoragaming.gg/manage.py collectstatic --noinput
+python $APP_DIR/manage.py collectstatic --noinput
 
 # Restart Python Daemon Processes
 echo "Restart Python Daemon Processes"
