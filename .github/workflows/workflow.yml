@@ -11,7 +11,7 @@ jobs:
           HOSTNAME: ${{ secrets.PROD_SSH_HOST }}
           USER_NAME: 'ubuntu'
         run: |
-          echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
+          echo "${{ secrets.PROD_SSH_PRIVATE_KEY }}" > private_key && chmod 600 private_key
           ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} '
               export NVM_DIR=~/.nvm &&
               export DJANGO_SETTINGS_MODULE=kernel.settings_prod &&
@@ -31,8 +31,8 @@ jobs:
           HOSTNAME: ${{ secrets.DEV_SSH_HOST }}
           USER_NAME: 'ubuntu'
         run: |
-          echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
-          ssh -o StrictHostKeyChecking=no -i private key ${USER_NAME}@${HOSTNAME} '
+          echo "${{ secrets.DEV_SSH_PRIVATE_KEY }}" > private_key && chmod 600 private_key
+          ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} '
               export NVM_DIR=~/.nvm &&
               source ~/.nvm/nvm.sh &&
               cd /home/ubuntu/dev.agoragaming.gg &&
