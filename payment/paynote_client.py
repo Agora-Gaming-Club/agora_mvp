@@ -8,12 +8,12 @@ logger.info(f"ENV CHECK: {settings.REACT_APP_ENV}")
 
 PAYNOTE_PUBLIC_KEY = settings.PAYNOTE_PUBLIC_KEY
 PAYNOTE_SECRET_KEY = settings.PAYNOTE_SECRET_KEY
-PAYNOTE_LIVE_ENDPOINT = "https://api-paynote.seamlesschex.com/"
-PAYNOTE_SANDBOX_ENDPOINT = "https://sandbox-paynote.seamlesschex.com/"
+PAYNOTE_LIVE_ENDPOINT = "https://api-paynote.seamlesschex.com/v1/"
+PAYNOTE_SANDBOX_ENDPOINT = "https://sandbox-paynote.seamlesschex.com/v1/"
 
 class PaynoteClient:
     def __init__(self):
-        self.api_url = 'https://sandbox-paynote.seamlesschex.com/v1/'  # Ensure this is the correct base URL
+        self.api_url = PAYNOTE_LIVE_ENDPOINT if settings.REACT_APP_ENV == 'production' else PAYNOTE_SANDBOX_ENDPOINT
         self.api_key = PAYNOTE_SECRET_KEY
         self.headers = {
             'Authorization': f'Bearer {self.api_key}',
