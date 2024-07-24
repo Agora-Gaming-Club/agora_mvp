@@ -1,6 +1,8 @@
 #!/bin/bash
 
 # Determine the environment
+echo "Environment argument: $1"
+
 if [ "$1" = "prod" ]; then
     ENV_FILE="/home/ubuntu/agoragaming.gg/.env"
     SETTINGS_MODULE="kernel.settings_prod"
@@ -10,6 +12,10 @@ else
     SETTINGS_MODULE="kernel.settings"
     APP_DIR="/home/ubuntu/dev.agoragaming.gg"
 fi
+
+echo "Environment file: $ENV_FILE"
+echo "Settings module: $SETTINGS_MODULE"
+echo "App directory: $APP_DIR"
 
 # Source the environment variables from the appropriate .env file
 echo "Sourcing environment variables from $ENV_FILE"

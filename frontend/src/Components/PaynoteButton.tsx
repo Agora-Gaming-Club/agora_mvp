@@ -73,6 +73,8 @@ export const PaynoteButton = ({
 }: PaynoteButtonType) => {
   const paynoteRef = useRef<any>(null);
   const renderRef = useRef<HTMLDivElement>(null);
+  console.log('Environment:', process.env.REACT_APP_ENV);
+  console.log('Environment 2:', window.REACT_APP_ENV);
 
   const objRequestIframe = {
     publicKey: window.PAYNOTE_KEYS.publicKey, // Replace with actual public key
