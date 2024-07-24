@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Determine the environment
-if [ "$1" == "prod" ]; then
+if [ "$1" = "prod" ]; then
     ENV_FILE="/home/ubuntu/agoragaming.gg/.env"
     SETTINGS_MODULE="kernel.settings_prod"
     APP_DIR="/home/ubuntu/agoragaming.gg"
@@ -14,17 +14,21 @@ fi
 # Source the environment variables from the appropriate .env file
 echo "Sourcing environment variables from $ENV_FILE"
 set -o allexport
-source $ENV_FILE
+. $ENV_FILE
 set +o allexport
 
 # Activate the virtual environment
 echo "Activate the virtual environment"
-source $APP_DIR/.venv/bin/activate
+. $APP_DIR/.venv/bin/activate
 
 # Install MySQL development headers and libraries
 echo "Install MySQL development headers and libraries"
 sudo apt-get update
 sudo apt-get install -y libmysqlclient-dev
+
+# Ensure npm and zsh are installed
+echo "Ensure npm and zsh are installed"
+sudo apt-get install -y npm zsh
 
 # Pull Latest Git Changes
 echo "Pull Latest Git Changes"
